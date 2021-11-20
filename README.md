@@ -48,6 +48,23 @@ Since the default bridge network that docker uses by default cannot provide auto
 
 During the docker run stage in the `initial-script.sh`, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in /root folder, so we mount a volume at /root directory.
 
+## 3) Check the cluster
+
+* `kubectl cluster-info --kubeconfig admin.kubeconfig`
+
+<img width="897" alt="Screen Shot 2021-11-20 at 19 33 15" src="https://user-images.githubusercontent.com/61777390/142733930-cdca326c-3c83-4ff6-ab21-461c7d0297d4.png">
+
+* `kubectl get nodes -o wide --kubeconfig admin.kubeconfig`
+
+<img width="1389" alt="Screen Shot 2021-11-20 at 19 34 30" src="https://user-images.githubusercontent.com/61777390/142733968-019ddaad-2366-4c5b-9448-2603e45b1c74.png">
+
+* `kubectl run nginx --image nginx --port 80 --kubeconfig admin.kubeconfig`
+
+* `kubectl get pods -o wide --kubeconfig admin.kubeconfig `
+
+<img width="1073" alt="Screen Shot 2021-11-20 at 19 37 08" src="https://user-images.githubusercontent.com/61777390/142734060-675e8351-6ba0-4287-bf74-3bfcdaa04aee.png">
+
+
 ------------
 
 ## RESOURCES
