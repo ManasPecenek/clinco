@@ -27,6 +27,8 @@ git clone https://github.com/ManasPecenek/clinco.git && cd clinco
 
 [./initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
 
+During the docker run stage, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in /root folder, so we mount a volume at /root directory.
+
 ------------
 
 ## RESOURCES
