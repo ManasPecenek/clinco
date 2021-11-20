@@ -15,6 +15,14 @@ In this Dockerfile there are three important points:
 
 --------------
 
+## PREREQUISITES
+
+* kubectl tool must be installed on your host where you installed Docker in the first place
+
+* To install it run: 
+
+* `curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl`
+
 ## LET US START
 
 ## 1) Create a Docker bridge network
@@ -32,7 +40,7 @@ Since the default bridge network that docker uses by default cannot provide auto
 
 * `./initial-script.sh`
 
-During the docker run stage, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in /root folder, so we mount a volume at /root directory.
+During the docker run stage in the `initial-script.sh`, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in /root folder, so we mount a volume at /root directory.
 
 ------------
 
