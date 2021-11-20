@@ -62,9 +62,8 @@ wget -q --show-progress --https-only --timestamping \
 "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-scheduler" \
 "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl"
 
-
 chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
-sudo cp kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
+sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 
 sudo mkdir -p /var/lib/kubernetes/
 
