@@ -24,8 +24,9 @@ In this Dockerfile there are three important points:
 * And also `cfssl` and `cfssljson`must be installed on your host
 
 * `wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssl \
-  && wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson \
-  && chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/ `
+  && wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson
+  
+* `chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/ `
 
 
 ## LET US START
