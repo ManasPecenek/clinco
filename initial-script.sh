@@ -376,9 +376,9 @@ EOF
 
 docker cp encryption-config.yaml master:/root/
 
-docker cp 07_08.sh master:/root/
+docker cp master.sh master:/root/
 
-docker cp 09.sh worker:/root/
+docker cp worker.sh worker:/root/
 
 docker exec -it --privileged --user root master bash -c "./master.sh"
 docker exec -it --privileged --user root worker bash -c "./worker.sh"
