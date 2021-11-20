@@ -1,10 +1,9 @@
 # clinco 
 # Cluster in Container
 
+-------------
 
 ## BEFORE WE START
-
--------------
 
 Let us take a look at the Docker image used for nodes
 
