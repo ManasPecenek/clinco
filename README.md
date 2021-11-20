@@ -32,5 +32,13 @@ git clone https://github.com/ManasPecenek/clinco.git && cd clinco
 * [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
 
 
+## Some additional Advantages of clinco
+
+* You do not need to take ETCD snapshots of your cluster, the data of your cluster is automatically saved. For example, in case of your worker node gets deleted you do not lose anything. When you create a new worker node, the cluster will be up and running again with the same state before the deletion of the worker node
+
+
+
+
+
 
 
