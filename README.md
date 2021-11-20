@@ -50,6 +50,10 @@ During the docker run stage in the `initial-script.sh`, we need to mount /lib/mo
 
 ## 3) Check the cluster
 
+* `docker ps`
+
+<img width="1192" alt="Screen Shot 2021-11-20 at 19 47 23" src="https://user-images.githubusercontent.com/61777390/142734398-5e19324f-4ac2-4213-ac0b-d16e9ef2a7d5.png">
+
 * `kubectl cluster-info --kubeconfig admin.kubeconfig`
 
 <img width="897" alt="Screen Shot 2021-11-20 at 19 33 15" src="https://user-images.githubusercontent.com/61777390/142733930-cdca326c-3c83-4ff6-ab21-461c7d0297d4.png">
