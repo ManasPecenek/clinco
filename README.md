@@ -29,7 +29,7 @@ git clone https://github.com/ManasPecenek/clinco.git && cd clinco
 
 ## RESOURCES
 
-* [Kubernetes the Har Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
+* [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
 
 
 
