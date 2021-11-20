@@ -380,5 +380,5 @@ docker cp 07_08.sh master:/root/
 
 docker cp 09.sh worker:/root/
 
-docker exec -it --privileged --user root master bash -c "./07_08.sh"
-docker exec -it --privileged --user root worker bash -c "./09.sh"
+docker exec -it --privileged --user root master bash -c "./master.sh"
+docker exec -it --privileged --user root worker bash -c "./worker.sh"
