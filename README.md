@@ -16,18 +16,18 @@ Here there are three important points. First, we need to tell systemd that it is
 
 ## 1) Create a Docker bridge network
 
-Since the default bridge network that docker uses by default cannot provide automatic DNS resolution between containers, we need to create a user defined one
+* Since the default bridge network that docker uses by default cannot provide automatic DNS resolution between containers, we need to create a user defined one
 
-`docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false macaroni`
+* `docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false macaroni`
 
 
 ## 2) Create the cluster
 
-git clone https://github.com/ManasPecenek/clinco.git && cd clinco
+* git clone https://github.com/ManasPecenek/clinco.git && cd clinco
 
-[./initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
+* [./initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
 
-During the docker run stage, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in /root folder, so we mount a volume at /root directory.
+* During the docker run stage, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in /root folder, so we mount a volume at /root directory.
 
 ------------
 
