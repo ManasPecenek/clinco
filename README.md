@@ -1,6 +1,4 @@
-# clinco
-
-## Cluster in Container
+# clinco Cluster in Container
 
 ## 1) Image used for containers
 
