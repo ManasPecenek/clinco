@@ -24,4 +24,6 @@ Since the default bridge network that docker uses by default cannot provide auto
 
 ## 2) Create the cluster
 
-For that you just need to run [initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
+git clone https://github.com/ManasPecenek/clinco.git && cd clinco
+
+Then run [initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
