@@ -39,6 +39,7 @@ git clone https://github.com/ManasPecenek/clinco.git && cd clinco
 * You do not need to take ETCD snapshots of your cluster, the data of your cluster is automatically saved. For example, in case of your worker node gets deleted you do not lose anything. When you create a new worker node, the cluster will be up and running again with the same state before the deletion of the worker node
 
 
+* If master or worker node get deleted, it will be enough to run them with the command `docker run -dt --network macaroni --hostname worker --name worker -v /lib/modules:/lib/modules:ro -v worker:/root --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker bash -c "worker.sh"`
 
 
 
