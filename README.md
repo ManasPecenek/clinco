@@ -26,6 +26,7 @@ git clone https://github.com/ManasPecenek/clinco.git && cd clinco
 
 [./initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
 
+------------
 
 ## RESOURCES
 
