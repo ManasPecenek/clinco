@@ -19,7 +19,7 @@ Here there are three important points. First, we need to tell systemd that it is
 
 Since the default bridge network that docker uses by default cannot provide automatic DNS resolution between containers, we need to create a user defined one
 
-docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false macaroni
+`docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false macaroni`
 
 
 ## 2) Create the cluster
