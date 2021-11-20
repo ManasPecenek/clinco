@@ -24,4 +24,4 @@ Since the default bridge network that docker uses by default cannot provide auto
 
 git clone https://github.com/ManasPecenek/clinco.git && cd clinco
 
-./[initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
+[./initial-script.sh](https://github.com/ManasPecenek/clinco/blob/main/initial-script.sh)
