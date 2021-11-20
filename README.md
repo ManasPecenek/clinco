@@ -26,7 +26,7 @@ In this Dockerfile there are three important points:
 
 ## 2) Create the cluster
 
-* `git clone https://github.com/ManasPecenek/clinco.git && cd clinco
+* `git clone https://github.com/ManasPecenek/clinco.git && cd clinco`
 
 * `chmod +x initial-script.sh master.sh worker.sh`
 
