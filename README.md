@@ -4,6 +4,8 @@
 
 ## BEFORE WE START
 
+-------------
+
 Let us take a look at the Docker image used for nodes
 
 The ubuntu based image "petschenek/ubuntu-systemd (219MB)" has systemd installed in it. You can check the [Dockerfile](https://github.com/ManasPecenek/clinco/blob/main/Dockerfile)
