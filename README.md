@@ -47,7 +47,7 @@ Since the default bridge network that docker uses by default cannot provide auto
 
 * `./initial-script.sh`
 
-During the docker run stage in the `initial-script.sh`, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in /root folder, so we mount a volume at /root directory.
+During the docker run stage in the `initial-script.sh`, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in `/root` folder, so we mount a volume at `/root` directory.
 
 ## 3) Check the cluster
 
