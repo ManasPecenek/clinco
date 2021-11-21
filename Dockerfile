@@ -4,7 +4,7 @@ ENV container=docker
 
 WORKDIR /root
 
-VOLUME ["/var"]
+VOLUME ["/var/lib/containerd"]
 
 RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo && apt clean -y
 
