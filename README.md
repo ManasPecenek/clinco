@@ -7,7 +7,7 @@
 
 Let us take a look at the Docker image used for nodes
 
-The ubuntu based image "petschenek/ubuntu-systemd (219MB)" has systemd installed in it. You can check the [Dockerfile](https://github.com/ManasPecenek/clinco/blob/main/Dockerfile)
+The ubuntu based image "petschenek/ubuntu-systemd (215MB)" has systemd installed in it. You can check the [Dockerfile](https://github.com/ManasPecenek/clinco/blob/main/Dockerfile)
 
 In this Dockerfile there are three important points:
 1. We need to tell systemd that it is in Docker. 
