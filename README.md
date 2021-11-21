@@ -11,7 +11,7 @@ The ubuntu based image "petschenek/ubuntu-systemd (219MB)" has systemd installed
 
 In this Dockerfile there are three important points:
 1. We need to tell systemd that it is in Docker. 
-2. We need to declare a volume for "/var" because the filesystem of pods that will be created in the cluster must be a normal filesystem.
+2. We need to declare a volume for "/var/lib/containerd" because the filesystem of pods that will be created in the cluster must be a normal filesystem.
 3. We need to declare the stopsignal different than the default stopsignal of Docker which is SIGTERM whereas systemd exits on SIGRTMIN+3
 
 --------------
