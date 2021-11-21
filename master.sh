@@ -51,7 +51,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable etcd
+# sudo systemctl enable etcd
 sudo systemctl start etcd
 
 sudo mkdir -p /etc/kubernetes/config
@@ -177,7 +177,7 @@ EOF
 
 
 sudo systemctl daemon-reload
-sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+# sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
 sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
 
 cat > kubernetes.default.svc.cluster.local <<EOF
@@ -197,7 +197,8 @@ sudo cp kubernetes.default.svc.cluster.local /etc/nginx/sites-available/kubernet
 
 sudo ln -s /etc/nginx/sites-available/kubernetes.default.svc.cluster.local /etc/nginx/sites-enabled/
 
-sudo systemctl restart nginx && sudo systemctl enable nginx
+sudo systemctl restart nginx 
+# sudo systemctl enable nginx
 
 
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
