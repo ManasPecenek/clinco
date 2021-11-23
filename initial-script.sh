@@ -1,9 +1,14 @@
 ## This script prepares the overall environment
 
-docker run -dt --network macaroni --hostname master --name master -v etcd:/lib/etcd -v master:/root --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd
+docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd
 
-
-docker run -dt --network macaroni --hostname worker --name worker -v /lib/modules:/lib/modules:ro -v worker:/root --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd
+i=$1
+while [ $i -gt 0 ]
+do
+docker run -dt --network macaroni --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd
+i=$((i-1))
+done
+i=$1
 
 
 cat > ca-config.json <<EOF
@@ -69,38 +74,6 @@ cfssl gencert \
   -profile=kubernetes \
   admin-csr.json | cfssljson -bare admin
 
-instance=worker
-
-cat > ${instance}-csr.json <<EOF
-{
-  "CN": "system:node:${instance}",
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  },
-  "names": [
-    {
-      "C": "US",
-      "L": "Portland",
-      "O": "system:nodes",
-      "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
-    }
-  ]
-}
-EOF
-
-EXTERNAL_IP=172.172.0.2
-
-INTERNAL_IP=127.0.0.1
-
-cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
-  -config=ca-config.json \
-  -hostname=${instance},${EXTERNAL_IP},${INTERNAL_IP} \
-  -profile=kubernetes \
-  ${instance}-csr.json | cfssljson -bare ${instance}
 
 cat > kube-controller-manager-csr.json <<EOF
 {
@@ -180,8 +153,14 @@ cfssl gencert \
   -profile=kubernetes \
   kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 
+if [ "$(uname)" = "Darwin" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+elif [ "$(uname)" = "Linux" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
+fi
 
-KUBERNETES_PUBLIC_ADDRESS=$(hostname)
 KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
 
 cat > kubernetes-csr.json <<EOF
@@ -207,7 +186,7 @@ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
-  -hostname=10.32.0.1,172.172.0.1,172.172.0.2,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} \
+  -hostname=10.32.0.1,172.172.0.1,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} \
   -profile=kubernetes \
   kubernetes-csr.json | cfssljson -bare kubernetes
 
@@ -238,38 +217,77 @@ cfssl gencert \
   -profile=kubernetes \
   service-account-csr.json | cfssljson -bare service-account
 
-docker cp ca.pem ${instance}:/root/
-docker cp ${instance}-key.pem ${instance}:/root/
-docker cp ${instance}.pem ${instance}:/root/
-
 docker cp ca.pem master:/root/
 docker cp ca-key.pem master:/root/
 docker cp kubernetes-key.pem master:/root/
 docker cp kubernetes.pem master:/root/
 docker cp service-account-key.pem master:/root/
 docker cp service-account.pem master:/root/
+  
+#########################################################################################################################
+while [ $i -gt 0 ]
+do
+
+instance=worker
+
+cat > ${instance}-$i-csr.json <<EOF
+{
+  "CN": "system:node:${instance}-$i",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "system:nodes",
+      "OU": "Kubernetes The Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
 
 
+EXTERNAL_IP=172.172.1.$i
+INTERNAL_IP=127.0.0.1
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
+  -profile=kubernetes \
+  ${instance}-$i-csr.json | cfssljson -bare ${instance}-$i
+
+
+docker cp ca.pem ${instance}-$i:/root/
+docker cp ${instance}-$i-key.pem ${instance}-$i:/root/
+docker cp ${instance}-$i.pem ${instance}-$i:/root/
 
 kubectl config set-cluster kubernetes-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
 --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
---kubeconfig=${instance}.kubeconfig
+--kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-credentials system:node:${instance} \
---client-certificate=${instance}.pem \
---client-key=${instance}-key.pem \
+kubectl config set-credentials system:node:${instance}-$i \
+--client-certificate=${instance}-$i.pem \
+--client-key=${instance}-$i-key.pem \
 --embed-certs=true \
---kubeconfig=${instance}.kubeconfig
+--kubeconfig=${instance}-$i.kubeconfig
 
 kubectl config set-context default \
 --cluster=kubernetes-the-hard-way \
---user=system:node:${instance} \
---kubeconfig=${instance}.kubeconfig
+--user=system:node:${instance}-$i \
+--kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config use-context default --kubeconfig=${instance}.kubeconfig
+kubectl config use-context default --kubeconfig=${instance}-$i.kubeconfig
 
+i=$((i-1))
+done
+i=$1
+#########################################################################################################################
 
 kubectl config set-cluster kubernetes-the-hard-way \
 --certificate-authority=ca.pem \
@@ -351,8 +369,6 @@ kubectl config set-context default \
 kubectl config use-context default --kubeconfig=admin.kubeconfig
 
 
-docker cp ${instance}.kubeconfig ${instance}:/root/
-docker cp kube-proxy.kubeconfig ${instance}:/root/
 docker cp admin.kubeconfig master:/root/
 docker cp kube-scheduler.kubeconfig master:/root/
 docker cp kube-controller-manager.kubeconfig master:/root/
@@ -378,7 +394,16 @@ docker cp encryption-config.yaml master:/root/
 
 docker cp master.sh master:/root/
 
-docker cp worker.sh worker:/root/
-
 docker exec -it --privileged --user root master bash -c "./master.sh"
-docker exec -it --privileged --user root worker bash -c "./worker.sh"
+
+#########################################################################################################################
+while [ $i -gt 0 ]
+do
+docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/
+docker cp kube-proxy.kubeconfig ${instance}-$i:/root/
+
+docker cp worker.sh ${instance}-$i:/root/
+docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
+i=$((i-1))
+done
+#########################################################################################################################
