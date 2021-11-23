@@ -52,21 +52,22 @@ Notes: During the docker run stage in the `initial-script.sh`, we need to mount 
 
 * `docker ps`
 
-<img width="1192" alt="Screen Shot 2021-11-20 at 19 47 23" src="https://user-images.githubusercontent.com/61777390/142734398-5e19324f-4ac2-4213-ac0b-d16e9ef2a7d5.png">
+<img width="1040" alt="Screen Shot 2021-11-23 at 21 21 03" src="https://user-images.githubusercontent.com/61777390/143082059-8725dc8a-c93d-4381-98ca-0c1ffbd85099.png">
 
 * `kubectl cluster-info --kubeconfig admin.kubeconfig`
 
-<img width="897" alt="Screen Shot 2021-11-20 at 19 33 15" src="https://user-images.githubusercontent.com/61777390/142733930-cdca326c-3c83-4ff6-ab21-461c7d0297d4.png">
+<img width="599" alt="Screen Shot 2021-11-23 at 21 21 36" src="https://user-images.githubusercontent.com/61777390/143082142-0a1a9d9c-a9bd-4c6d-a86f-b3095512af8f.png">
 
 * `kubectl get nodes -o wide --kubeconfig admin.kubeconfig`
 
-<img width="1389" alt="Screen Shot 2021-11-20 at 19 34 30" src="https://user-images.githubusercontent.com/61777390/142733968-019ddaad-2366-4c5b-9448-2603e45b1c74.png">
+<img width="917" alt="Screen Shot 2021-11-23 at 21 22 13" src="https://user-images.githubusercontent.com/61777390/143082231-babd079e-48c9-48ca-b791-ec9258e1f33e.png">
 
-* `kubectl run nginx --image nginx --port 80 --kubeconfig admin.kubeconfig`
+* `kubectl create deploy nginx --image nginx --replicas 4 --kubeconfig admin.kubeconfig`
 
 * `kubectl get pods -o wide --kubeconfig admin.kubeconfig `
 
-<img width="1073" alt="Screen Shot 2021-11-20 at 19 37 08" src="https://user-images.githubusercontent.com/61777390/142734060-675e8351-6ba0-4287-bf74-3bfcdaa04aee.png">
+<img width="838" alt="Screen Shot 2021-11-23 at 21 25 11" src="https://user-images.githubusercontent.com/61777390/143082545-4ed24ef7-7119-4fb0-8479-3e5664eb1353.png">
+
 
 
 ------------
