@@ -40,13 +40,13 @@ Since the default bridge network that docker uses by default cannot provide auto
 
 ## 2) Create the cluster
 
-* `git clone https://github.com/ManasPecenek/clinco.git && cd clinco`
+Download the scripts
+* `git clone https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh master.sh worker.sh `
 
-* `chmod +x initial-script.sh master.sh worker.sh`
+Now run the script with how many worker nodes you want. For example "./initial-script.sh 3" will result in a 3-worker-node cluster
+* `./initial-script.sh <worker-node-count>`
 
-* `./initial-script.sh`
-
-During the docker run stage in the `initial-script.sh`, we need to mount /lib/modules as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in `/root` folder, so we mount a volume at `/root` directory.
+Notes: During the docker run stage in the `initial-script.sh`, we need to mount /lib/modules to worker nodes as a read-only volume for containerd to be able to run `modprobe overlay`. Also we do not want to lose the certificates and scripts in `/root` folder, so we mount a volume at `/root` directory.
 
 ## 3) Check the cluster
 
