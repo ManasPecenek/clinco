@@ -10,9 +10,9 @@ Let us take a look at the Docker image used for nodes
 The ubuntu based image "petschenek/ubuntu-systemd (215MB)" has systemd installed in it. You can check the [Dockerfile](https://github.com/ManasPecenek/clinco/blob/main/Dockerfile)
 
 In this Dockerfile there are three important points:
-1. We need to tell systemd that it is in Docker. 
-2. We need to declare a volume for "/var/lib/containerd" because the filesystem of pods that will be created in the cluster must be a normal filesystem.
-3. We need to declare the stopsignal different than the default stopsignal of Docker which is SIGTERM whereas systemd exits on SIGRTMIN+3
+1. We need to tell systemd that it is in Docker. `ENV container=docker`
+2. We need to declare a volume for "/var/lib/containerd" because the filesystem of pods that will be created in the cluster must be a normal filesystem. `VOLUME ["/var/lib/containerd"]`
+3. We need to declare the stopsignal different than the default stopsignal of Docker which is SIGTERM whereas systemd exits on SIGRTMIN+3. `STOPSIGNAL SIGRTMIN+3`
 
 --------------
 
