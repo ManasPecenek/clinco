@@ -35,7 +35,8 @@ sudo mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
 sudo mv containerd/bin/* /bin/
 
 
-POD_CIDR=10.32.0.0/24
+i=$(hostname -s | cut -b 8)
+POD_CIDR=10.172.$i.0/24
 
 cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
 {
