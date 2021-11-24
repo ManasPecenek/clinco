@@ -66,7 +66,7 @@ Notes: During the docker run stage in the `initial-script.sh`, we need to mount 
 
 * `kubectl get pods -o wide --kubeconfig admin.kubeconfig `
 
-<img width="838" alt="Screen Shot 2021-11-23 at 21 25 11" src="https://user-images.githubusercontent.com/61777390/143082545-4ed24ef7-7119-4fb0-8479-3e5664eb1353.png">
+<img width="869" alt="Screen Shot 2021-11-24 at 08 16 33" src="https://user-images.githubusercontent.com/61777390/143179047-e2ae0bb2-b033-4922-b477-0fce0e224b8f.png">
 
 
 
