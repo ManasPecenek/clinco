@@ -81,11 +81,11 @@ Notes: During the docker run stage in the `initial-script.sh`, we need to mount 
 
 * You do not have to take snapshots of your cluster, as soon as /var/lib/docker/volumes/etcd volume in your host machine persists, you will not lose any cluster data even if your master node gets deleted.
 
-* To recover your cluster after the deletion of master node is via this command `docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root master bash -c "./master.sh"`
+* To recover your cluster after the deletion of master node is via this command `docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/lib/etcd -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root master bash -c "./master.sh"`
 
-* If worker node, for instance, gets deleted then this command `docker run -dt --network macaroni --hostname worker --name worker -v /lib/modules:/lib/modules:ro -v worker:/root --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker bash -c "./worker.sh"` is what you need to run
+* If one of the worker nodes, worker-1 for instance, gets deleted then this command `docker run -dt --network macaroni --hostname worker-1 --name worker-1 -v /lib/modules:/lib/modules:ro -v worker-1:/root -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker-1 bash -c "./worker.sh"` is what you need to run
 
-* If worker node stops, you need to remove it and then run it again with `docker rm -f worker && docker run -dt --network macaroni --hostname worker --name worker -v /lib/modules:/lib/modules:ro -v worker:/root --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker bash -c "./worker.sh"`
+
 
 
 
