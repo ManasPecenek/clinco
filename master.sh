@@ -2,10 +2,6 @@
 
 #!/bin/bash
 
-apt update -y && apt upgrade -y && apt install -y nginx && apt clean -y
-
-wget -q --show-progress --https-only --timestamping "https://github.com/etcd-io/etcd/releases/download/v3.4.15/etcd-v3.4.15-linux-amd64.tar.gz"
-
 tar -xvf etcd-v3.4.15-linux-amd64.tar.gz
 sudo mv etcd-v3.4.15-linux-amd64/etcd* /usr/local/bin/
 sudo mkdir -p /etc/etcd /lib/etcd
@@ -56,12 +52,6 @@ sudo systemctl start etcd
 
 sudo mkdir -p /etc/kubernetes/config
 
-wget -q --show-progress --https-only --timestamping \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-apiserver" \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-controller-manager" \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-scheduler" \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl"
-
 chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
 sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 
@@ -70,7 +60,6 @@ sudo mkdir -p /var/lib/kubernetes/
 sudo cp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
 service-account-key.pem service-account.pem \
 encryption-config.yaml /var/lib/kubernetes/
-
 
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-apiserver.service
