@@ -1,5 +1,3 @@
-## This script is going to be run inside master node(container)
-
 #!/bin/bash
 
 tar -xvf etcd-v3.4.15-linux-amd64.tar.gz
