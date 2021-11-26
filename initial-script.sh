@@ -1,4 +1,10 @@
-## This script prepares the overall environment
+#!/bin/bash
+
+
+if [ -z "$(docker network ls | grep macaroni)" ]
+then
+docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false macaroni
+fi
 
 docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/var/lib/etcd -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master
 
