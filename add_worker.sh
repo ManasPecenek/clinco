@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cat > ca-config.json <<EOF
 {
   "signing": {
