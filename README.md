@@ -93,7 +93,7 @@ Notes: During the docker run stage in the `initial-script.sh`, we need to mount 
 
 <img width="698" alt="Screen Shot 2021-11-26 at 22 03 19" src="https://user-images.githubusercontent.com/61777390/143622017-7f0f6946-5025-4d40-ab99-756e9be18747.png">
 
-2) Now just delete all of the containers via docker `rm -f $(docker ps -aq)`
+2) Now just delete all of the containers via `docker rm -f $(docker ps -aq)`
 
 3) Now create the cluster again with `./initial-script.sh <worker-node-count>`
 
