@@ -79,7 +79,7 @@ Notes: During the docker run stage in the `initial-script.sh`, we need to mount 
 
 ## Some Notes
 
-* You do not have to take snapshots of your cluster, as soon as /var/lib/docker/volumes/etcd volume in your host machine persists, you will not lose any cluster data even if your master node gets deleted.
+* You do not have to take snapshots of your cluster, as soon as `/var/lib/docker/volumes/etcd` volume in your host machine persists, you will not lose any cluster data even if your nodes get deleted.
 
 * To recover your cluster after the deletion of master node is via this command `docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/lib/etcd -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root master bash -c "./master.sh"`
 
