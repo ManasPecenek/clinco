@@ -34,7 +34,7 @@ In these Dockerfiles there are three important points:
 ## 1) Create the cluster
 
 Download the scripts:
-* `git clone https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh master.sh worker.sh `
+* `git clone https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh master.sh worker.sh add_worker.sh`
 
 Now run the script with how many worker nodes you want. For example "./initial-script.sh 3" will result in a 3-worker-node cluster:
 * `./initial-script.sh <worker-node-count>`
