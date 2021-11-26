@@ -85,6 +85,22 @@ Notes: During the docker run stage in the `initial-script.sh`, we need to mount 
 
 * If one of the worker nodes, worker-1 for instance, gets deleted then this command `docker run -dt --network macaroni --hostname worker-1 --name worker-1 -v /lib/modules:/lib/modules:ro -v worker-1:/root -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker-1 bash -c "./worker.sh"` is what you need to run
 
+* If you want to add additional worker nodes, all you need to do is run `./add_worker.sh <number>`. For example `./add_worker.sh 2` will add two additional nodes into your cluster
+
+## Testing Disaster Recovery
+
+1) First off all, `etcd` volume under `/var/lib/docker/volumes` SHOULD NOT get deleted, otherwise you will lose your cluster data. You can find the storage location of Docker for various systems below
+
+<img width="698" alt="Screen Shot 2021-11-26 at 22 03 19" src="https://user-images.githubusercontent.com/61777390/143622017-7f0f6946-5025-4d40-ab99-756e9be18747.png">
+
+2) Now just delete all of the containers via docker `rm -f $(docker ps -aq)`
+
+3) Now create the cluster again with `./initial-script.sh <worker-node-count>`
+
+4) You will see that the cluster state has been persisted
+
+
+
 
 
 
