@@ -9,10 +9,11 @@ Let us take a look at the Docker image used for nodes
 
 The ubuntu based images "petschenek/ubuntu-systemd:master (581MB) and petschenek/ubuntu-systemd:worker (531MB)" have systemd installed in them. You can check the [Dockerfile for master](https://github.com/ManasPecenek/clinco/blob/main/master%20image/Dockerfile) and  [Dockerfile for worker](https://github.com/ManasPecenek/clinco/blob/main/worker%20image/Dockerfile)
 
-In this Dockerfile there are three important points:
+In thses Dockerfiles there are three important points:
 1. We need to tell systemd that it is in Docker. `ENV container=docker`
-2. We need to declare a volume for "/var/lib/containerd" because the filesystem of pods that will be created in the cluster must be a normal filesystem. `VOLUME ["/var/lib/containerd"]`
-3. We need to declare the stopsignal different than the default stopsignal of Docker which is SIGTERM whereas systemd exits on SIGRTMIN+3. `STOPSIGNAL SIGRTMIN+3`
+2. We need to declare the stopsignal different than the default stopsignal of Docker which is SIGTERM whereas systemd exits on SIGRTMIN+3. `STOPSIGNAL SIGRTMIN+3`
+3. We need to declare a volume for `/var/lib/containerd` in worker node image because the filesystem of pods that will be created in the cluster must be a normal filesystem. `VOLUME ["/var/lib/containerd"]`
+4. We need to attach a volume for `etcd` in master image so as to persist the overall cluster
 
 --------------
 
