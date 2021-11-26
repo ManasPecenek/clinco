@@ -93,8 +93,8 @@ docker cp kube-proxy.kubeconfig ${instance}-$i:/root/
 
 docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/
 
-docker cp 09.sh ${instance}-$i:/root/
-docker exec -it --privileged --user root ${instance}-$i bash -c "./09.sh"
+docker cp worker.sh ${instance}-$i:/root/
+docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
 
 i=$((i-1))
 done
