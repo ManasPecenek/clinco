@@ -21,7 +21,7 @@ then
   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
 elif [ "$(uname)" = "Linux" ]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
 fi
 
 docker cp master:/root/ca.pem . && docker cp master:/root/ca-key.pem .
