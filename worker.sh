@@ -106,7 +106,7 @@ LimitCORE=infinity
 WantedBy=multi-user.target
 EOF
 
-HOSTNAME=worker
+HOSTNAME=$(hostname -s)
 
 sudo cp ${HOSTNAME}-key.pem ${HOSTNAME}.pem /var/lib/kubelet/
 sudo cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
