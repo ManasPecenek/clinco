@@ -29,9 +29,9 @@ In these Dockerfiles there are three important points:
 * `chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/ `
 
 
-## LET US START
+## CREATE A CLUSTER
 
-## 1) Create the cluster
+## 1) Create a cluster
 
 Download the scripts:
 * `git clone https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh master.sh worker.sh add_worker.sh`
@@ -59,7 +59,9 @@ Now run the script with how many worker nodes you want. For example "./initial-s
 
 <img width="869" alt="Screen Shot 2021-11-24 at 08 16 33" src="https://user-images.githubusercontent.com/61777390/143179047-e2ae0bb2-b033-4922-b477-0fce0e224b8f.png">
 
+## ADD ADDITIONAL WORKER NODES TO THE CLUSTER
 
+If you want to add additional worker nodes, all you need to do is run `./add_worker.sh <number>`. For example `./add_worker.sh 2` will add two additional nodes into your cluster
 
 ------------
 
@@ -76,7 +78,6 @@ Now run the script with how many worker nodes you want. For example "./initial-s
 
 * If one of the worker nodes, worker-1 for instance, gets deleted then this command `docker run -dt --network macaroni --hostname worker-1 --name worker-1 -v /lib/modules:/lib/modules:ro -v worker-1:/root -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker-1 bash -c "./worker.sh"` is what you need to run
 
-* If you want to add additional worker nodes, all you need to do is run `./add_worker.sh <number>`. For example `./add_worker.sh 2` will add two additional nodes into your cluster
 
 ## Testing Disaster Recovery
 
