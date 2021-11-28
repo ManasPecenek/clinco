@@ -26,7 +26,7 @@ fi
 
 docker cp master:/root/ca.pem . && docker cp master:/root/ca-key.pem .
 
-current=$(docker ps | grep worker | wc -l)
+current=$(docker ps | grep worker | tail -n 1 | rev | cut -b 1)
 
 i=$(($1 + $current))
 
