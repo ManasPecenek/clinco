@@ -2,8 +2,8 @@
 
 tar -xvf etcd-v3.4.15-linux-amd64.tar.gz
 sudo mv etcd-v3.4.15-linux-amd64/etcd* /usr/local/bin/
-sudo mkdir -p /etc/etcd /lib/etcd
-sudo chmod 700 /lib/etcd 
+sudo mkdir -p /etc/etcd /var/lib/etcd
+sudo chmod 700 /var/lib/etcd
 sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 
 INTERNAL_IP=172.172.0.1
@@ -34,9 +34,9 @@ ExecStart=/usr/local/bin/etcd \\
   --listen-client-urls https://${INTERNAL_IP}:2379,https://127.0.0.1:2379 \\
   --advertise-client-urls https://${INTERNAL_IP}:2379 \\
   --initial-cluster-token etcd-cluster-0 \\
-  --initial-cluster master=https://172.172.0.1:2380 \\
+  --initial-cluster master=https://${INTERNAL_IP}:2380 \\
   --initial-cluster-state new \\
-  --data-dir=/lib/etcd
+  --data-dir=/var/lib/etcd
 Restart=on-failure
 RestartSec=5
 
