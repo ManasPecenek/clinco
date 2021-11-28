@@ -16,7 +16,7 @@ then
   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
 elif [ "$(uname)" = "Linux" ]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
 fi
 
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service
