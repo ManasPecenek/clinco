@@ -5,6 +5,7 @@ sudo mv etcd-v3.4.15-linux-amd64/etcd* /usr/local/bin/
 sudo mkdir -p /etc/etcd /var/lib/etcd
 sudo chmod 700 /var/lib/etcd
 sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
+rm -f etcd-v3.4.15-linux-amd64.tar.gz etcd-v3.4.15-linux-amd64
 
 INTERNAL_IP=172.172.0.1
 
@@ -81,7 +82,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --etcd-cafile=/var/lib/kubernetes/ca.pem \\
   --etcd-certfile=/var/lib/kubernetes/kubernetes.pem \\
   --etcd-keyfile=/var/lib/kubernetes/kubernetes-key.pem \\
-  --etcd-servers=https://172.172.0.1:2379 \\
+  --etcd-servers=https://${INTERNAL_IP}:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.pem \\
