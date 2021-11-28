@@ -413,5 +413,5 @@ docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
 i=$((i-1))
 done
 #########################################################################################################################
-rm -f *.csr *.pem *.json  encryption-config.yaml worker-* kube-* service-* 
+#rm -f *.csr *.pem *.json  encryption-config.yaml worker-* kube-* service-* 
 
