@@ -11,7 +11,13 @@ INTERNAL_IP=172.172.0.1
 
 ETCD_NAME=$(hostname -s)
 
-KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+if [ "$(uname)" = "Darwin" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+elif [ "$(uname)" = "Linux" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
+fi
 
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service
 [Unit]
