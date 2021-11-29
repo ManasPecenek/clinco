@@ -76,7 +76,7 @@ If you want to add additional worker nodes, all you need to do is run `./add_wor
 
 * To recover your cluster after the deletion of master node is via this command `docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/lib/etcd -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root master bash -c "./master.sh"`
 
-* If one of the worker nodes, worker-1 for instance, gets deleted then this command `docker run -dt --network macaroni --hostname worker-1 --name worker-1 -v /lib/modules:/lib/modules:ro -v worker-1:/root -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.2 --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker-1 bash -c "./worker.sh"` is what you need to run
+* If one of the worker nodes, worker-3 for instance, gets deleted then this command `j=3 && docker run -dt --network macaroni --hostname worker-$j --name worker-$j -v /lib/modules:/lib/modules:ro -v worker-$j:/root -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.$j --privileged --user root petschenek/ubuntu-systemd && docker exec -it --privileged --user root worker-$j bash -c "./worker.sh"` is what you need to run
 
 
 ## Testing Disaster Recovery
