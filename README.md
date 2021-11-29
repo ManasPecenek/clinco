@@ -29,7 +29,7 @@ In these Dockerfiles there are three important points:
 * `chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/ `
 
 
-## CREATE A CLUSTER
+## LET'S START
 
 ## 1) Create a cluster
 
@@ -59,7 +59,7 @@ Now run the script with how many worker nodes you want. For example "./initial-s
 
 <img width="869" alt="Screen Shot 2021-11-24 at 08 16 33" src="https://user-images.githubusercontent.com/61777390/143179047-e2ae0bb2-b033-4922-b477-0fce0e224b8f.png">
 
-## ADD ADDITIONAL WORKER NODES TO THE CLUSTER
+## 3) Add additional worker nodes
 
 If you want to add additional worker nodes, all you need to do is run `./add_worker.sh <number>`. For example `./add_worker.sh 2` will add two additional nodes into your cluster
 
