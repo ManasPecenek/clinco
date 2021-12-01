@@ -71,7 +71,7 @@ docker cp ca.pem ${instance}-$i:/root/
 docker cp ${instance}-$i-key.pem ${instance}-$i:/root/
 docker cp ${instance}-$i.pem ${instance}-$i:/root/
 
-kubectl config set-cluster kubernetes-the-hard-way \
+kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
 --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
@@ -84,7 +84,7 @@ kubectl config set-credentials system:node:${instance}-$i \
 --kubeconfig=${instance}-$i.kubeconfig
 
 kubectl config set-context default \
---cluster=kubernetes-the-hard-way \
+--cluster=clinco-the-hard-way \
 --user=system:node:${instance}-$i \
 --kubeconfig=${instance}-$i.kubeconfig
 
