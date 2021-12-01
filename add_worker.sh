@@ -48,7 +48,7 @@ cat > ${instance}-$i-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "system:nodes",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
