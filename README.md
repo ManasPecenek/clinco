@@ -5,7 +5,7 @@
 
 ## BEFORE WE START
 
-Let us take a look at the Docker image used for nodes
+Let us take a look at the Docker images used for nodes
 
 The ubuntu based images "[petschenek/ubuntu-systemd:master](https://hub.docker.com/repository/docker/petschenek/ubuntu-systemd) (581MB) and [petschenek/ubuntu-systemd:worker](https://hub.docker.com/repository/docker/petschenek/ubuntu-systemd) (531MB)" have systemd installed in them. You can check the [Dockerfile for master](https://github.com/ManasPecenek/clinco/blob/main/master%20image/Dockerfile) and  [Dockerfile for worker](https://github.com/ManasPecenek/clinco/blob/main/worker%20image/Dockerfile)
 
