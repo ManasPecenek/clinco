@@ -271,7 +271,7 @@ docker cp ca.pem ${instance}-$i:/root/
 docker cp ${instance}-$i-key.pem ${instance}-$i:/root/
 docker cp ${instance}-$i.pem ${instance}-$i:/root/
 
-kubectl config set-cluster kubernetes-the-hard-way \
+kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
 --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
@@ -284,7 +284,7 @@ kubectl config set-credentials system:node:${instance}-$i \
 --kubeconfig=${instance}-$i.kubeconfig
 
 kubectl config set-context default \
---cluster=kubernetes-the-hard-way \
+--cluster=clinco-the-hard-way \
 --user=system:node:${instance}-$i \
 --kubeconfig=${instance}-$i.kubeconfig
 
@@ -295,7 +295,7 @@ done
 i=$1
 #########################################################################################################################
 
-kubectl config set-cluster kubernetes-the-hard-way \
+kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
 --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
@@ -308,14 +308,14 @@ kubectl config set-credentials system:kube-proxy \
 --kubeconfig=kube-proxy.kubeconfig
 
 kubectl config set-context default \
---cluster=kubernetes-the-hard-way \
+--cluster=clinco-the-hard-way \
 --user=system:kube-proxy \
 --kubeconfig=kube-proxy.kubeconfig
 
 kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 
 
-kubectl config set-cluster kubernetes-the-hard-way \
+kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
 --server=https://127.0.0.1:6443 \
@@ -328,14 +328,14 @@ kubectl config set-credentials system:kube-controller-manager \
 --kubeconfig=kube-controller-manager.kubeconfig
 
 kubectl config set-context default \
---cluster=kubernetes-the-hard-way \
+--cluster=clinco-the-hard-way \
 --user=system:kube-controller-manager \
 --kubeconfig=kube-controller-manager.kubeconfig
 
 kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
 
 
-kubectl config set-cluster kubernetes-the-hard-way \
+kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
 --server=https://127.0.0.1:6443 \
@@ -348,14 +348,14 @@ kubectl config set-credentials system:kube-scheduler \
 --kubeconfig=kube-scheduler.kubeconfig
 
 kubectl config set-context default \
---cluster=kubernetes-the-hard-way \
+--cluster=clinco-the-hard-way \
 --user=system:kube-scheduler \
 --kubeconfig=kube-scheduler.kubeconfig
 
 kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 
 
-kubectl config set-cluster kubernetes-the-hard-way \
+kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
 --server=https://127.0.0.1:6443 \
@@ -368,7 +368,7 @@ kubectl config set-credentials admin \
 --kubeconfig=admin.kubeconfig
 
 kubectl config set-context default \
---cluster=kubernetes-the-hard-way \
+--cluster=clinco-the-hard-way \
 --user=admin \
 --kubeconfig=admin.kubeconfig
 
