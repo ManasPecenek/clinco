@@ -66,7 +66,7 @@ cat > admin-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "system:masters",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
@@ -93,7 +93,7 @@ cat > kube-controller-manager-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "system:kube-controller-manager",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
@@ -119,7 +119,7 @@ cat > kube-proxy-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "system:node-proxier",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
@@ -145,7 +145,7 @@ cat > kube-scheduler-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "system:kube-scheduler",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
@@ -181,7 +181,7 @@ cat > kubernetes-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "Kubernetes",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
@@ -209,7 +209,7 @@ cat > service-account-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "Kubernetes",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
@@ -248,7 +248,7 @@ cat > ${instance}-$i-csr.json <<EOF
       "C": "US",
       "L": "Portland",
       "O": "system:nodes",
-      "OU": "Kubernetes The Hard Way",
+      "OU": "clinco Hard Way",
       "ST": "Oregon"
     }
   ]
