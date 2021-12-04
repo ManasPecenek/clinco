@@ -398,8 +398,6 @@ EOF
 
 docker cp encryption-config.yaml master:/root/
 
-#docker cp master.sh master:/root/
-
 docker exec -it --privileged --user root master bash -c "./master.sh"
 
 #########################################################################################################################
@@ -408,10 +406,10 @@ do
 docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/
 docker cp kube-proxy.kubeconfig ${instance}-$i:/root/
 
-#docker cp worker.sh ${instance}-$i:/root/
 docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
 i=$((i-1))
 done
 #########################################################################################################################
+
 rm -f *.csr *.pem *.json  encryption-config.yaml worker-* kube-* service-* 
 
