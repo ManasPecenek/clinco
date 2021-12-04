@@ -43,7 +43,7 @@ Now run the script with how many worker nodes you want. For example "./initial-s
 
 * `docker ps`
 
-<img width="1040" alt="Screen Shot 2021-11-23 at 21 21 03" src="https://user-images.githubusercontent.com/61777390/143082059-8725dc8a-c93d-4381-98ca-0c1ffbd85099.png">
+<img width="1134" alt="Screen Shot 2021-12-04 at 16 03 55" src="https://user-images.githubusercontent.com/61777390/144710457-e0ee8d93-918e-486e-8aa6-a661fb3d93f9.png">
 
 * `kubectl cluster-info --kubeconfig admin.kubeconfig`
 
@@ -51,13 +51,14 @@ Now run the script with how many worker nodes you want. For example "./initial-s
 
 * `kubectl get nodes -o wide --kubeconfig admin.kubeconfig`
 
-<img width="917" alt="Screen Shot 2021-11-23 at 21 22 13" src="https://user-images.githubusercontent.com/61777390/143082231-babd079e-48c9-48ca-b791-ec9258e1f33e.png">
+<img width="1292" alt="Screen Shot 2021-12-04 at 16 08 14" src="https://user-images.githubusercontent.com/61777390/144710612-b25cf1dd-b9fa-4a63-858f-28db0f0e9af8.png">
+
 
 * `kubectl create deploy nginx --image nginx --replicas 4 --kubeconfig admin.kubeconfig`
 
 * `kubectl get pods -o wide --kubeconfig admin.kubeconfig `
 
-<img width="869" alt="Screen Shot 2021-11-24 at 08 16 33" src="https://user-images.githubusercontent.com/61777390/143179047-e2ae0bb2-b033-4922-b477-0fce0e224b8f.png">
+<img width="1188" alt="Screen Shot 2021-12-04 at 16 08 42" src="https://user-images.githubusercontent.com/61777390/144710630-0788920e-1dcf-485f-bdad-09e6eb4964b7.png">
 
 ## 3) Add additional worker nodes
 
