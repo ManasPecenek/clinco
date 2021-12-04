@@ -4,7 +4,9 @@ ENV container=docker
 
 WORKDIR /root
 
-RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo nginx && apt clean -y
+COPY ./master.sh .
+
+RUN chmod +x master.sh && apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo nginx && apt clean -y
 
 RUN wget -q --show-progress --https-only --timestamping \
 "https://github.com/etcd-io/etcd/releases/download/v3.5.1/etcd-v3.5.1-linux-amd64.tar.gz" \
