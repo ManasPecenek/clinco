@@ -6,7 +6,9 @@ WORKDIR /root
 
 VOLUME ["/var/lib/containerd"]
 
-RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo kmod socat conntrack ipset && apt clean -y
+COPY ./worker.sh .
+
+RUN chmod +x worker.sh && apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo kmod socat conntrack ipset && apt clean -y
 
 RUN wget -q --show-progress --https-only --timestamping \
 https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.22.0/crictl-v1.22.0-linux-amd64.tar.gz \
