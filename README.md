@@ -1,6 +1,6 @@
 # clinco - Cluster in Container
 
-![clinco](https://user-images.githubusercontent.com/61777390/144721568-665792d0-2451-4e3f-8984-6ab7da589365.png)
+![clinco](https://user-images.githubusercontent.com/61777390/144721867-9fe2d85c-eaa3-4579-ba07-13ca7d23380f.png)
 
 -------------
 
