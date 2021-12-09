@@ -6,12 +6,12 @@ then
 docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false macaroni
 fi
 
-docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/var/lib/etcd -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master
+docker run -dt --network macaroni --hostname master --name master -v master:/root -v etcd:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master
 
 i=$1
 while [ $i -gt 0 ]
 do
-docker run -dt --network macaroni --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
+docker run -dt --network macaroni --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
 i=$((i-1))
 done
 i=$1
