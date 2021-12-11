@@ -32,7 +32,7 @@ i=$(($1 + $current))
 
 while [ $i -gt $current ]
 do
-docker run -dt --network macaroni --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
 
 instance=worker
 
