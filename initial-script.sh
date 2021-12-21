@@ -131,17 +131,24 @@ i=$1
 
 docker exec -it --privileged --user root master bash -c "./master.sh $1"
 
+instance=worker
+docker cp master:/root/admin.kubeconfig .
 #########################################################################################################################
 while [ $i -gt 0 ]
 do
-docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/
-docker cp kube-proxy.kubeconfig ${instance}-$i:/root/
+docker cp master:/root/${instance}-$i.kubeconfig .
+docker cp master:/root/kube-proxy.kubeconfig .
+docker cp master:/root/ca.pem .
+docker cp master:/root/${instance}-$i-key.pem .
+docker cp master:/root/${instance}-$i.pem .
+
+docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/ && rm -f ${instance}-$i.kubeconfig
+docker cp kube-proxy.kubeconfig ${instance}-$i:/root/ && rm -f kube-proxy.kubeconfig
+docker cp ca.pem ${instance}-$i:/root/ && rm -f ca.pem
+docker cp ${instance}-$i-key.pem ${instance}-$i:/root/ && rm -f ${instance}-$i-key.pem
+docker cp ${instance}-$i.pem ${instance}-$i:/root/ && rm -f ${instance}-$i.pem
 
 docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
-
-docker cp ca.pem ${instance}-$i:/root/
-docker cp ${instance}-$i-key.pem ${instance}-$i:/root/
-docker cp ${instance}-$i.pem ${instance}-$i:/root/
 
 i=$((i-1))
 done
