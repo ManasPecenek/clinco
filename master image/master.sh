@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./init.sh $1
+
 tar -xvf etcd-v3.5.1-linux-amd64.tar.gz
 sudo mv etcd-v3.5.1-linux-amd64/etcd* /usr/local/bin/
 sudo mkdir -p /etc/etcd /var/lib/etcd
