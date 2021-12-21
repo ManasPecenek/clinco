@@ -22,7 +22,8 @@ RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable
 && chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/
 
 COPY ./init.sh .
-RUN chmod +x init.sh
+COPY ./add.sh .
+RUN chmod +x init.sh add.sh
 
 STOPSIGNAL SIGRTMIN+3
 

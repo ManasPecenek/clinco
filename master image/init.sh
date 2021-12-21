@@ -1,21 +1,6 @@
 #!/bin/bash
 
-
-# if [ -z "$(docker network ls | grep clinco)" ]
-# then
-# docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco
-# fi
-
-# docker run -dt --network clinco --hostname master --name master -v master:/root -v etcd:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master
-
-# i=$1
-# while [ $i -gt 0 ]
-# do
-# docker run -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
-# i=$((i-1))
-# done
 i=$1
-
 
 cat > ca-config.json <<EOF
 {
@@ -222,13 +207,6 @@ cfssl gencert \
   -config=ca-config.json \
   -profile=kubernetes \
   service-account-csr.json | cfssljson -bare service-account
-
-# docker cp ca.pem master:/root/
-# docker cp ca-key.pem master:/root/
-# docker cp kubernetes-key.pem master:/root/
-# docker cp kubernetes.pem master:/root/
-# docker cp service-account-key.pem master:/root/
-# docker cp service-account.pem master:/root/
   
 #########################################################################################################################
 while [ $i -gt 0 ]
@@ -265,11 +243,6 @@ cfssl gencert \
   -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
   -profile=kubernetes \
   ${instance}-$i-csr.json | cfssljson -bare ${instance}-$i
-
-
-# docker cp ca.pem ${instance}-$i:/root/
-# docker cp ${instance}-$i-key.pem ${instance}-$i:/root/
-# docker cp ${instance}-$i.pem ${instance}-$i:/root/
 
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
@@ -375,11 +348,6 @@ kubectl config set-context default \
 kubectl config use-context default --kubeconfig=admin.kubeconfig
 
 
-# docker cp admin.kubeconfig master:/root/
-# docker cp kube-scheduler.kubeconfig master:/root/
-# docker cp kube-controller-manager.kubeconfig master:/root/
-
-
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 
 cat > encryption-config.yaml <<EOF
@@ -396,19 +364,3 @@ resources:
       - identity: {}
 EOF
 
-# docker cp encryption-config.yaml master:/root/
-
-# docker exec -it --privileged --user root master bash -c "./master.sh"
-
-#########################################################################################################################
-# while [ $i -gt 0 ]
-# do
-# docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/
-# docker cp kube-proxy.kubeconfig ${instance}-$i:/root/
-
-# docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
-# i=$((i-1))
-# done
-# #########################################################################################################################
-
-# rm -f *.csr *.pem *.json  encryption-config.yaml worker-* kube-* service-* 

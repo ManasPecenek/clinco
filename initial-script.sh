@@ -16,142 +16,30 @@ i=$((i-1))
 done
 i=$1
 
-# cat > ca-config.json <<EOF
-# {
-#   "signing": {
-#     "default": {
-#       "expiry": "8760h"
-#     },
-#     "profiles": {
-#       "kubernetes": {
-#         "usages": ["signing", "key encipherment", "server auth", "client auth"],
-#         "expiry": "8760h"
-#       }
-#     }
-#   }
-# }
-# EOF
-
-# cat > ca-csr.json <<EOF
-# {
-#   "CN": "Kubernetes",
-#   "key": {
-#     "algo": "rsa",
-#     "size": 2048
-#   },
-#   "names": [
-#     {
-#       "C": "US",
-#       "L": "Portland",
-#       "O": "Kubernetes",
-#       "OU": "CA",
-#       "ST": "Oregon"
-#     }
-#   ]
-# }
-# EOF
-
-# cfssl gencert -initca ca-csr.json | cfssljson -bare ca
-
-# docker cp ca.pem master:/root/
-# docker cp ca-key.pem master:/root/
-
-# if [ "$(uname)" = "Darwin" ]
-# then
-#   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
-# elif [ "$(uname)" = "Linux" ]
-# then
-#   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
-# fi
-
-# #########################################################################################################################
-# while [ $i -gt 0 ]
-# do
-
-# instance=worker
-
-# cat > ${instance}-$i-csr.json <<EOF
-# {
-#   "CN": "system:node:${instance}-$i",
-#   "key": {
-#     "algo": "rsa",
-#     "size": 2048
-#   },
-#   "names": [
-#     {
-#       "C": "US",
-#       "L": "Portland",
-#       "O": "system:nodes",
-#       "OU": "clinco Hard Way",
-#       "ST": "Oregon"
-#     }
-#   ]
-# }
-# EOF
-
-
-# EXTERNAL_IP=172.172.1.$i
-# INTERNAL_IP=127.0.0.1
-# cfssl gencert \
-#   -ca=ca.pem \
-#   -ca-key=ca-key.pem \
-#   -config=ca-config.json \
-#   -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
-#   -profile=kubernetes \
-#   ${instance}-$i-csr.json | cfssljson -bare ${instance}-$i
-
-
-# docker cp ca.pem ${instance}-$i:/root/
-# docker cp ${instance}-$i-key.pem ${instance}-$i:/root/
-# docker cp ${instance}-$i.pem ${instance}-$i:/root/
-
-# kubectl config set-cluster clinco-the-hard-way \
-# --certificate-authority=ca.pem \
-# --embed-certs=true \
-# --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
-# --kubeconfig=${instance}-$i.kubeconfig
-
-# kubectl config set-credentials system:node:${instance}-$i \
-# --client-certificate=${instance}-$i.pem \
-# --client-key=${instance}-$i-key.pem \
-# --embed-certs=true \
-# --kubeconfig=${instance}-$i.kubeconfig
-
-# kubectl config set-context default \
-# --cluster=clinco-the-hard-way \
-# --user=system:node:${instance}-$i \
-# --kubeconfig=${instance}-$i.kubeconfig
-
-# kubectl config use-context default --kubeconfig=${instance}-$i.kubeconfig
-
-# i=$((i-1))
-# done
-# i=$1
-# #########################################################################################################################
+#########################################################################################################################
 
 docker exec -it --privileged --user root master bash -c "./master.sh $1"
 
-instance=worker
 docker cp master:/root/admin.kubeconfig .
+
 #########################################################################################################################
 while [ $i -gt 0 ]
 do
-docker cp master:/root/${instance}-$i.kubeconfig .
+docker cp master:/root/worker-$i.kubeconfig .
 docker cp master:/root/kube-proxy.kubeconfig .
 docker cp master:/root/ca.pem .
-docker cp master:/root/${instance}-$i-key.pem .
-docker cp master:/root/${instance}-$i.pem .
+docker cp master:/root/worker-$i-key.pem .
+docker cp master:/root/worker-$i.pem .
 
-docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/ && rm -f ${instance}-$i.kubeconfig
-docker cp kube-proxy.kubeconfig ${instance}-$i:/root/ && rm -f kube-proxy.kubeconfig
-docker cp ca.pem ${instance}-$i:/root/ && rm -f ca.pem
-docker cp ${instance}-$i-key.pem ${instance}-$i:/root/ && rm -f ${instance}-$i-key.pem
-docker cp ${instance}-$i.pem ${instance}-$i:/root/ && rm -f ${instance}-$i.pem
+docker cp worker-$i.kubeconfig worker-$i:/root/ && rm -f worker-$i.kubeconfig
+docker cp kube-proxy.kubeconfig worker-$i:/root/ && rm -f kube-proxy.kubeconfig
+docker cp ca.pem worker-$i:/root/ && rm -f ca.pem
+docker cp worker-$i-key.pem worker-$i:/root/ && rm -f worker-$i-key.pem
+docker cp worker-$i.pem worker-$i:/root/ && rm -f worker-$i.pem
 
-docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
+docker exec -it --privileged --user root worker-$i bash -c "./worker.sh"
 
 i=$((i-1))
 done
 #########################################################################################################################
 
-#rm -f *.csr *.pem *.json  encryption-config.yaml worker-* kube-* service-* 
