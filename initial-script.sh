@@ -128,7 +128,7 @@ i=$((i-1))
 done
 i=$1
 #########################################################################################################################
-
+docker exec -it --privileged --user root master bash -c "./cert.sh"
 docker exec -it --privileged --user root master bash -c "./master.sh"
 
 #########################################################################################################################
@@ -142,5 +142,5 @@ i=$((i-1))
 done
 #########################################################################################################################
 
-# rm -f *.csr *.pem *.json  encryption-config.yaml worker-* kube-* service-* 
+#rm -f *.csr *.pem *.json  encryption-config.yaml worker-* kube-* service-* 
 
