@@ -15,6 +15,16 @@ RUN wget -q --show-progress --https-only --timestamping \
 "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-scheduler" \
 "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl"
 
+RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+&& chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl \
+&& wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssl \
+&& wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson \
+&& chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/
+
+COPY ./init.sh .
+COPY ./add.sh .
+RUN chmod +x init.sh add.sh
+
 STOPSIGNAL SIGRTMIN+3
 
 ENTRYPOINT ["/sbin/init"]
