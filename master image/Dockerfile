@@ -4,9 +4,7 @@ ENV container=docker
 
 WORKDIR /root
 
-COPY ./master.sh .
-
-RUN chmod +x master.sh && apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo nginx && apt clean -y
+RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo nginx && apt clean -y
 
 RUN wget -q --show-progress --https-only --timestamping \
 "https://github.com/etcd-io/etcd/releases/download/v3.5.1/etcd-v3.5.1-linux-amd64.tar.gz" \
@@ -23,7 +21,9 @@ RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable
 
 COPY ./init.sh .
 COPY ./add.sh .
-RUN chmod +x init.sh add.sh
+COPY ./master.sh .
+
+RUN chmod +x init.sh add.sh master.sh
 
 STOPSIGNAL SIGRTMIN+3
 
