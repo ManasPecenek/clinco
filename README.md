@@ -17,19 +17,6 @@ In these Dockerfiles there are three important points:
 
 --------------
 
-## PREREQUISITES
-
-* kubectl tool must be installed on your host where you installed Docker in the first place:
-
-* `curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl`
-
-* And also `cfssl` and `cfssljson`must be installed on your host:
-
-* `curl -LO https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssl && curl -LO https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson `
-  
-* `chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/ `
-
-
 ## LET'S START
 
 ## 1) Create a cluster
