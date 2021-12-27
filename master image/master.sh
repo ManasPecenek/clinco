@@ -59,8 +59,8 @@ sudo systemctl start etcd
 
 sudo mkdir -p /etc/kubernetes/config
 
-chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
-sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
+chmod +x kube-apiserver kube-controller-manager kube-scheduler
+sudo mv kube-apiserver kube-controller-manager kube-scheduler /usr/local/bin/
 
 sudo mkdir -p /var/lib/kubernetes/
 
