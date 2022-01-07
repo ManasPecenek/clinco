@@ -4,7 +4,15 @@ current=$(docker ps | grep worker | tail -n 1 | rev | cut -b 1)
 
 i=$(($1 + $current))
 
-docker exec -it --privileged --user root master bash -c "./add.sh $i $current"
+if [ "$(uname)" = "Darwin" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+elif [ "$(uname)" = "Linux" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+fi
+
+docker exec -it --privileged --user root master bash -c "./add.sh $i $current $KUBERNETES_PUBLIC_ADDRESS"
 
 while [ $i -gt $current ]
 do
