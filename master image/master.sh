@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./init.sh $1
+./init.sh $1 $2
 
 tar -xvf etcd-v3.5.1-linux-amd64.tar.gz
 sudo mv etcd-v3.5.1-linux-amd64/etcd* /usr/local/bin/
@@ -13,13 +13,15 @@ INTERNAL_IP=172.172.0.1
 
 ETCD_NAME=$(hostname -s)
 
-if [ "$(uname)" = "Darwin" ]
-then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
-elif [ "$(uname)" = "Linux" ]
-then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
-fi
+# if [ "$(uname)" = "Darwin" ]
+# then
+#   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+# elif [ "$(uname)" = "Linux" ]
+# then
+#   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+# fi
+
+KUBERNETES_PUBLIC_ADDRESS=$2
 
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service
 [Unit]
@@ -125,6 +127,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 ExecStart=/usr/local/bin/kube-controller-manager \\
   --bind-address=0.0.0.0 \\
   --cluster-cidr=10.172.0.0/16 \\
+  --allocate-node-cidrs=true \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/var/lib/kubernetes/ca.pem \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca-key.pem \\
