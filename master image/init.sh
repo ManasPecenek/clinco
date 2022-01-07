@@ -144,13 +144,15 @@ cfssl gencert \
   -profile=kubernetes \
   kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 
-if [ "$(uname)" = "Darwin" ]
-then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
-elif [ "$(uname)" = "Linux" ]
-then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
-fi
+# if [ "$(uname)" = "Darwin" ]
+# then
+#   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+# elif [ "$(uname)" = "Linux" ]
+# then
+#   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+# fi
+
+KUBERNETES_PUBLIC_ADDRESS=$2
 
 KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
 
@@ -234,8 +236,8 @@ cat > ${instance}-$i-csr.json <<EOF
 EOF
 
 
-EXTERNAL_IP=172.172.1.$i
-INTERNAL_IP=127.0.0.1
+EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
+INTERNAL_IP=172.172.1.$i # 127.0.0.1
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
@@ -363,4 +365,3 @@ resources:
               secret: ${ENCRYPTION_KEY}
       - identity: {}
 EOF
-
