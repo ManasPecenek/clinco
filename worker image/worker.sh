@@ -150,6 +150,8 @@ ExecStart=/usr/local/bin/kubelet \\
   --kubeconfig=/var/lib/kubelet/kubeconfig \\
   --register-node=true \\
   --v=2 \\
+  --network-plugin=cni \\
+  --image-pull-progress-deadline=2m \\
   --fail-swap-on=false \\
   --pod-infra-container-image=k8s.gcr.io/pause:3.4.1
 Restart=on-failure
@@ -170,6 +172,8 @@ clientConnection:
   kubeconfig: "/var/lib/kube-proxy/kubeconfig"
 mode: "iptables"
 clusterCIDR: "10.172.0.0/16"
+conntrack:
+  maxPerCore: 0
 EOF
 
 
