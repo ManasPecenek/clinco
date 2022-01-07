@@ -27,16 +27,18 @@ cat > ${instance}-$i-csr.json <<EOF
 }
 EOF
 
-if [ "$(uname)" = "Darwin" ]
-then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
-elif [ "$(uname)" = "Linux" ]
-then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
-fi
+# if [ "$(uname)" = "Darwin" ]
+# then
+#   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+# elif [ "$(uname)" = "Linux" ]
+# then
+#   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+# fi
 
-EXTERNAL_IP=172.172.1.$i
-INTERNAL_IP=127.0.0.1
+KUBERNETES_PUBLIC_ADDRESS=$3
+
+EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
+INTERNAL_IP=172.172.1.$i # 127.0.0.1
 
 cfssl gencert \
   -ca=ca.pem \
