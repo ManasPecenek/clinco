@@ -6,9 +6,7 @@ WORKDIR /root
 
 VOLUME ["/var/lib/containerd"]
 
-COPY ./worker.sh .
-
-RUN chmod +x worker.sh && apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo kmod socat conntrack ipset && apt clean -y
+RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo kmod socat conntrack ipset && apt clean -y
 
 RUN wget -q --show-progress --https-only --timestamping \
 https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.22.0/crictl-v1.22.0-linux-amd64.tar.gz \
@@ -18,6 +16,10 @@ https://github.com/containerd/containerd/releases/download/v1.5.8/containerd-1.5
 https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl \
 https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-proxy \
 https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubelet
+
+COPY ./worker.sh .
+
+RUN chmod +x worker.sh
 
 STOPSIGNAL SIGRTMIN+3
 
