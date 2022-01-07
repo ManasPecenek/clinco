@@ -51,4 +51,6 @@ docker exec -it --privileged --user root worker-$i bash -c "./worker.sh"
 i=$((i-1))
 done
 #########################################################################################################################
+sleep 10 && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
 
