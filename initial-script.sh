@@ -11,14 +11,23 @@ docker run -dt --network clinco --hostname master --name master -v master:/root 
 i=$1
 while [ $i -gt 0 ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
+docker run --cpus=2 -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro -v sys:/sys/fs --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
 i=$((i-1))
 done
 i=$1
 
 #########################################################################################################################
 
-docker exec -it --privileged --user root master bash -c "./master.sh $1"
+if [ "$(uname)" = "Darwin" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
+elif [ "$(uname)" = "Linux" ]
+then
+  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+fi
+
+
+docker exec -it --privileged --user root master bash -c "./master.sh $1 $KUBERNETES_PUBLIC_ADDRESS"
 
 docker cp master:/root/admin.kubeconfig .
 
