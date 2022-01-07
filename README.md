@@ -63,10 +63,6 @@ If you want to add additional worker nodes, all you need to do is run `./add-wor
 
 * You do not have to take snapshots of your cluster, as soon as `/var/lib/docker/volumes/etcd` volume in your host machine persists, you will not lose any cluster data even if your nodes get deleted.
 
-* To recover your cluster after the deletion of master node is via this command `docker run -dt --network clinco --hostname master --name master -v master:/root -v etcd:/lib/etcd -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master && docker exec -it --privileged --user root master bash -c "./master.sh"`
-
-* If one of the worker nodes, worker-3 for instance, gets deleted then this command `j=3 && docker run -dt --network clinco --hostname worker-$j --name worker-$j -v /lib/modules:/lib/modules:ro -v worker-$j:/root -v /sys/fs/cgroup:/sys/fs/cgroup:ro --ip=172.172.0.$j --privileged --user root petschenek/ubuntu-systemd:worker && docker exec -it --privileged --user root worker-$j bash -c "./worker.sh"` is what you need to run
-
 
 ## Testing Disaster Recovery
 
