@@ -137,7 +137,8 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account-key.pem \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --use-service-account-credentials=true \\
-  --v=2
+  --v=2 \\
+  --pod-eviction-timeout=1m0s
 Restart=on-failure
 RestartSec=5
 
