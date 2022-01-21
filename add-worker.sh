@@ -1,6 +1,6 @@
 #!/bin/bash
 
-current=$(docker ps | grep worker | tail -n 1 | rev | cut -b 1)
+current=$(docker ps | grep worker- | wc -l)
 
 i=$(($1 + $current))
 
