@@ -27,7 +27,7 @@ Download the scripts:
 Now run the script with how many worker nodes you want. For example "startCluster 3" will result in a 3-worker-node cluster:
 * `startCluster <worker-node-count>`
 
-## 2) Check the cluster
+## 2) Check the cluster via Installing OPA Gatekeeper
 
 * `docker ps`
 
@@ -35,18 +35,18 @@ Now run the script with how many worker nodes you want. For example "startCluste
 
 * `kubectl cluster-info`
 
-<img width="599" alt="Screen Shot 2021-11-23 at 21 21 36" src="https://user-images.githubusercontent.com/61777390/143082142-0a1a9d9c-a9bd-4c6d-a86f-b3095512af8f.png">
+<img width="722" alt="Screen Shot 2022-01-21 at 18 34 28" src="https://user-images.githubusercontent.com/61777390/150554773-a9ddc3d5-66a3-4d6b-ae07-02de87ffd65a.png">
 
 * `kubectl get nodes -o wide`
 
-<img width="1292" alt="Screen Shot 2021-12-04 at 16 08 14" src="https://user-images.githubusercontent.com/61777390/144710612-b25cf1dd-b9fa-4a63-858f-28db0f0e9af8.png">
+<img width="903" alt="Screen Shot 2022-01-21 at 18 35 10" src="https://user-images.githubusercontent.com/61777390/150554858-68bf07f5-68cd-4d71-8c56-99761096d6bb.png">
 
+* `kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/release-3.7/deploy/gatekeeper.yaml`
 
-* `kubectl create deploy nginx --image nginx --replicas 4`
+* `kubectl get pods -o wide -n gatekeeper-system`
 
-* `kubectl get pods -o wide`
+<img width="1002" alt="Screen Shot 2022-01-21 at 18 45 42" src="https://user-images.githubusercontent.com/61777390/150556540-dfbf41ce-2718-4c20-a421-b0526ab5f638.png">
 
-<img width="1188" alt="Screen Shot 2021-12-04 at 16 08 42" src="https://user-images.githubusercontent.com/61777390/144710630-0788920e-1dcf-485f-bdad-09e6eb4964b7.png">
 
 ## 3) Add additional worker nodes
 
