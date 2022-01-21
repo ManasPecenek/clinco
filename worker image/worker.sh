@@ -148,12 +148,11 @@ ExecStart=/usr/local/bin/kubelet \\
   --container-runtime=remote \\
   --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \\
   --kubeconfig=/var/lib/kubelet/kubeconfig \\
+  --register-schedulable=true \\
   --register-node=true \\
   --v=2 \\
-  --network-plugin=cni \\
-  --image-pull-progress-deadline=2m \\
   --fail-swap-on=false \\
-  --pod-infra-container-image=k8s.gcr.io/pause:3.4.1
+  --pod-infra-container-image=k8s.gcr.io/pause:3.6
 Restart=on-failure
 RestartSec=5
 
