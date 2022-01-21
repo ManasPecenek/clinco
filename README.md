@@ -22,10 +22,10 @@ In these Dockerfiles there are three important points:
 ## 1) Create a cluster
 
 Download the scripts:
-* `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh add-worker.sh`
+* `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh add-worker.sh && alias startCluster="bash initial-script.sh" addNode="bash add-worker.sh"`
 
-Now run the script with how many worker nodes you want. For example "./initial-script.sh 3" will result in a 3-worker-node cluster:
-* `./initial-script.sh <worker-node-count>`
+Now run the script with how many worker nodes you want. For example "startCluster 3" will result in a 3-worker-node cluster:
+* `startCluster <worker-node-count>`
 
 ## 2) Check the cluster
 
@@ -33,24 +33,24 @@ Now run the script with how many worker nodes you want. For example "./initial-s
 
 <img width="1134" alt="Screen Shot 2021-12-04 at 16 03 55" src="https://user-images.githubusercontent.com/61777390/144710457-e0ee8d93-918e-486e-8aa6-a661fb3d93f9.png">
 
-* `kubectl cluster-info --kubeconfig admin.kubeconfig`
+* `kubectl cluster-info`
 
 <img width="599" alt="Screen Shot 2021-11-23 at 21 21 36" src="https://user-images.githubusercontent.com/61777390/143082142-0a1a9d9c-a9bd-4c6d-a86f-b3095512af8f.png">
 
-* `kubectl get nodes -o wide --kubeconfig admin.kubeconfig`
+* `kubectl get nodes -o wide`
 
 <img width="1292" alt="Screen Shot 2021-12-04 at 16 08 14" src="https://user-images.githubusercontent.com/61777390/144710612-b25cf1dd-b9fa-4a63-858f-28db0f0e9af8.png">
 
 
-* `kubectl create deploy nginx --image nginx --replicas 4 --kubeconfig admin.kubeconfig`
+* `kubectl create deploy nginx --image nginx --replicas 4`
 
-* `kubectl get pods -o wide --kubeconfig admin.kubeconfig `
+* `kubectl get pods -o wide`
 
 <img width="1188" alt="Screen Shot 2021-12-04 at 16 08 42" src="https://user-images.githubusercontent.com/61777390/144710630-0788920e-1dcf-485f-bdad-09e6eb4964b7.png">
 
 ## 3) Add additional worker nodes
 
-If you want to add additional worker nodes, all you need to do is run `./add-worker.sh <number>`. For example `./add-worker.sh 2` will add two additional nodes into your cluster
+If you want to add additional worker nodes, all you need to do is run `addNode <number>`. For example `addNode 2` will add two additional nodes into your cluster
 
 ------------
 
@@ -72,7 +72,7 @@ If you want to add additional worker nodes, all you need to do is run `./add-wor
 
 2) Now just delete all of the containers via `docker rm -f $(docker ps -aq)`
 
-3) Now create the cluster again with `./initial-script.sh <worker-node-count>`
+3) Now create the cluster again with `startCluster <worker-node-count>`
 
 4) You will see that the cluster state has been persisted
 
