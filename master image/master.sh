@@ -79,7 +79,6 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-apiserver \\
   --advertise-address=${INTERNAL_IP} \\
-  --feature-gates=StatefulSetMinReadySeconds=true \\
   --allow-privileged=true \\
   --apiserver-count=3 \\
   --audit-log-maxage=30 \\
@@ -126,7 +125,6 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
-  --feature-gates=StatefulSetMinReadySeconds=true \\
   --bind-address=0.0.0.0 \\
   --cluster-cidr=10.172.0.0/16 \\
   --allocate-node-cidrs=true \\
