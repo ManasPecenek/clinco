@@ -17,25 +17,25 @@ fi
 
 if [[ "$(uname -m)" = *"arm64"* || "$(uname -m)" = *"aarch64"* ]]
 then
-  TAG=arm64-21.10
+  ARCH=arm64
 else
-  TAG=amd64-21.10
+  ARCH=amd64
 fi
 
 
-docker run -dt --network clinco --hostname master --name master -v master:/root -v etcd:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master-$TAG
+docker run -dt --network clinco --hostname master --name master -v master:/root -v etcd:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
 
 i=$1
 while [ $i -gt 0 ]
 do
-docker run --cpus=2 -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$TAG
+docker run --cpus=2 -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10
 i=$((i-1))
 done
 i=$1
 
 #########################################################################################################################
 
-docker exec -it --privileged --user root master bash -c "./master.sh $1 $KUBERNETES_PUBLIC_ADDRESS"
+docker exec -it --privileged --user root master bash -c "./$ARCH-master.sh $1 $KUBERNETES_PUBLIC_ADDRESS"
 
 docker cp master:/root/admin.kubeconfig .
 
@@ -54,12 +54,12 @@ docker cp ca.pem worker-$i:/root/ && rm -f ca.pem
 docker cp worker-$i-key.pem worker-$i:/root/ && rm -f worker-$i-key.pem
 docker cp worker-$i.pem worker-$i:/root/ && rm -f worker-$i.pem
 
-docker exec -it --privileged --user root worker-$i bash -c "./worker.sh"
+docker exec -it --privileged --user root worker-$i bash -c "./$ARCH-worker.sh"
 
 i=$((i-1))
 done
 #########################################################################################################################
-export KUBECONFIG=./admin.kubeconfig
+#export KUBECONFIG=./admin.kubeconfig
 sleep 10 && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 sleep 10 && kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.8.yaml
 
