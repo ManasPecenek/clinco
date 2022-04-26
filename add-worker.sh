@@ -4,19 +4,26 @@ current=$(docker ps | grep worker- | wc -l)
 
 i=$(($1 + $current))
 
-if [ "$(uname)" = "Darwin" ]
+if [[ "$(uname)" = *"Darwin"* ]]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname)
-elif [ "$(uname)" = "Linux" ]
+  KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
+elif [[ "$(uname)" = *"Linux"* ]]
 then
   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+fi
+
+if [[ "$(uname -m)" = *"arm64"* || "$(uname -m)" = *"aarch64"* ]]
+then
+  TAG=arm64-21.10
+else
+  TAG=amd64-21.10
 fi
 
 docker exec -it --privileged --user root master bash -c "./add.sh $i $current $KUBERNETES_PUBLIC_ADDRESS"
 
 while [ $i -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$TAG
 
 instance=worker
 

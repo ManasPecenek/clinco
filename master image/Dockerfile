@@ -1,4 +1,4 @@
-FROM ubuntu:21.10
+FROM --platform=linux/amd64 ubuntu:21.10
 
 ENV container=docker 
 
