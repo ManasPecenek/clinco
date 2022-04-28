@@ -15,11 +15,14 @@ then
   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
 fi
 
-if [[ "$(uname -m)" = *"arm64"* || "$(uname -m)" = *"aarch64"* ]]
+if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
 then
   ARCH=arm64
-else
+elif [[ "$(uname -m)" = *"x86"* ]]
+then
   ARCH=amd64
+else
+  echo "Could not configure your archştecture" && exit 1
 fi
 
 
