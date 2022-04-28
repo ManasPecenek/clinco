@@ -26,17 +26,19 @@ POD_CIDR=10.172.$i.0/24
 
 cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
 {
-    "cniVersion": "1.0.0",
-    "name": "dbnet",
+    "cniVersion": "0.4.0",
+    "name": "bridge",
     "type": "bridge",
-    "bridge": "cni0",
+    "bridge": "cnio0",
+    "isGateway": true,
     "ipMasq": true,
     "ipam": {
         "type": "host-local",
-        "subnet": "${POD_CIDR}",
-        "gateway": "10.172.0.1",
-    },
-    "routes": [{"dst": "0.0.0.0/0"}]
+        "ranges": [
+          [{"subnet": "${POD_CIDR}"}]
+        ],
+        "routes": [{"dst": "0.0.0.0/0"}]
+    }
 }
 EOF
 
