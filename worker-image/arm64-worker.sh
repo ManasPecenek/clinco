@@ -14,7 +14,7 @@ sudo mkdir -p \
 sudo mkdir -p containerd
 sudo tar -xvf crictl-v1.22.0-linux-arm64.tar.gz
 sudo tar -xvf containerd-1.6.3-linux-arm64.tar.gz -C containerd
-sudo tar -xvf cni-plugins-linux-arm64-v0.9.1.tgz -C /opt/cni/bin/
+sudo tar -xvf cni-plugins-linux-arm64-v1.1.1.tgz -C /opt/cni/bin/
 sudo mv runc.arm64 runc
 chmod +x crictl kubectl kube-proxy kubelet runc 
 sudo mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
@@ -26,19 +26,17 @@ POD_CIDR=10.172.$i.0/24
 
 cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
 {
-    "cniVersion": "0.4.0",
-    "name": "bridge",
+    "cniVersion": "1.0.0",
+    "name": "dbnet",
     "type": "bridge",
-    "bridge": "cnio0",
-    "isGateway": true,
+    "bridge": "cni0",
     "ipMasq": true,
     "ipam": {
         "type": "host-local",
-        "ranges": [
-          [{"subnet": "${POD_CIDR}"}]
-        ],
-        "routes": [{"dst": "0.0.0.0/0"}]
-    }
+        "subnet": "${POD_CIDR}",
+        "gateway": "10.172.0.1",
+    },
+    "routes": [{"dst": "0.0.0.0/0"}]
 }
 EOF
 
