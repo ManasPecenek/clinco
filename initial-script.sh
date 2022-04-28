@@ -27,7 +27,7 @@ else
 fi
 
 
-docker run -dt --network clinco --hostname master --name master -v etcd:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
+docker run -dt --network clinco --hostname master --name master -v etcd-$RANDOM:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
 
 i=$1
 while [ $i -gt 0 ]
