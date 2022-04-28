@@ -23,7 +23,7 @@ docker exec -it --privileged --user root master bash -c "./add.sh $i $current $K
 
 while [ $i -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v worker-$i:/root -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$TAG
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$TAG
 
 instance=worker
 
