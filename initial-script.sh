@@ -6,6 +6,7 @@ then
 docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco
 fi
 
+NODE_COUNT=$1
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
@@ -38,7 +39,7 @@ i=$1
 
 #########################################################################################################################
 
-docker exec -it --privileged --user root master bash -c "./$ARCH-master.sh $1 $KUBERNETES_PUBLIC_ADDRESS"
+docker exec -it --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS"
 
 docker cp master:/root/admin.kubeconfig .
 
@@ -62,7 +63,7 @@ docker exec -it --privileged --user root worker-$i bash -c "./$ARCH-worker.sh"
 i=$((i-1))
 done
 #########################################################################################################################
-#export KUBECONFIG=./admin.kubeconfig
+export KUBECONFIG=./admin.kubeconfig
 sleep 10 && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 sleep 10 && kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.8.yaml
 
