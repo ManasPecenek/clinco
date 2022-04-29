@@ -58,7 +58,7 @@ docker cp ca.pem worker-$i:/root/ && rm -f ca.pem
 docker cp worker-$i-key.pem worker-$i:/root/ && rm -f worker-$i-key.pem
 docker cp worker-$i.pem worker-$i:/root/ && rm -f worker-$i.pem
 
-docker exec -it --privileged --user root worker-$i bash -c "./$ARCH-worker.sh"
+docker exec -it --privileged --user root worker-$i bash -c "./$ARCH-worker.sh $NODE_COUNT"
 
 i=$((i-1))
 done

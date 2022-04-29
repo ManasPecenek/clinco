@@ -198,3 +198,9 @@ sudo systemctl enable containerd kubelet kube-proxy
 sudo systemctl start containerd kubelet kube-proxy
 
 
+i=$1
+while [ $i -gt 0 ]
+do
+ip r add 10.172.$i.0/24 via 172.172.1.$i
+i=$((i-1))
+done
