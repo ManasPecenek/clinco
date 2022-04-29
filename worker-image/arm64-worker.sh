@@ -197,10 +197,12 @@ sudo systemctl daemon-reload
 sudo systemctl enable containerd kubelet kube-proxy
 sudo systemctl start containerd kubelet kube-proxy
 
-
-i=$1
-while [ $i -gt 0 ]
+NODE_COUNT=$1
+while [[ $NODE_COUNT -gt 0 ]]
 do
-ip r add 10.172.$i.0/24 via 172.172.1.$i
-i=$((i-1))
+if [[ $NODE_COUNT -ne $i ]]
+then 
+  ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
+fi
+NODE_COUNT=$((NODE_COUNT-1))
 done
