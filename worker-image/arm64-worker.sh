@@ -31,6 +31,7 @@ cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
     "type": "bridge",
     "bridge": "cnio0",
     "isGateway": true,
+    "isDefaultGateway": true
     "ipMasq": true,
     "ipam": {
         "type": "host-local",

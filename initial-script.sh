@@ -32,7 +32,7 @@ docker run -dt --network clinco --hostname master --name master -v etcd-$RANDOM:
 i=$1
 while [ $i -gt 0 ]
 do
-docker run --cpus=2 -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10
 i=$((i-1))
 done
 i=$1
