@@ -31,7 +31,6 @@ cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
     "type": "bridge",
     "bridge": "cnio0",
     "isGateway": true,
-    "isDefaultGateway": true
     "ipMasq": true,
     "ipam": {
         "type": "host-local",
@@ -200,9 +199,6 @@ sudo systemctl start containerd kubelet kube-proxy
 NODE_COUNT=$1
 while [[ $NODE_COUNT -gt 0 ]]
 do
-if [[ $NODE_COUNT -ne $i ]]
-then 
-  ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
-fi
+ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
 NODE_COUNT=$((NODE_COUNT-1))
 done
