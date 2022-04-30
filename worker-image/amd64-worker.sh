@@ -14,7 +14,7 @@ sudo mkdir -p \
 sudo mkdir -p containerd
 sudo tar -xvf crictl-v1.22.0-linux-amd64.tar.gz
 sudo tar -xvf containerd-1.5.8-linux-amd64.tar.gz -C containerd
-sudo tar -xvf cni-plugins-linux-amd64-v0.9.1.tgz -C /opt/cni/bin/
+sudo tar -xvf cni-plugins-linux-amd64-v1.1.1.tgz -C /opt/cni/bin/
 sudo mv runc.amd64 runc
 chmod +x crictl kubectl kube-proxy kubelet runc 
 sudo mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
@@ -197,3 +197,12 @@ sudo systemctl enable containerd kubelet kube-proxy
 sudo systemctl start containerd kubelet kube-proxy
 
 
+NODE_COUNT=$1
+while [[ $NODE_COUNT -gt 0 ]]
+do
+  if [[ $NODE_COUNT != $i ]]
+  then
+    ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
+  fi
+NODE_COUNT=$((NODE_COUNT-1))
+done

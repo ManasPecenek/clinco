@@ -1,4 +1,4 @@
-FROM ubuntu:21.10
+FROM --platform=linux/amd64 ubuntu:21.10
 
 ENV container=docker 
 
@@ -21,9 +21,9 @@ RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable
 
 COPY ./init.sh .
 COPY ./add.sh .
-COPY ./master.sh .
+COPY ./amd64-master.sh .
 
-RUN chmod +x init.sh add.sh master.sh
+RUN chmod +x init.sh add.sh  amd64-master.sh
 
 STOPSIGNAL SIGRTMIN+3
 
