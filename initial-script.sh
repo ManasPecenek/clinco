@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[[ -f "admin.kubeconfig" ]] && rm -f admin.kubeconfig
+
 
 if [ -z "$(docker network ls | grep clinco)" ]
 then
@@ -27,7 +29,7 @@ else
 fi
 
 
-docker run -dt --network clinco --hostname master --name master -v etcd-$RANDOM:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
+docker run -dt --network clinco --hostname master --name master -v etcd-$RANDOM:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 -p 443:443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
 
 i=$1
 while [ $i -gt 0 ]
@@ -64,4 +66,4 @@ i=$((i-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-sleep 5 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
+sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
