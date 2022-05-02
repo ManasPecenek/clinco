@@ -36,7 +36,6 @@ while getopts "v:n:" option; do
 done
 
 [[ -z "$NODE_COUNT" ]] && echo "Please decide the worker node count" && exit 1
-[[ -z $(docker volume ls | awk '{print $2}' | grep etcd |  cut -d "-" -f2 | grep -w "$ETCD_VOLUME") ]] && echo "Please specify an etcd volume" && exit 1
 
 if [[ -z "$ETCD_VOLUME" ]]
 then
@@ -81,4 +80,4 @@ i=$((i-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-[[ -z "$ETCD_VOLUME" ]] && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
+[[ -z $(docker volume ls | awk '{print $2}' | grep etcd |  cut -d "-" -f2 | grep -w "$ETCD_VOLUME") ]] && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
