@@ -3,10 +3,8 @@
 [[ -f "admin.kubeconfig" ]] && rm -f admin.kubeconfig
 
 
-if [ -z "$(docker network ls | grep clinco)" ]
-then
-docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco
-fi
+[[ -z "$(docker network ls | grep clinco)" ]] && docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco
+
 
 NODE_COUNT=$1
 

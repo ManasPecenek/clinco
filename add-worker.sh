@@ -12,18 +12,21 @@ then
   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
 fi
 
-if [[ "$(uname -m)" = *"arm64"* || "$(uname -m)" = *"aarch64"* ]]
+if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
 then
-  TAG=arm64-21.10
+  ARCH=arm64
+elif [[ "$(uname -m)" = *"x86"* ]]
+then
+  ARCH=amd64
 else
-  TAG=amd64-21.10
+  echo "Could not configure your architecture" && exit 1
 fi
 
 docker exec -it --privileged --user root master bash -c "./add.sh $i $current $KUBERNETES_PUBLIC_ADDRESS"
 
 while [ $i -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$TAG
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10
 
 instance=worker
 
@@ -40,7 +43,7 @@ docker cp ${instance}-$i.pem ${instance}-$i:/root/ && rm -f ${instance}-$i.pem
 docker cp kube-proxy.kubeconfig ${instance}-$i:/root/ && rm -f kube-proxy.kubeconfig
 docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/ && rm -f ${instance}-$i.kubeconfig
 
-docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh"
+docker exec -it --privileged --user root ${instance}-$i bash -c "./$ARCH-worker.sh $current"
 
 i=$((i-1))
 done
