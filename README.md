@@ -33,7 +33,7 @@ Now run the script with how many worker nodes you want. For example "startCluste
 
 <img width="1134" alt="Screen Shot 2021-12-04 at 16 03 55" src="https://user-images.githubusercontent.com/61777390/144710457-e0ee8d93-918e-486e-8aa6-a661fb3d93f9.png">
 
-* `kubectl cluster-info`
+* `kubectl cluster-info` Note: If you cannot connect to the cluster by default, just run "export KUBECONFIG=./admin.kubeconfig" in the same directory.
 
 <img width="722" alt="Screen Shot 2022-01-21 at 18 34 28" src="https://user-images.githubusercontent.com/61777390/150554773-a9ddc3d5-66a3-4d6b-ae07-02de87ffd65a.png">
 
