@@ -1,9 +1,5 @@
 #!/bin/bash
 
-current=$(docker ps | grep worker- | wc -l)
-
-i=$(($1 + $current))
-
 if [[ "$(uname)" = *"Darwin"* ]]
 then
   KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
@@ -21,6 +17,21 @@ then
 else
   echo "Could not configure your architecture" && exit 1
 fi
+
+
+while getopts "n:" option; do
+  case $option in
+  n) 
+    ADDITIONAL_NODE_COUNT=$OPTARG;;
+  esac
+done
+
+[[ -z "$ADDITIONAL_NODE_COUNT" ]] && ADDITIONAL_NODE_COUNT=1
+
+current=$(docker ps | grep worker- | wc -l)
+
+i=$(($ADDITIONAL_NODE_COUNT + $current))
+
 
 docker exec -it --privileged --user root master bash -c "./add.sh $i $current $KUBERNETES_PUBLIC_ADDRESS"
 
