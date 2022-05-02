@@ -37,12 +37,10 @@ done
 
 [[ -z "$NODE_COUNT" ]] && NODE_COUNT=1
 
-if [[ -z "$ETCD_VOLUME" ]]
-then
-  docker run -dt --network clinco --hostname master --name master -v etcd-$RANDOM:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 -p 443:443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
-else
-  docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 -p 443:443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
-fi
+[[ -z "$ETCD_VOLUME" ]] && ETCD_VOLUME=$RANDOM
+
+docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 -p 443:443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
+
 
 i=$NODE_COUNT
 while [ $i -gt 0 ]
@@ -80,4 +78,4 @@ j=$((j-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
+[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && echo "*** Deploying CoreDNS ***" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
