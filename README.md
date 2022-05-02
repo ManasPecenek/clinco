@@ -60,7 +60,7 @@ You can check the etcd-volumes via `docker volume ls`
 
 ## 3) Add additional worker nodes
 
-If you want to add additional worker nodes, all you need to do is run `addNode -n <number>`. For example `addNode -n 2` will add two additional nodes into your cluster
+If you want to add additional worker nodes, all you need to do is run `addNode -n <number>`. For example `addNode -n 2` will add two additional nodes into your cluster. If you do not specify a number and run only `addNode`, it will add only 1 node to your cluster.
 
 ------------
 
