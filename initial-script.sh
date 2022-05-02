@@ -35,7 +35,7 @@ while getopts "v:n:" option; do
   esac
 done
 
-[[ -z "$NODE_COUNT" ]] && echo "Please decide the worker node count" && exit 1
+[[ -z "$NODE_COUNT" ]] && NODE_COUNT=1
 
 if [[ -z "$ETCD_VOLUME" ]]
 then
@@ -60,7 +60,7 @@ docker cp master:/root/admin.kubeconfig .
 
 #########################################################################################################################
 j=$NODE_COUNT
-while [ $i -gt 0 ]
+while [ $j -gt 0 ]
 do
 docker cp master:/root/worker-$j.kubeconfig .
 docker cp master:/root/kube-proxy.kubeconfig .
@@ -76,8 +76,8 @@ docker cp worker-$j.pem worker-$j:/root/ && rm -f worker-$j.pem
 
 docker exec -it --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT"
 
-i=$((i-1))
+j=$((j-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-[[ -z $(docker volume ls | awk '{print $2}' | grep etcd |  cut -d "-" -f2 | grep -w "$ETCD_VOLUME") ]] && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
+[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
