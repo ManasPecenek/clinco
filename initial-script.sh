@@ -22,7 +22,7 @@ elif [[ "$(uname -m)" = *"x86"* ]]
 then
   ARCH=amd64
 else
-  echo "Could not configure your architecture" && exit 1
+  echo "Could not find your architecture" && exit 1
 fi
 
 
