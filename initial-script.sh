@@ -79,3 +79,4 @@ done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
 [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && echo "*** Deploying CoreDNS ***" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
+export KUBECONFIG=./admin.kubeconfig
