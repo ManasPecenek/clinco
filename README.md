@@ -24,6 +24,9 @@ In these Dockerfiles there are three important points:
 Download the scripts:
 * `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh add-worker.sh && alias startCluster="bash initial-script.sh" addNode="bash add-worker.sh"`
 
+Then specify the cluster:
+* `export KUBECONFIG=./admin.kubeconfig`
+
 Now run the script with how many worker nodes you want. For example "startCluster -n 3" will result in a 3-worker-node cluster:
 * `startCluster -n <worker-node-count>`
 
