@@ -4,7 +4,7 @@
 
 
 [[ -z "$(docker network ls | grep clinco)" ]] && \
-docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco
+docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco > /dev/null 2>&1
 
 
 if [[ "$(uname)" = *"Darwin"* ]]
@@ -39,20 +39,26 @@ done
 
 [[ -z "$ETCD_VOLUME" ]] && ETCD_VOLUME=$RANDOM
 
-docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 -p 443:443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10
-
+echo -e "\n*** Creating Master Node *** \n"
+docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 -p 443:443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10 > /dev/null 2>&1
+echo -e "*** Master Node Created *** \n"
 
 i=$NODE_COUNT
 while [ $i -gt 0 ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10
+echo -e "*** Creating Worker Node $i *** \n"
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10 > /dev/null 2>&1
+echo -e "*** Worker Node $i Created *** \n"
 i=$((i-1))
 done
 
 
 #########################################################################################################################
+echo -e "\n*** Configuring Master Node *** \n"
 
-docker exec -it --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS"
+(docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS") > /dev/null 2>&1
+
+echo -e "*** Master Node Configured *** \n"
 
 docker cp master:/root/admin.kubeconfig .
 
@@ -72,11 +78,12 @@ docker cp ca.pem worker-$j:/root/ && rm -f ca.pem
 docker cp worker-$j-key.pem worker-$j:/root/ && rm -f worker-$j-key.pem
 docker cp worker-$j.pem worker-$j:/root/ && rm -f worker-$j.pem
 
-docker exec -it --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT"
-
+echo -e "*** Configuring Worker Node $j *** \n"
+(docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT") > /dev/null 2>&1
+echo -e "*** Worker Node $j Configured *** \n"
 j=$((j-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && echo "*** Deploying CoreDNS ***" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml
-export KUBECONFIG=./admin.kubeconfig
+[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && echo -e "*** Deploying CoreDNS *** \n" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null 2>&1 && echo "*** CoreDNS Deployed ***"
+
