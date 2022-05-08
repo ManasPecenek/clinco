@@ -237,7 +237,7 @@ EOF
 
 
 EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
-INTERNAL_IP=172.172.1.$i # 127.0.0.1
+INTERNAL_IP=172.172.0.$i # 127.0.0.1
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
