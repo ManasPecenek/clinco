@@ -36,7 +36,6 @@ You can also specify a volume name for etcd in order to restore your cluster lat
 
 * `startCluster -n <worker-node-count>`
 
-You can check the etcd-volumes via `docker volume ls`
 
 ## 2) Check the cluster via Installing OPA Gatekeeper
 
