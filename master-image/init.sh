@@ -238,6 +238,8 @@ EOF
 
 EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
 INTERNAL_IP=172.172.1.$i # 127.0.0.1
+MASTER_IP=172.172.0.1
+
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
@@ -249,7 +251,7 @@ cfssl gencert \
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
---server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+--server=https://$MASTER_IP:6443 \
 --kubeconfig=${instance}-$i.kubeconfig
 
 kubectl config set-credentials system:node:${instance}-$i \
@@ -273,7 +275,7 @@ i=$1
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
---server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+--server=https://$MASTER_IP:6443 \
 --kubeconfig=kube-proxy.kubeconfig
 
 kubectl config set-credentials system:kube-proxy \
@@ -333,7 +335,7 @@ kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
---server=https://127.0.0.1:6443 \
+--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 --kubeconfig=admin.kubeconfig
 
 kubectl config set-credentials admin \
