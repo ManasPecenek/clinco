@@ -273,7 +273,7 @@ i=$1
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
---server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+--server=https://$(hostname -i):6443 \
 --kubeconfig=kube-proxy.kubeconfig
 
 kubectl config set-credentials system:kube-proxy \
