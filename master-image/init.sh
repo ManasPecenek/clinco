@@ -333,7 +333,7 @@ kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
 --embed-certs=true \
---server=https://127.0.0.1:6443 \
+--server=https://$INTERNAL_IP:6443 \
 --kubeconfig=admin.kubeconfig
 
 kubectl config set-credentials admin \
