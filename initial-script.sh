@@ -40,7 +40,7 @@ done
 [[ -z "$ETCD_VOLUME" ]] && ETCD_VOLUME=$RANDOM
 
 echo -e "\n*** Creating Master Node *** \n"
-docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 80:80 -p 443:443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10 > /dev/null 2>&1
+docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10 > /dev/null 2>&1
 echo -e "*** Master Node Created *** \n"
 
 i=$NODE_COUNT
@@ -85,5 +85,8 @@ j=$((j-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && echo -e "*** Deploying CoreDNS *** \n" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null 2>&1 && echo "*** CoreDNS Deployed ***"
+[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] || kubectl delete -f kube-tools/coredns-1.9.1.yaml
+kubectl delete rs --all -A && kubectl delete pod --all -A
+# echo -e "*** Deploying CoreDNS *** \n" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null 2>&1 && echo "*** CoreDNS Deployed ***"
 
+# [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
