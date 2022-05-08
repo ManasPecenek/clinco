@@ -85,5 +85,10 @@ j=$((j-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-[[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && echo -e "*** Deploying CoreDNS *** \n" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null 2>&1 && echo "*** CoreDNS Deployed ***"
+echo -e "*** Deploying CoreDNS *** \n" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null 2>&1 && echo "*** CoreDNS Deployed ***"
+
+# [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
+
+
+
 
