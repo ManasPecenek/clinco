@@ -34,9 +34,7 @@ If you do not specify worker node count, it will be "1" by default.
 
 You can also specify a volume name for etcd in order to restore your cluster later on.
 
-* `startCluster -n <worker-node-count> -v <volume-name>`
-
-If you do not specify a volume name, it will be a random number.
+* `startCluster -n <worker-node-count>`
 
 You can check the etcd-volumes via `docker volume ls`
 
@@ -71,22 +69,5 @@ If you want to add additional worker nodes, all you need to do is run `addNode -
 
 * [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
 
-
-## Some Notes
-
-* You do not have to take snapshots of your cluster, as soon as `/var/lib/docker/volumes/etcd` volume in your host machine persists, you will not lose any cluster data even if your nodes get deleted.
-
-
-## Testing Disaster Recovery
-
-1) First off all, `etcd-xxxx` volume under `/var/lib/docker/volumes` SHOULD NOT get deleted, otherwise you will lose your cluster data. You can find the storage location of Docker for various systems below
-
-<img width="698" alt="Screen Shot 2021-11-26 at 22 03 19" src="https://user-images.githubusercontent.com/61777390/143622017-7f0f6946-5025-4d40-ab99-756e9be18747.png">
-
-2) Now just delete all of the containers via `docker rm -f $(docker ps -aq)`
-
-3) Now create the cluster again with `startCluster -v <xxxx-part-of-the-etcd-volume> -n <any-number>`
-
-4) You will see that the cluster state has been persisted
 
 
