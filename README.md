@@ -16,6 +16,7 @@ In these Dockerfiles there are three important points:
 3. We need to declare a volume for `/var/lib/containerd` in worker node image because the filesystem of pods that will be created in the cluster must be a normal filesystem. When you run Docker in Docker, the outer Docker runs on top of a normal filesystem (EXT4, BTRFS etc), but the inner Docker runs on top of a copy-on-write system (AUFS, BTRFS etc). Since you cannot run AUFS on top of AUFS, you need to use `VOLUME ["/var/lib/containerd"]` in the Dockerfile or specify `-v /var/lib/containerd` during container creation.
 
 --------------
+
 ## PREREQUISITES
 
 * DOCKER
@@ -25,6 +26,7 @@ In these Dockerfiles there are three important points:
 * HELM
 
 Must be installed on your host
+
 --------------
 ## LET'S START
 
