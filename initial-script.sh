@@ -47,7 +47,12 @@ i=$NODE_COUNT
 while [ $i -gt 0 ]
 do
 echo -e "*** Creating Worker Node $i *** \n"
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10 > /dev/null 2>&1
+if [[ $i -ne 1 ]];
+then
+  docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10 > /dev/null 2>&1
+else
+  docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10 > /dev/null 2>&1
+fi
 echo -e "*** Worker Node $i Created *** \n"
 i=$((i-1))
 done
