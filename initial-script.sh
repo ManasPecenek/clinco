@@ -107,6 +107,7 @@ helm upgrade --install ingress-nginx ingress-nginx \
 --set controller.hostNetwork=true \
 --set controller.hostPort.enabled=true  \
 --set controller.admissionWebhooks.enabled=false \
+--set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
 --set controller.service.external.enabled=false \
 --version 4.1.1 > /dev/null 2>&1
 echo -e "*** Nginx Ingress Controller Deployed *** \n"
