@@ -4,8 +4,8 @@
 
 
 [[ -z "$(docker network ls | grep clinco)" ]] && \
-docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco > /dev/null 2>&1
-
+docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco > /dev/null # 2>&1
+[[ $? -eq 0 ]] && echo -e "*** Docker Network clinco Created *** \n"
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
@@ -41,7 +41,7 @@ done
 
 echo -e "\n*** Creating Master Node *** \n"
 docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10 > /dev/null 2>&1
-echo -e "*** Master Node Created *** \n"
+[[ $? -eq 0 ]] && echo -e "*** Master Node Created *** \n" || echo -e "ERROR! Couldn't Create Master Node \n"
 
 i=$NODE_COUNT
 while [ $i -gt 0 ]
@@ -53,7 +53,7 @@ then
 else
   docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10 > /dev/null 2>&1
 fi
-echo -e "*** Worker Node $i Created *** \n"
+[[ $? -eq 0 ]] && echo -e "*** Worker Node $i Created *** \n" || echo -e "ERROR! Couldn't Create Worker Node $i \n"
 i=$((i-1))
 done
 
@@ -63,7 +63,7 @@ echo -e "\n*** Configuring Master Node *** \n"
 
 (docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS") > /dev/null 2>&1
 
-echo -e "*** Master Node Configured *** \n"
+[[ $? -eq 0 ]] && echo -e "*** Master Node Configured *** \n" || echo -e "ERROR! Couldn't Configure Master Node \n"
 
 docker cp master:/root/admin.kubeconfig .
 
@@ -84,21 +84,23 @@ docker cp worker-$j-key.pem worker-$j:/root/ && rm -f worker-$j-key.pem
 docker cp worker-$j.pem worker-$j:/root/ && rm -f worker-$j.pem
 
 echo -e "*** Configuring Worker Node $j *** \n"
+
 (docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT") > /dev/null 2>&1
-echo -e "*** Worker Node $j Configured *** \n"
+
+[[ $? -eq 0 ]] && echo -e "*** Worker Node $j Configured *** \n" || echo -e "ERROR! Couldn't Configure Worker Node $j \n"
+
 j=$((j-1))
 done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
-echo -e "*** Deploying CoreDNS *** \n"; sleep 15
-kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null 2>&1
-echo "*** CoreDNS Deployed ***"
 
-kubectl label node worker-1 ingress-ready=true > /dev/null 2>&1
+echo -e "*** Deploying CoreDNS *** \n"; sleep 15
+kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null
+[[ $? -eq 0 ]] && echo "*** CoreDNS Deployed *** \n" || echo -e "ERROR! Couldn't Deploy CoreDNS \n"
 
 echo -e "*** Deploying Local Path Provisioner *** \n"
-kubectl apply -f /Users/Manas.Pecenek/Desktop/clinco/kube-tools/sc.yaml > /dev/null 2>&1
-echo -e "*** Local Path Provisioner Deployed*** \n";
+kubectl apply -f /Users/Manas.Pecenek/Desktop/clinco/kube-tools/sc.yaml > /dev/null
+[[ $? -eq 0 ]] && echo -e "*** Local Path Provisioner Deployed*** \n" || echo -e "ERROR! Couldn't Deploy Local Path Provisioner \n"
 
 echo -e "*** Deploying Nginx Ingress Controller *** \n"
 helm upgrade --install ingress-nginx ingress-nginx \
@@ -109,8 +111,8 @@ helm upgrade --install ingress-nginx ingress-nginx \
 --set controller.admissionWebhooks.enabled=false \
 --set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
 --set controller.service.external.enabled=false \
---version 4.1.1 > /dev/null 2>&1
-echo -e "*** Nginx Ingress Controller Deployed *** \n"
+--version 4.1.1 > /dev/null
+[[ $? -eq 0 ]] && echo -e "*** Nginx Ingress Controller Deployed *** \n" || echo -e "ERROR! Couldn't Deploy Nginx Ingress Controller \n" 
 
 # [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
 
