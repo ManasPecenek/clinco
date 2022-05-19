@@ -91,13 +91,18 @@ done
 #########################################################################################################################
 export KUBECONFIG=./admin.kubeconfig
 echo -e "*** Deploying CoreDNS *** \n" && sleep 15 && kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null 2>&1 && echo "*** CoreDNS Deployed ***"
+
 kubectl label node worker-1 ingress-ready=true > /dev/null 2>&1
+
+kubectl apply -f /Users/Manas.Pecenek/Desktop/clinco/kube-tools/sc.yaml > /dev/null 2>&1
+
 helm upgrade --install ingress-nginx ingress-nginx \
 --repo https://kubernetes.github.io/ingress-nginx \
 --namespace ingress-nginx --create-namespace \
 --set controller.hostNetwork=true \
 --set controller.hostPort=true  \
 --set controller.enabled=false > /dev/null 2>&1
+
 # [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
 
 
