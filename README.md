@@ -67,6 +67,8 @@ If you want to add additional worker nodes, all you need to do is run `addNode -
 ## RESOURCES
 
 * [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
+* [Nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
+* [Local Storage Class](https://github.com/rancher/local-path-provisioner)
 
 
 
