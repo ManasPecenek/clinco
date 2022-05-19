@@ -8,7 +8,7 @@
 
 Let us take a look at the Docker images used for nodes
 
-The ubuntu based images "[petschenek/ubuntu-systemd:master-<architecture>-21.10](https://hub.docker.com/repository/docker/petschenek/ubuntu-systemd) (compressed size 229MB) and [petschenek/ubuntu-systemd:worker-<architecture>-21.10](https://hub.docker.com/repository/docker/petschenek/ubuntu-systemd) (compressed size 232MB)" have systemd installed in them. You can check the [Dockerfile for master](https://github.com/ManasPecenek/clinco/blob/main/master%20image/Dockerfile) and  [Dockerfile for worker](https://github.com/ManasPecenek/clinco/blob/main/worker%20image/Dockerfile)
+The ubuntu based images "[petschenek/ubuntu-systemd:master-arc-21.10](https://hub.docker.com/repository/docker/petschenek/ubuntu-systemd) (compressed size 229MB) and [petschenek/ubuntu-systemd:worker-arc-21.10](https://hub.docker.com/repository/docker/petschenek/ubuntu-systemd) (compressed size 232MB)" have systemd installed in them. You can check the [Dockerfile for master](https://github.com/ManasPecenek/clinco/blob/main/master%20image/Dockerfile) and  [Dockerfile for worker](https://github.com/ManasPecenek/clinco/blob/main/worker%20image/Dockerfile)
 
 In these Dockerfiles there are three important points:
 1. We need to tell systemd that it is in Docker. `ENV container=docker`
