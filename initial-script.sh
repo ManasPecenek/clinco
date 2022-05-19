@@ -40,7 +40,7 @@ done
 [[ -z "$ETCD_VOLUME" ]] && ETCD_VOLUME=$RANDOM
 
 echo -e "\n*** Creating Master Node *** \n"
-docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10 > /dev/null 2>&1
+docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10 > /dev/null 2>&1
 echo -e "*** Master Node Created *** \n"
 
 i=$NODE_COUNT
