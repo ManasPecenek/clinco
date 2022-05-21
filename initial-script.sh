@@ -5,7 +5,7 @@
 
 [[ -z "$(docker network ls | grep clinco)" ]] && \
 docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco > /dev/null # 2>&1
-[[ $? -eq 0 ]] && echo -e "*** Docker Network clinco Created *** \n"
+[[ $? -eq 0 ]] && echo -e "\n*** Docker Network clinco Created *** \n"
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
@@ -99,7 +99,7 @@ kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null
 [[ $? -eq 0 ]] && echo "*** CoreDNS Deployed *** \n" || echo -e "ERROR! Couldn't Deploy CoreDNS \n"
 
 echo -e "*** Deploying Local Path Provisioner *** \n"
-kubectl apply -f /Users/Manas.Pecenek/Desktop/clinco/kube-tools/sc.yaml > /dev/null
+kubectl apply -f kube-tools/local-storage-class.yaml > /dev/null
 [[ $? -eq 0 ]] && echo -e "*** Local Path Provisioner Deployed*** \n" || echo -e "ERROR! Couldn't Deploy Local Path Provisioner \n"
 
 echo -e "*** Deploying Nginx Ingress Controller *** \n"
