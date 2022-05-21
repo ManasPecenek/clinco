@@ -35,17 +35,14 @@ Must be installed on your host
 Download the scripts:
 * `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh add-worker.sh && alias startCluster="bash initial-script.sh" addNode="bash add-worker.sh"`
 
-Then specify the cluster:
-* `export KUBECONFIG=./admin.kubeconfig`
-
 Now run the script with how many worker nodes you want. For example "startCluster -n 3" will result in a 3-worker-node cluster:
 * `startCluster -n <worker-node-count>`
 
 If you do not specify worker node count, it will be "1" by default.
 
-You can also specify a volume name for etcd in order to restore your cluster later on.
+Then specify the cluster:
 
-* `startCluster -n <worker-node-count>`
+* `export KUBECONFIG=./admin.kubeconfig`
 
 
 ## 2) Check the cluster via Installing OPA Gatekeeper
