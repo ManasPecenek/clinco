@@ -149,14 +149,14 @@ EOF
 
 sudo cp kube-scheduler.kubeconfig /var/lib/kubernetes/
 
-cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
-apiVersion: kubescheduler.config.k8s.io/v1beta1
-kind: KubeSchedulerConfiguration
-clientConnection:
-  kubeconfig: "/var/lib/kubernetes/kube-scheduler.kubeconfig"
-leaderElection:
-  leaderElect: true
-EOF
+# cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
+# apiVersion: kubescheduler.config.k8s.io/v1beta1
+# kind: KubeSchedulerConfiguration
+# clientConnection:
+#   kubeconfig: "/var/lib/kubernetes/kube-scheduler.kubeconfig"
+# leaderElection:
+#   leaderElect: true
+# EOF
 
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
@@ -166,7 +166,11 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-scheduler \\
-  --config=/etc/kubernetes/config/kube-scheduler.yaml \\
+  --authentication-kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+  --authorization-kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+  --kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+  --bind-address=127.0.0.1 \\
+  --leader-elect=true \\
   --v=2
 Restart=on-failure
 RestartSec=5
@@ -174,6 +178,7 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOF
+
 
 
 sudo systemctl daemon-reload
