@@ -1,17 +1,19 @@
 FROM --platform=linux/arm64 ubuntu:22.04
 
 ENV container=docker 
+ENV K8S_VERSION=v1.26.1
+ENV ETCD_VERSION=v3.5.7
 
 WORKDIR /root
 
 RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo nginx && apt clean -y
 
 RUN wget -q --show-progress --https-only --timestamping \
-"https://github.com/etcd-io/etcd/releases/download/v3.5.1/etcd-v3.5.1-linux-arm64.tar.gz" \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/arm64/kube-apiserver" \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/arm64/kube-controller-manager" \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/arm64/kube-scheduler" \
-"https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/arm64/kubectl"
+"https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-arm64.tar.gz" \
+"https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/arm64/kube-apiserver" \
+"https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/arm64/kube-controller-manager" \
+"https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/arm64/kube-scheduler" \
+"https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/arm64/kubectl"
 
 RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl" \
 && chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl \
