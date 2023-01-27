@@ -12,9 +12,9 @@ sudo mkdir -p \
 
 
 sudo mkdir -p containerd
-sudo tar -xvf crictl-v1.22.0-linux-amd64.tar.gz
-sudo tar -xvf containerd-1.5.8-linux-amd64.tar.gz -C containerd
-sudo tar -xvf cni-plugins-linux-amd64-v1.1.1.tgz -C /opt/cni/bin/
+sudo tar -xvf crictl-${CRI_VERSION}-linux-amd64.tar.gz
+sudo tar -xvf containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -C containerd
+sudo tar -xvf cni-plugins-linux-amd64-${CNI_VERSION}.tgz -C /opt/cni/bin/
 sudo mv runc.amd64 runc
 chmod +x crictl kubectl kube-proxy kubelet runc 
 sudo mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/

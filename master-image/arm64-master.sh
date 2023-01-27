@@ -2,12 +2,12 @@
 
 ./init.sh $1 $2
 
-tar -xvf etcd-v3.5.1-linux-arm64.tar.gz
-sudo mv etcd-v3.5.1-linux-arm64/etcd* /usr/local/bin/
+tar -xvf etcd-${ETCD_VERSION}-linux-arm64.tar.gz
+sudo mv etcd-${ETCD_VERSION}-linux-arm64/etcd* /usr/local/bin/
 sudo mkdir -p /etc/etcd /var/lib/etcd
 sudo chmod 700 /var/lib/etcd
 sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
-rm -f etcd-v3.5.1-linux-arm64.tar.gz && rm -rf etcd-v3.5.1-linux-arm64
+rm -f etcd-${ETCD_VERSION}-linux-arm64.tar.gz && rm -rf etcd-${ETCD_VERSION}-linux-arm64
 
 INTERNAL_IP=172.172.0.1
 
