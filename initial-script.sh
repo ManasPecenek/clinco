@@ -96,7 +96,7 @@ export KUBECONFIG=./admin.kubeconfig
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
 kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null
-[[ $? -eq 0 ]] && echo "*** CoreDNS Deployed *** \n" || echo -e "ERROR! Couldn't Deploy CoreDNS \n"
+[[ $? -eq 0 ]] && echo -e "*** CoreDNS Deployed *** \n" || echo -e "ERROR! Couldn't Deploy CoreDNS \n"
 
 echo -e "*** Deploying Local Path Provisioner *** \n"
 kubectl apply -f kube-tools/local-storage-class.yaml > /dev/null
