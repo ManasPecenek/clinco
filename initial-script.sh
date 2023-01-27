@@ -59,7 +59,7 @@ done
 
 
 #########################################################################################################################
-echo -e "\n*** Configuring Master Node *** \n"
+echo -e "*** Configuring Master Node *** \n"
 
 (docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS") > /dev/null 2>&1
 
@@ -95,11 +95,11 @@ done
 export KUBECONFIG=./admin.kubeconfig
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
-kubectl apply -f kube-tools/coredns-1.9.1.yaml > /dev/null
+kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml > /dev/null
 [[ $? -eq 0 ]] && echo -e "*** CoreDNS Deployed *** \n" || echo -e "ERROR! Couldn't Deploy CoreDNS \n"
 
 echo -e "*** Deploying Local Path Provisioner *** \n"
-kubectl apply -f kube-tools/local-storage-class.yaml > /dev/null
+kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml > /dev/null
 [[ $? -eq 0 ]] && echo -e "*** Local Path Provisioner Deployed*** \n" || echo -e "ERROR! Couldn't Deploy Local Path Provisioner \n"
 
 echo -e "*** Deploying Nginx Ingress Controller *** \n"

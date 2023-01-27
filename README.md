@@ -33,7 +33,7 @@ Must be installed on your host
 ## 1) Create a cluster
 
 Download the scripts:
-* `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh add-worker.sh && alias startCluster="bash initial-script.sh" addNode="bash add-worker.sh"`
+* `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && chmod +x initial-script.sh add-worker.sh && alias startCluster="bash $PWD/initial-script.sh" addNode="bash $PWD/add-worker.sh"`
 
 Now run the script with how many worker nodes you want. For example "startCluster -n 3" will result in a 3-worker-node cluster:
 * `startCluster -n <worker-node-count>`
