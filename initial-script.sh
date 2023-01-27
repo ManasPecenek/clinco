@@ -40,7 +40,7 @@ done
 [[ -z "$ETCD_VOLUME" ]] && ETCD_VOLUME=$RANDOM
 
 echo -e "\n*** Creating Master Node *** \n"
-docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-21.10 > /dev/null 2>&1
+docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-22.04 > /dev/null 2>&1
 [[ $? -eq 0 ]] && echo -e "*** Master Node Created *** \n" || echo -e "ERROR! Couldn't Create Master Node \n"
 
 i=$NODE_COUNT
@@ -49,9 +49,9 @@ do
 echo -e "*** Creating Worker Node $i *** \n"
 if [[ $i -ne 1 ]];
 then
-  docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10 > /dev/null 2>&1
+  docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null 2>&1
 else
-  docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10 > /dev/null 2>&1
+  docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null 2>&1
 fi
 [[ $? -eq 0 ]] && echo -e "*** Worker Node $i Created *** \n" || echo -e "ERROR! Couldn't Create Worker Node $i \n"
 i=$((i-1))
