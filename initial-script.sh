@@ -1,5 +1,11 @@
 #!/bin/bash
 
+export TERM=xterm
+blue="$(tput setab 9; tput setaf 4)" && export blue
+red="$(tput setab 9; tput setaf 1)" && export red
+none="\033[0m" && export none
+
+
 [[ -f "admin.kubeconfig" ]] && rm -f admin.kubeconfig
 
 
@@ -32,6 +38,8 @@ while getopts "v:n:" option; do
     ETCD_VOLUME=$OPTARG;;
   n) 
     NODE_COUNT=$OPTARG;;
+  *) echo "usage: $0 [-v] [-r]" >&2
+     exit 1 ;;
   esac
 done
 
@@ -41,7 +49,8 @@ done
 
 echo -e "\n*** Creating Master Node *** \n"
 docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-22.04 > /dev/null 2>&1
-[[ $? -eq 0 ]] && echo -e "*** Master Node Created *** \n" || echo -e "ERROR! Couldn't Create Master Node \n"
+[[ $? -eq 0 ]] && echo -e $blue"*** Master Node Created ***"$none"\n" || echo -e $red"ERROR Could not Create Master Node"$none"\n"
+
 
 i=$NODE_COUNT
 while [ $i -gt 0 ]
@@ -53,7 +62,7 @@ then
 else
   docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null 2>&1
 fi
-[[ $? -eq 0 ]] && echo -e "*** Worker Node $i Created *** \n" || echo -e "ERROR! Couldn't Create Worker Node $i \n"
+[[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
 i=$((i-1))
 done
 
@@ -63,7 +72,7 @@ echo -e "*** Configuring Master Node *** \n"
 
 (docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS") > /dev/null 2>&1
 
-[[ $? -eq 0 ]] && echo -e "*** Master Node Configured *** \n" || echo -e "ERROR! Couldn't Configure Master Node \n"
+[[ $? -eq 0 ]] && echo -e $blue"*** Master Node Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Master Node"$none"\n"
 
 docker cp master:/root/admin.kubeconfig .
 
@@ -87,7 +96,7 @@ echo -e "*** Configuring Worker Node $j *** \n"
 
 (docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT") > /dev/null 2>&1
 
-[[ $? -eq 0 ]] && echo -e "*** Worker Node $j Configured *** \n" || echo -e "ERROR! Couldn't Configure Worker Node $j \n"
+[[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
 
 j=$((j-1))
 done
@@ -96,11 +105,11 @@ export KUBECONFIG=./admin.kubeconfig
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml > /dev/null
-[[ $? -eq 0 ]] && echo -e "*** CoreDNS Deployed *** \n" || echo -e "ERROR! Couldn't Deploy CoreDNS \n"
+[[ $? -eq 0 ]] && echo -e $blue"*** CoreDNS Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy CoreDNS"$none"\n"
 
 echo -e "*** Deploying Local Path Provisioner *** \n"
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml > /dev/null
-[[ $? -eq 0 ]] && echo -e "*** Local Path Provisioner Deployed*** \n" || echo -e "ERROR! Couldn't Deploy Local Path Provisioner \n"
+[[ $? -eq 0 ]] && echo -e $blue"*** Local Path Provisioner Deployed***"$none"\n" || echo -e $red"ERROR! Could not Deploy Local Path Provisioner"$none"\n"
 
 echo -e "*** Deploying Nginx Ingress Controller *** \n"
 helm upgrade --install ingress-nginx ingress-nginx \
@@ -112,7 +121,7 @@ helm upgrade --install ingress-nginx ingress-nginx \
 --set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
 --set controller.service.external.enabled=false \
 --version 4.1.1 > /dev/null
-[[ $? -eq 0 ]] && echo -e "*** Nginx Ingress Controller Deployed *** \n" || echo -e "ERROR! Couldn't Deploy Nginx Ingress Controller \n" 
+[[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
 
 # [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
 
