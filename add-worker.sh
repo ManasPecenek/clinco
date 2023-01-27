@@ -23,12 +23,14 @@ while getopts "n:" option; do
   case $option in
   n) 
     ADDITIONAL_NODE_COUNT=$OPTARG;;
+  *) echo "usage: $0 [-v] [-r]" >&2
+     exit 1 ;;
   esac
 done
 
 [[ -z "$ADDITIONAL_NODE_COUNT" ]] && ADDITIONAL_NODE_COUNT=1
 
-current=$(docker ps | grep worker- | wc -l)
+current=$(docker ps | grep -c worker-)
 
 i=$(($ADDITIONAL_NODE_COUNT + $current))
 
@@ -37,7 +39,7 @@ docker exec -it --privileged --user root master bash -c "./add.sh $i $current $K
 
 while [ $i -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-21.10
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04
 
 instance=worker
 
