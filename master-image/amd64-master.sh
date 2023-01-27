@@ -2,12 +2,12 @@
 
 ./init.sh $1 $2
 
-tar -xvf etcd-v3.5.1-linux-amd64.tar.gz
-sudo mv etcd-v3.5.1-linux-amd64/etcd* /usr/local/bin/
+tar -xvf etcd-${ETCD_VERSION}-linux-amd64.tar.gz
+sudo mv etcd-${ETCD_VERSION}-linux-amd64/etcd* /usr/local/bin/
 sudo mkdir -p /etc/etcd /var/lib/etcd
 sudo chmod 700 /var/lib/etcd
 sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
-rm -f etcd-v3.5.1-linux-amd64.tar.gz && rm -rf etcd-v3.5.1-linux-amd64
+rm -f etcd-${ETCD_VERSION}-linux-amd64.tar.gz && rm -rf etcd-${ETCD_VERSION}-linux-amd64
 
 INTERNAL_IP=172.172.0.1
 
@@ -125,15 +125,19 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
-  --bind-address=0.0.0.0 \\
+  --bind-address=127.0.0.1 \\
   --cluster-cidr=10.172.0.0/16 \\
   --allocate-node-cidrs=true \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/var/lib/kubernetes/ca.pem \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca-key.pem \\
   --kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
+  --authentication-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
+  --authorization-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --leader-elect=true \\
+  --controllers=* \\
   --root-ca-file=/var/lib/kubernetes/ca.pem \\
+  --client-ca-file=/var/lib/kubernetes/ca.pem \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account-key.pem \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --use-service-account-credentials=true \\
@@ -149,14 +153,14 @@ EOF
 
 sudo cp kube-scheduler.kubeconfig /var/lib/kubernetes/
 
-cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
-apiVersion: kubescheduler.config.k8s.io/v1beta1
-kind: KubeSchedulerConfiguration
-clientConnection:
-  kubeconfig: "/var/lib/kubernetes/kube-scheduler.kubeconfig"
-leaderElection:
-  leaderElect: true
-EOF
+# cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
+# apiVersion: kubescheduler.config.k8s.io/v1beta1
+# kind: KubeSchedulerConfiguration
+# clientConnection:
+#   kubeconfig: "/var/lib/kubernetes/kube-scheduler.kubeconfig"
+# leaderElection:
+#   leaderElect: true
+# EOF
 
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
@@ -166,7 +170,11 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-scheduler \\
-  --config=/etc/kubernetes/config/kube-scheduler.yaml \\
+  --authentication-kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+  --authorization-kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+  --kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
+  --bind-address=127.0.0.1 \\
+  --leader-elect=true \\
   --v=2
 Restart=on-failure
 RestartSec=5
@@ -174,6 +182,7 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOF
+
 
 
 sudo systemctl daemon-reload
