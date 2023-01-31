@@ -3,10 +3,10 @@
 ./init.sh $1 $2
 
 tar -xvf etcd-${ETCD_VERSION}-linux-arm64.tar.gz
-sudo mv etcd-${ETCD_VERSION}-linux-arm64/etcd* /usr/local/bin/
-sudo mkdir -p /etc/etcd /var/lib/etcd
-sudo chmod 700 /var/lib/etcd
-sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
+mv etcd-${ETCD_VERSION}-linux-arm64/etcd* /usr/local/bin/
+mkdir -p /etc/etcd /var/lib/etcd
+chmod 700 /var/lib/etcd
+cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 rm -f etcd-${ETCD_VERSION}-linux-arm64.tar.gz && rm -rf etcd-${ETCD_VERSION}-linux-arm64
 
 INTERNAL_IP=172.172.0.1
@@ -23,7 +23,7 @@ ETCD_NAME=$(hostname -s)
 
 KUBERNETES_PUBLIC_ADDRESS=$2
 
-cat <<EOF | sudo tee /etc/systemd/system/etcd.service
+cat <<EOF | tee /etc/systemd/system/etcd.service
 [Unit]
 Description=etcd
 Documentation=https://github.com/coreos
@@ -55,23 +55,23 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl enable etcd
-sudo systemctl start etcd
+systemctl daemon-reload
+systemctl enable etcd
+systemctl start etcd
 
-sudo mkdir -p /etc/kubernetes/config
+mkdir -p /etc/kubernetes/config
 
 chmod +x kube-apiserver kube-controller-manager kube-scheduler
-sudo mv kube-apiserver kube-controller-manager kube-scheduler /usr/local/bin/
+mv kube-apiserver kube-controller-manager kube-scheduler /usr/local/bin/
 
-sudo mkdir -p /var/lib/kubernetes/
+mkdir -p /var/lib/kubernetes/
 
-sudo cp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
+cp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
 service-account-key.pem service-account.pem \
 encryption-config.yaml /var/lib/kubernetes/
 
 
-cat <<EOF | sudo tee /etc/systemd/system/kube-apiserver.service
+cat <<EOF | tee /etc/systemd/system/kube-apiserver.service
 [Unit]
 Description=Kubernetes API Server
 Documentation=https://github.com/kubernetes/kubernetes
@@ -79,14 +79,14 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-apiserver \\
   --advertise-address=${INTERNAL_IP} \\
+  --bind-address=0.0.0.0 \\
   --allow-privileged=true \\
-  --apiserver-count=3 \\
   --audit-log-maxage=30 \\
   --audit-log-maxbackup=3 \\
   --audit-log-maxsize=100 \\
   --audit-log-path=/var/log/audit.log \\
   --authorization-mode=Node,RBAC \\
-  --bind-address=0.0.0.0 \\
+  --secure-port=6443 \\
   --client-ca-file=/var/lib/kubernetes/ca.pem \\
   --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
   --etcd-cafile=/var/lib/kubernetes/ca.pem \\
@@ -114,10 +114,10 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-sudo cp kube-controller-manager.kubeconfig /var/lib/kubernetes/
+cp kube-controller-manager.kubeconfig /var/lib/kubernetes/
 
 
-cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
+cat <<EOF | tee /etc/systemd/system/kube-controller-manager.service
 [Unit]
 Description=Kubernetes Controller Manager
 Documentation=https://github.com/kubernetes/kubernetes
@@ -150,9 +150,9 @@ WantedBy=multi-user.target
 EOF
 
 
-sudo cp kube-scheduler.kubeconfig /var/lib/kubernetes/
+cp kube-scheduler.kubeconfig /var/lib/kubernetes/
 
-# cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
+# cat <<EOF | tee /etc/kubernetes/config/kube-scheduler.yaml
 # apiVersion: kubescheduler.config.k8s.io/v1beta1
 # kind: KubeSchedulerConfiguration
 # clientConnection:
@@ -162,7 +162,7 @@ sudo cp kube-scheduler.kubeconfig /var/lib/kubernetes/
 # EOF
 
 
-cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
+cat <<EOF | tee /etc/systemd/system/kube-scheduler.service
 [Unit]
 Description=Kubernetes Scheduler
 Documentation=https://github.com/kubernetes/kubernetes
@@ -183,28 +183,28 @@ WantedBy=multi-user.target
 EOF
 
 
-sudo systemctl daemon-reload
-sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
-sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
+systemctl daemon-reload
+systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+systemctl start kube-apiserver kube-controller-manager kube-scheduler
 
-cat > kubernetes.default.svc.cluster.local <<EOF
-server {
-  listen      80;
-  server_name kubernetes.default.svc.cluster.local;
+# cat > kubernetes.default.svc.cluster.local <<EOF
+# server {
+#   listen      80;
+#   server_name kubernetes.default.svc.cluster.local;
 
-  location /healthz {
-     proxy_pass                    https://127.0.0.1:6443/healthz;
-     proxy_ssl_trusted_certificate /var/lib/kubernetes/ca.pem;
-  }
-}
-EOF
+#   location /healthz {
+#      proxy_pass                    https://127.0.0.1:6443/healthz;
+#      proxy_ssl_trusted_certificate /var/lib/kubernetes/ca.pem;
+#   }
+# }
+# EOF
 
 
-sudo cp kubernetes.default.svc.cluster.local /etc/nginx/sites-available/kubernetes.default.svc.cluster.local
+# cp kubernetes.default.svc.cluster.local /etc/nginx/sites-available/kubernetes.default.svc.cluster.local
 
-sudo ln -s /etc/nginx/sites-available/kubernetes.default.svc.cluster.local /etc/nginx/sites-enabled/
+# ln -s /etc/nginx/sites-available/kubernetes.default.svc.cluster.local /etc/nginx/sites-enabled/
 
-sudo systemctl restart nginx && sudo systemctl enable nginx
+# systemctl restart nginx && systemctl enable nginx
 
 
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
