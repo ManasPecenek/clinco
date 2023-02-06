@@ -13,14 +13,6 @@ INTERNAL_IP=172.172.0.1
 
 ETCD_NAME=$(hostname -s)
 
-# if [ "$(uname)" = "Darwin" ]
-# then
-#   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
-# elif [ "$(uname)" = "Linux" ]
-# then
-#   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
-# fi
-
 KUBERNETES_PUBLIC_ADDRESS=$2
 
 cat <<EOF | tee /etc/systemd/system/etcd.service
@@ -152,16 +144,6 @@ EOF
 
 cp kube-scheduler.kubeconfig /var/lib/kubernetes/
 
-# cat <<EOF | tee /etc/kubernetes/config/kube-scheduler.yaml
-# apiVersion: kubescheduler.config.k8s.io/v1beta1
-# kind: KubeSchedulerConfiguration
-# clientConnection:
-#   kubeconfig: "/var/lib/kubernetes/kube-scheduler.kubeconfig"
-# leaderElection:
-#   leaderElect: true
-# EOF
-
-
 cat <<EOF | tee /etc/systemd/system/kube-scheduler.service
 [Unit]
 Description=Kubernetes Scheduler
@@ -186,25 +168,6 @@ EOF
 systemctl daemon-reload
 systemctl enable kube-apiserver kube-controller-manager kube-scheduler
 systemctl start kube-apiserver kube-controller-manager kube-scheduler
-
-# cat > kubernetes.default.svc.cluster.local <<EOF
-# server {
-#   listen      80;
-#   server_name kubernetes.default.svc.cluster.local;
-
-#   location /healthz {
-#      proxy_pass                    https://127.0.0.1:6443/healthz;
-#      proxy_ssl_trusted_certificate /var/lib/kubernetes/ca.pem;
-#   }
-# }
-# EOF
-
-
-# cp kubernetes.default.svc.cluster.local /etc/nginx/sites-available/kubernetes.default.svc.cluster.local
-
-# ln -s /etc/nginx/sites-available/kubernetes.default.svc.cluster.local /etc/nginx/sites-enabled/
-
-# systemctl restart nginx && systemctl enable nginx
 
 
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -

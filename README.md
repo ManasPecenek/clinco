@@ -33,16 +33,12 @@ Must be installed on your host
 ## 1) Create a cluster
 
 Download the scripts:
-* `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && alias startCluster="bash $PWD/initial-script.sh" addNode="bash $PWD/add-worker.sh"`
+* `git clone --depth=1 https://github.com/ManasPecenek/clinco.git && cd clinco && export KUBECONFIG=./admin.kubeconfig && alias startCluster="bash $PWD/initial-script.sh" addNode="bash $PWD/add-worker.sh"`
 
 Now run the script with how many worker nodes you want. For example "startCluster -n 3" will result in a 3-worker-node cluster:
 * `startCluster -n <worker-node-count>`
 
 If you do not specify worker node count, it will be "1" by default.
-
-Then specify the cluster:
-
-* `export KUBECONFIG=./admin.kubeconfig`
 
 
 ## 2) Check the cluster via Installing OPA Gatekeeper

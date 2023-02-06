@@ -1,8 +1,8 @@
 #!/bin/bash
 
-sudo swapoff -a && sysctl vm.swappiness=0
+swapoff -a && sysctl vm.swappiness=0
 
-sudo mkdir -p \
+mkdir -p \
   /etc/cni/net.d \
   /opt/cni/bin \
   /var/lib/kubelet \
@@ -11,20 +11,20 @@ sudo mkdir -p \
   /var/run/kubernetes
 
 
-sudo mkdir -p containerd
-sudo tar -xvf crictl-${CRI_VERSION}-linux-amd64.tar.gz
-sudo tar -xvf containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -C containerd
-sudo tar -xvf cni-plugins-linux-amd64-${CNI_VERSION}.tgz -C /opt/cni/bin/
-sudo mv runc.amd64 runc
+mkdir -p containerd
+tar -xvf crictl-${CRI_VERSION}-linux-amd64.tar.gz
+tar -xvf containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -C containerd
+tar -xvf cni-plugins-linux-amd64-${CNI_VERSION}.tgz -C /opt/cni/bin/
+mv runc.amd64 runc
 chmod +x crictl kubectl kube-proxy kubelet runc 
-sudo mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
-sudo mv containerd/bin/* /bin/
-
+mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
+mv containerd/bin/* /bin/
+rm -f *.gz *.tgz
 
 i=$(hostname -s | cut -b 8)
 POD_CIDR=10.172.$i.0/24
 
-cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
+cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
 {
     "cniVersion": "0.4.0",
     "name": "bridge",
@@ -43,7 +43,7 @@ cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
 EOF
 
 
-cat <<EOF | sudo tee /etc/cni/net.d/99-loopback.conf
+cat <<EOF | tee /etc/cni/net.d/99-loopback.conf
 {
     "cniVersion": "0.4.0",
     "name": "lo",
@@ -52,9 +52,9 @@ cat <<EOF | sudo tee /etc/cni/net.d/99-loopback.conf
 EOF
 
 
-sudo mkdir -p /etc/containerd/
+mkdir -p /etc/containerd/
 
-cat << EOF | sudo tee /etc/containerd/config.toml
+cat << EOF | tee /etc/containerd/config.toml
 version = 2
 
 [plugins."io.containerd.grpc.v1.cri".containerd]
@@ -84,7 +84,7 @@ version = 2
 EOF
 
 
-cat <<EOF | sudo tee /etc/systemd/system/containerd.service
+cat <<EOF | tee /etc/systemd/system/containerd.service
 [Unit]
 Description=containerd container runtime
 Documentation=https://containerd.io
@@ -108,12 +108,12 @@ EOF
 
 HOSTNAME=$(hostname -s)
 
-sudo cp ${HOSTNAME}-key.pem ${HOSTNAME}.pem /var/lib/kubelet/
-sudo cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
-sudo cp ca.pem /var/lib/kubernetes/
+cp ${HOSTNAME}-key.pem ${HOSTNAME}.pem /var/lib/kubelet/
+cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
+cp ca.pem /var/lib/kubernetes/
 
 
-cat <<EOF | sudo tee /var/lib/kubelet/kubelet-config.yaml
+cat <<EOF | tee /var/lib/kubelet/kubelet-config.yaml
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 authentication:
@@ -135,7 +135,7 @@ tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.pem"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}-key.pem"
 EOF
 
-cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
+cat <<EOF | tee /etc/systemd/system/kubelet.service
 [Unit]
 Description=Kubernetes Kubelet
 Documentation=https://github.com/kubernetes/kubernetes
@@ -161,10 +161,10 @@ WantedBy=multi-user.target
 EOF
 
 
-sudo cp kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
+cp kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
 
 
-cat <<EOF | sudo tee /var/lib/kube-proxy/kube-proxy-config.yaml
+cat <<EOF | tee /var/lib/kube-proxy/kube-proxy-config.yaml
 kind: KubeProxyConfiguration
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 clientConnection:
@@ -176,7 +176,7 @@ conntrack:
 EOF
 
 
-cat <<EOF | sudo tee /etc/systemd/system/kube-proxy.service
+cat <<EOF | tee /etc/systemd/system/kube-proxy.service
 [Unit]
 Description=Kubernetes Kube Proxy
 Documentation=https://github.com/kubernetes/kubernetes
@@ -192,9 +192,9 @@ WantedBy=multi-user.target
 EOF
 
 
-sudo systemctl daemon-reload
-sudo systemctl enable containerd kubelet kube-proxy
-sudo systemctl start containerd kubelet kube-proxy
+systemctl daemon-reload
+systemctl enable containerd kubelet kube-proxy
+systemctl start containerd kubelet kube-proxy
 
 
 NODE_COUNT=$1
