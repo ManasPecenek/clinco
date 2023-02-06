@@ -6,7 +6,7 @@ ENV ETCD_VERSION=v3.5.7
 
 WORKDIR /root
 
-RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron && apt clean -y
+RUN apt update && apt upgrade -y && apt install wget systemd systemd-cron -y && apt clean -y
 
 RUN wget -q --show-progress --https-only --timestamping \
 "https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-arm64.tar.gz" \
