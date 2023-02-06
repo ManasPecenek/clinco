@@ -39,7 +39,7 @@ docker exec -it --privileged --user root master bash -c "./add.sh $i $current $K
 
 while [ $i -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null 2>&1
 
 instance=worker
 
@@ -56,7 +56,7 @@ docker cp ${instance}-$i.pem ${instance}-$i:/root/ && rm -f ${instance}-$i.pem
 docker cp kube-proxy.kubeconfig ${instance}-$i:/root/ && rm -f kube-proxy.kubeconfig
 docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/ && rm -f ${instance}-$i.kubeconfig
 
-docker exec -it --privileged --user root ${instance}-$i bash -c "./$ARCH-worker.sh $current"
+(docker exec -it --privileged --user root ${instance}-$i bash -c "./$ARCH-worker.sh $current") > /dev/null 2>&1
 
 i=$((i-1))
 done
