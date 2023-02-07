@@ -144,14 +144,6 @@ cfssl gencert \
   -profile=kubernetes \
   kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 
-# if [ "$(uname)" = "Darwin" ]
-# then
-#   KUBERNETES_PUBLIC_ADDRESS=$(hostname)
-# elif [ "$(uname)" = "Linux" ]
-# then
-#   KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
-# fi
-
 KUBERNETES_PUBLIC_ADDRESS=$2
 
 KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local

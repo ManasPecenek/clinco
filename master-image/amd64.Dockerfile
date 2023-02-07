@@ -6,7 +6,7 @@ ENV ETCD_VERSION=v3.5.7
 
 WORKDIR /root
 
-RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron sudo nginx && apt clean -y
+RUN apt update && apt upgrade -y && apt install wget systemd systemd-cron -y && apt clean -y
 
 RUN wget -q --show-progress --https-only --timestamping \
 "https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-amd64.tar.gz" \
@@ -19,7 +19,7 @@ RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable
 && chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl \
 && wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssl \
 && wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson \
-&& chmod +x cfssl cfssljson && sudo mv cfssl cfssljson /usr/local/bin/
+&& chmod +x cfssl cfssljson && mv cfssl cfssljson /usr/local/bin/
 
 COPY ./init.sh .
 COPY ./add.sh .

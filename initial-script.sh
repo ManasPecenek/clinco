@@ -5,9 +5,12 @@ blue="$(tput setab 9; tput setaf 4)" && export blue
 red="$(tput setab 9; tput setaf 1)" && export red
 none="\033[0m" && export none
 
+if ! docker info > /dev/null 2>&1; then
+  echo -e "\n"$red"Docker is not running - please start docker and try again!"$none
+  exit 1
+fi
 
 [[ -f "admin.kubeconfig" ]] && rm -f admin.kubeconfig
-
 
 [[ -z "$(docker network ls | grep clinco)" ]] && \
 docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco > /dev/null # 2>&1
