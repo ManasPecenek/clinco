@@ -20,18 +20,18 @@ docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
+  export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+  export KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
 fi
 
 if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
 then
-  ARCH=arm64
+  export ARCH=arm64
 elif [[ "$(uname -m)" = *"x86"* ]]
 then
-  ARCH=amd64
+  export ARCH=amd64
 else
   echo "Could not find your architecture" && exit 1
 fi
@@ -48,9 +48,9 @@ while getopts "v:n:" option; do
   esac
 done
 
-[[ -z "$NODE_COUNT" ]] && NODE_COUNT=1
+[[ -z "$NODE_COUNT" ]] && export NODE_COUNT=1
 
-[[ -z "$ETCD_VOLUME" ]] && ETCD_VOLUME=$RANDOM
+[[ -z "$ETCD_VOLUME" ]] && export ETCD_VOLUME=$RANDOM
 
 echo -e "\n*** Creating Master Node *** \n"
 # docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-22.04 > /dev/null 2>&1
