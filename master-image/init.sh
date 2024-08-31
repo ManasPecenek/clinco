@@ -13,11 +13,13 @@ KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubern
 
 mkcert -install
 
-mkcert -key-file ca-key.pem -cert-file ca.pem 127.0.0.1
+mkcert -key-file ca-key.pem -cert-file ca.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
 
-mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 127.0.0.1
+mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
 
-mkcert -key-file service-account-key.pem -cert-file service-account.pem 127.0.0.1
+mkcert -key-file service-account-key.pem -cert-file service-account.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
+
+mkcert -key-file kube-proxy-key.pem -cert-file kube-proxy.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
   
 #########################################################################################################################
 while [ $i -gt 0 ]
@@ -25,37 +27,12 @@ do
 
 instance=worker
 
-cat > ${instance}-$i-csr.json <<EOF
-{
-  "CN": "system:node:${instance}-$i",
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  },
-  "names": [
-    {
-      "C": "US",
-      "L": "Portland",
-      "O": "system:nodes",
-      "OU": "clinco Hard Way",
-      "ST": "Oregon"
-    }
-  ]
-}
-EOF
-
-
 EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
 INTERNAL_IP=172.172.1.$i # 127.0.0.1
 MASTER_IP=172.172.0.1
 
-cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
-  -config=ca-config.json \
-  -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
-  -profile=kubernetes \
-  ${instance}-$i-csr.json | cfssljson -bare ${instance}-$i
+
+mkcert -key-file worker-$i-key.pem -cert-file worker-$i.pem 127.0.0.1 $EXTERNAL_IP $INTERNAL_IP
 
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \

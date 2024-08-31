@@ -22,17 +22,18 @@ RUN wget -o cfssl https://pkg.cfssl.org/R1.2/cfssl_darwin-amd64
 RUN wget -o cfssljson https://pkg.cfssl.org/R1.2/cfssljson_darwin-amd64
 RUN chmod +x cfssl cfssljson && mv cfssl cfssljson /usr/local/bin/
 
-COPY ./init.sh .
-COPY ./add.sh .
-COPY ./amd64-master.sh .
-
-RUN chmod +x init.sh add.sh  amd64-master.sh
-
 
 RUN apt install libnss3-tools -y
 RUN wget --content-disposition "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 RUN chmod +x mkcert-v*-linux-amd64
 RUN mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+
+
+COPY ./init.sh .
+COPY ./add.sh .
+COPY ./amd64-master.sh .
+
+RUN chmod +x init.sh add.sh  amd64-master.sh
 
 
 STOPSIGNAL SIGRTMIN+3
