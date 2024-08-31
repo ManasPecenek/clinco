@@ -1,6 +1,9 @@
 services:
   master:
     image: petschenek/ubuntu-systemd:master-${ARCH}-22.04
+    build:
+      context: ../master-image
+      dockerfile: ../master-image/amd64.Dockerfile
     container_name: master
     hostname: master
     privileged: true
@@ -18,7 +21,7 @@ services:
 
 networks:
   clinco:
-    external: true    # This specifies that the network is external and pre-existing
+    external: true
 
 volumes:
   etcd-volume:
