@@ -1,0 +1,25 @@
+services:
+  master:
+    image: petschenek/ubuntu-systemd:master-${ARCH}-22.04
+    container_name: master
+    hostname: master
+    privileged: true
+    user: root
+    stdin_open: true  # Allows the container to stay running
+    tty: true         # Enables terminal emulation
+    ports:
+      - "6443:6443"
+      - "8443:8443"
+    volumes:
+      - etcd-${ETCD_VOLUME}:/var/lib/etcd
+    networks:
+      clinco:
+        ipv4_address: 172.172.0.1
+
+networks:
+  clinco:
+    external: true    # This specifies that the network is external and pre-existing
+
+volumes:
+  etcd-${ETCD_VOLUME}:
+    external: true    # If the volume is already created externally, otherwise remove this line
