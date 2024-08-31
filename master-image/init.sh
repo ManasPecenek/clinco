@@ -23,17 +23,17 @@ cp /root/.local/share/mkcert/rootCA.pem ca.pem
 
 # mkcert -key-file ca-key.pem -cert-file ca.pem 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
-mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+mkcert -key-file kubernetes.key -cert-file kubernetes.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
-mkcert -key-file service-account-key.pem -cert-file service-account.pem 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+mkcert -key-file service-account.key -cert-file service-account.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
-mkcert -key-file kube-proxy-key.pem -cert-file kube-proxy.pem 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+mkcert -key-file kube-proxy.key -cert-file kube-proxy.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
-mkcert -key-file kube-controller-manager-key.pem -cert-file kube-controller-manager.pem 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+mkcert -key-file kube-controller-manager.key -cert-file kube-controller-manager.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
   
-mkcert -key-file kube-scheduler-key.pem -cert-file kube-scheduler.pem 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+mkcert -key-file kube-scheduler.key -cert-file kube-scheduler.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
-mkcert -key-file admin-key.pem -cert-file admin.pem 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+mkcert -key-file admin.key -cert-file admin.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
 #########################################################################################################################
 while [ $i -gt 0 ]
@@ -46,7 +46,7 @@ INTERNAL_IP=172.172.1.$i # 127.0.0.1
 MASTER_IP=172.172.0.1
 
 
-mkcert -key-file worker-$i-key.pem -cert-file worker-$i.pem 127.0.0.1 ${EXTERNAL_IP} 10.32.0.1 ${MASTER_IP} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+mkcert -key-file worker-$i.key -cert-file worker-$i.crt 127.0.0.1 ${EXTERNAL_IP} 10.32.0.1 ${MASTER_IP} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.pem \
@@ -55,8 +55,8 @@ kubectl config set-cluster clinco-the-hard-way \
 --kubeconfig=${instance}-$i.kubeconfig
 
 kubectl config set-credentials system:node:${instance}-$i \
---client-certificate=${instance}-$i.pem \
---client-key=${instance}-$i-key.pem \
+--client-certificate=${instance}-$i.crt \
+--client-key=${instance}-$i.key \
 --embed-certs=true \
 --kubeconfig=${instance}-$i.kubeconfig
 
@@ -79,8 +79,8 @@ kubectl config set-cluster clinco-the-hard-way \
 --kubeconfig=kube-proxy.kubeconfig
 
 kubectl config set-credentials system:kube-proxy \
---client-certificate=kube-proxy.pem \
---client-key=kube-proxy-key.pem \
+--client-certificate=kube-proxy.crt \
+--client-key=kube-proxy.key \
 --embed-certs=true \
 --kubeconfig=kube-proxy.kubeconfig
 
@@ -99,8 +99,8 @@ kubectl config set-cluster clinco-the-hard-way \
 --kubeconfig=kube-controller-manager.kubeconfig
 
 kubectl config set-credentials system:kube-controller-manager \
---client-certificate=kube-controller-manager.pem \
---client-key=kube-controller-manager-key.pem \
+--client-certificate=kube-controller-manager.crt \
+--client-key=kube-controller-manager.key \
 --embed-certs=true \
 --kubeconfig=kube-controller-manager.kubeconfig
 
@@ -119,8 +119,8 @@ kubectl config set-cluster clinco-the-hard-way \
 --kubeconfig=kube-scheduler.kubeconfig
 
 kubectl config set-credentials system:kube-scheduler \
---client-certificate=kube-scheduler.pem \
---client-key=kube-scheduler-key.pem \
+--client-certificate=kube-scheduler.crt \
+--client-key=kube-scheduler.key \
 --embed-certs=true \
 --kubeconfig=kube-scheduler.kubeconfig
 
@@ -139,8 +139,8 @@ kubectl config set-cluster clinco-the-hard-way \
 --kubeconfig=admin.kubeconfig
 
 kubectl config set-credentials admin \
---client-certificate=admin.pem \
---client-key=admin-key.pem \
+--client-certificate=admin.crt \
+--client-key=admin.key \
 --embed-certs=true \
 --kubeconfig=admin.kubeconfig
 

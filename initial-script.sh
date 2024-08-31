@@ -26,7 +26,7 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  export KUBERNETES_PUBLIC_ADDRESS=172.17.0.1 #host.docker.internal #$(hostname)
+  export KUBERNETES_PUBLIC_ADDRESS=host.docker.internal #172.17.0.1 #host.docker.internal #$(hostname)
 fi
 
 if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
@@ -94,14 +94,14 @@ do
 docker cp master:/root/worker-$j.kubeconfig .
 docker cp master:/root/kube-proxy.kubeconfig .
 docker cp master:/root/ca.pem .
-docker cp master:/root/worker-$j-key.pem .
-docker cp master:/root/worker-$j.pem .
+docker cp master:/root/worker-$j.key .
+docker cp master:/root/worker-$j.crt .
 
 docker cp worker-$j.kubeconfig worker-$j:/root/ && rm -f worker-$j.kubeconfig
 docker cp kube-proxy.kubeconfig worker-$j:/root/ && rm -f kube-proxy.kubeconfig
 docker cp ca.pem worker-$j:/root/ && rm -f ca.pem
-docker cp worker-$j-key.pem worker-$j:/root/ && rm -f worker-$j-key.pem
-docker cp worker-$j.pem worker-$j:/root/ && rm -f worker-$j.pem
+docker cp worker-$j.key worker-$j:/root/ && rm -f worker-$j.key
+docker cp worker-$j.crt worker-$j:/root/ && rm -f worker-$j.crt
 
 echo -e "*** Configuring Worker Node $j *** \n"
 
