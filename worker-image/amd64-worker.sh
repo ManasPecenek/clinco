@@ -110,7 +110,7 @@ EOF
 
 HOSTNAME=$(hostname -s)
 
-cp ${HOSTNAME}-key.pem ${HOSTNAME}.pem /var/lib/kubelet/
+cp ${HOSTNAME}.key ${HOSTNAME}.crt /var/lib/kubelet/
 cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
 cp ca.crt /var/lib/kubernetes/
 
@@ -133,8 +133,8 @@ clusterDNS:
 podCIDR: "${POD_CIDR}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
-tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.pem"
-tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}-key.pem"
+tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
+tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
 EOF
 
 cat <<EOF | tee /etc/systemd/system/kubelet.service
