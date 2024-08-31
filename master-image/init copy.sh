@@ -61,8 +61,8 @@ cat > admin-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -profile=kubernetes \
   admin-csr.json | cfssljson -bare admin
@@ -88,8 +88,8 @@ cat > kube-controller-manager-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -profile=kubernetes \
   kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
@@ -114,8 +114,8 @@ cat > kube-proxy-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -profile=kubernetes \
   kube-proxy-csr.json | cfssljson -bare kube-proxy
@@ -140,8 +140,8 @@ cat > kube-scheduler-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -profile=kubernetes \
   kube-scheduler-csr.json | cfssljson -bare kube-scheduler
@@ -170,8 +170,8 @@ cat > kubernetes-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -hostname=10.32.0.1,172.172.0.1,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} \
   -profile=kubernetes \
@@ -198,8 +198,8 @@ cat > service-account-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -profile=kubernetes \
   service-account-csr.json | cfssljson -bare service-account
@@ -235,15 +235,15 @@ INTERNAL_IP=172.172.1.$i # 127.0.0.1
 MASTER_IP=172.172.0.1
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
   -profile=kubernetes \
   ${instance}-$i-csr.json | cfssljson -bare ${instance}-$i
 
 kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.pem \
+--certificate-authority=ca.crt \
 --embed-certs=true \
 --server=https://$MASTER_IP:6443 \
 --kubeconfig=${instance}-$i.kubeconfig
@@ -267,7 +267,7 @@ i=$1
 #########################################################################################################################
 
 kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.pem \
+--certificate-authority=ca.crt \
 --embed-certs=true \
 --server=https://$MASTER_IP:6443 \
 --kubeconfig=kube-proxy.kubeconfig
@@ -287,7 +287,7 @@ kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 
 
 kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.pem \
+--certificate-authority=ca.crt \
 --embed-certs=true \
 --server=https://127.0.0.1:6443 \
 --kubeconfig=kube-controller-manager.kubeconfig
@@ -307,7 +307,7 @@ kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconf
 
 
 kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.pem \
+--certificate-authority=ca.crt \
 --embed-certs=true \
 --server=https://127.0.0.1:6443 \
 --kubeconfig=kube-scheduler.kubeconfig
@@ -327,7 +327,7 @@ kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 
 
 kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.pem \
+--certificate-authority=ca.crt \
 --embed-certs=true \
 --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 --kubeconfig=admin.kubeconfig

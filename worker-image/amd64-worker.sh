@@ -112,7 +112,7 @@ HOSTNAME=$(hostname -s)
 
 cp ${HOSTNAME}-key.pem ${HOSTNAME}.pem /var/lib/kubelet/
 cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
-cp ca.pem /var/lib/kubernetes/
+cp ca.crt /var/lib/kubernetes/
 
 
 cat <<EOF | tee /var/lib/kubelet/kubelet-config.yaml
@@ -124,7 +124,7 @@ authentication:
   webhook:
     enabled: true
   x509:
-    clientCAFile: "/var/lib/kubernetes/ca.pem"
+    clientCAFile: "/var/lib/kubernetes/ca.crt"
 authorization:
   mode: Webhook
 clusterDomain: "cluster.local"

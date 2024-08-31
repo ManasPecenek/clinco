@@ -8,7 +8,7 @@ tar -xvf etcd-${ETCD_VERSION}-linux-amd64.tar.gz
 mv etcd-${ETCD_VERSION}-linux-amd64/etcd* /usr/local/bin/
 mkdir -p /etc/etcd /var/lib/etcd
 chmod 700 /var/lib/etcd
-cp ca.pem kubernetes.key kubernetes.crt /etc/etcd/
+cp ca.crt kubernetes.key kubernetes.crt /etc/etcd/
 rm -f etcd-${ETCD_VERSION}-linux-amd64.tar.gz && rm -rf etcd-${ETCD_VERSION}-linux-amd64
 
 INTERNAL_IP=172.172.0.1
@@ -30,8 +30,8 @@ ExecStart=/usr/local/bin/etcd \\
   --key-file=/etc/etcd/kubernetes.key \\
   --peer-cert-file=/etc/etcd/kubernetes.crt \\
   --peer-key-file=/etc/etcd/kubernetes.key \\
-  --trusted-ca-file=/etc/etcd/ca.pem \\
-  --peer-trusted-ca-file=/etc/etcd/ca.pem \\
+  --trusted-ca-file=/etc/etcd/ca.crt \\
+  --peer-trusted-ca-file=/etc/etcd/ca.crt \\
   --peer-client-cert-auth \\
   --client-cert-auth \\
   --initial-advertise-peer-urls https://${INTERNAL_IP}:2380 \\
@@ -60,7 +60,7 @@ mv kube-apiserver kube-controller-manager kube-scheduler /usr/local/bin/
 
 mkdir -p /var/lib/kubernetes/
 
-cp ca.pem ca-key.pem kubernetes.key kubernetes.crt \
+cp ca.crt ca.key kubernetes.key kubernetes.crt \
 service-account.key service-account.crt \
 encryption-config.yaml /var/lib/kubernetes/
 
@@ -81,15 +81,15 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --audit-log-path=/var/log/audit.log \\
   --authorization-mode=Node,RBAC \\
   --secure-port=6443 \\
-  --client-ca-file=/var/lib/kubernetes/ca.pem \\
+  --client-ca-file=/var/lib/kubernetes/ca.crt \\
   --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
-  --etcd-cafile=/var/lib/kubernetes/ca.pem \\
+  --etcd-cafile=/var/lib/kubernetes/ca.crt \\
   --etcd-certfile=/var/lib/kubernetes/kubernetes.crt \\
   --etcd-keyfile=/var/lib/kubernetes/kubernetes.key \\
   --etcd-servers=https://${INTERNAL_IP}:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
-  --kubelet-certificate-authority=/var/lib/kubernetes/ca.pem \\
+  --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
   --kubelet-client-certificate=/var/lib/kubernetes/kubernetes.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kubernetes.key \\
   --runtime-config='api/all=true' \\
@@ -122,15 +122,15 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --cluster-cidr=10.172.0.0/16 \\
   --allocate-node-cidrs=true \\
   --cluster-name=kubernetes \\
-  --cluster-signing-cert-file=/var/lib/kubernetes/ca.pem \\
-  --cluster-signing-key-file=/var/lib/kubernetes/ca-key.pem \\
+  --cluster-signing-cert-file=/var/lib/kubernetes/ca.crt \\
+  --cluster-signing-key-file=/var/lib/kubernetes/ca.key \\
   --kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --authentication-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --authorization-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --leader-elect=true \\
   --controllers=* \\
-  --root-ca-file=/var/lib/kubernetes/ca.pem \\
-  --client-ca-file=/var/lib/kubernetes/ca.pem \\
+  --root-ca-file=/var/lib/kubernetes/ca.crt \\
+  --client-ca-file=/var/lib/kubernetes/ca.crt \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account.key \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --use-service-account-credentials=true \\

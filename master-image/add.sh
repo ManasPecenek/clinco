@@ -35,8 +35,8 @@ EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
 INTERNAL_IP=172.172.1.$i # 127.0.0.1
 
 cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
+  -ca=ca.crt \
+  -ca-key=ca.key \
   -config=ca-config.json \
   -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
   -profile=kubernetes \
@@ -44,7 +44,7 @@ cfssl gencert \
 
 
 kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.pem \
+--certificate-authority=ca.crt \
 --embed-certs=true \
 --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 --kubeconfig=${instance}-$i.kubeconfig
