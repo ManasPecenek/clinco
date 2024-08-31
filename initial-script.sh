@@ -23,7 +23,7 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  export KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+  export KUBERNETES_PUBLIC_ADDRESS=$(hostname)
 fi
 
 if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
