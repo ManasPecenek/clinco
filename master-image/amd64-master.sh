@@ -166,6 +166,7 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
+echo anann-0
 
 systemctl daemon-reload
 systemctl enable kube-apiserver kube-controller-manager kube-scheduler
