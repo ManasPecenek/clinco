@@ -17,10 +17,10 @@ RUN wget -q --show-progress --https-only --timestamping \
 
 RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
-RUN chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl \
-&& wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssl \
-&& wget https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson \
-&& chmod +x cfssl cfssljson && mv cfssl cfssljson /usr/local/bin/
+RUN chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl
+RUN wget -o cfssl https://pkg.cfssl.org/R1.2/cfssl_darwin-amd64
+RUN wget -o cfssljson https://pkg.cfssl.org/R1.2/cfssljson_darwin-amd64
+RUN chmod +x cfssl cfssljson && mv cfssl cfssljson /usr/local/bin/
 
 COPY ./init.sh .
 COPY ./add.sh .

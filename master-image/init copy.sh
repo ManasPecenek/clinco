@@ -4,24 +4,205 @@ set -e
 
 i=$1
 
-apt update
-apt install libnss3-tools
-curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-chmod +x mkcert-v*-linux-amd64
-mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+cat > ca-config.json <<EOF
+{
+  "signing": {
+    "default": {
+      "expiry": "8760h"
+    },
+    "profiles": {
+      "kubernetes": {
+        "usages": ["signing", "key encipherment", "server auth", "client auth"],
+        "expiry": "8760h"
+      }
+    }
+  }
+}
+EOF
 
+cat > ca-csr.json <<EOF
+{
+  "CN": "Kubernetes",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "Kubernetes",
+      "OU": "CA",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+
+cat > admin-csr.json <<EOF
+{
+  "CN": "admin",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "system:masters",
+      "OU": "clinco Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  admin-csr.json | cfssljson -bare admin
+
+
+cat > kube-controller-manager-csr.json <<EOF
+{
+  "CN": "system:kube-controller-manager",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "system:kube-controller-manager",
+      "OU": "clinco Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+
+cat > kube-proxy-csr.json <<EOF
+{
+  "CN": "system:kube-proxy",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "system:node-proxier",
+      "OU": "clinco Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-proxy-csr.json | cfssljson -bare kube-proxy
+
+cat > kube-scheduler-csr.json <<EOF
+{
+  "CN": "system:kube-scheduler",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "system:kube-scheduler",
+      "OU": "clinco Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 
 KUBERNETES_PUBLIC_ADDRESS=$2
 
 KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
 
-mkcert -install
+cat > kubernetes-csr.json <<EOF
+{
+  "CN": "kubernetes",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "Kubernetes",
+      "OU": "clinco Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
 
-mkcert -key-file ca-key.pem -cert-file ca.pem 
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname=10.32.0.1,172.172.0.1,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} \
+  -profile=kubernetes \
+  kubernetes-csr.json | cfssljson -bare kubernetes
 
-mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 
 
-mkcert -key-file service-account-key.pem -cert-file service-account.pem
+cat > service-account-csr.json <<EOF
+{
+  "CN": "service-accounts",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "Kubernetes",
+      "OU": "clinco Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  service-account-csr.json | cfssljson -bare service-account
   
 #########################################################################################################################
 while [ $i -gt 0 ]

@@ -66,9 +66,9 @@ do
 echo -e "*** Creating Worker Node $i *** \n"
 if [[ $i -ne 1 ]];
 then
-  docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null 2>&1
+  docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null
 else
-  docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null 2>&1
+  docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null
 fi
 [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
 i=$((i-1))
@@ -78,7 +78,7 @@ done
 #########################################################################################################################
 echo -e "*** Configuring Master Node *** \n"
 
-(docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS") > /dev/null 2>&1
+(docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS") > /dev/null
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Master Node"$none"\n"
 
@@ -102,7 +102,7 @@ docker cp worker-$j.pem worker-$j:/root/ && rm -f worker-$j.pem
 
 echo -e "*** Configuring Worker Node $j *** \n"
 
-(docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT") > /dev/null 2>&1
+(docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT") > /dev/null
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
 
