@@ -28,6 +28,13 @@ COPY ./amd64-master.sh .
 
 RUN chmod +x init.sh add.sh  amd64-master.sh
 
+
+RUN apt install libnss3-tools -y
+RUN wget --content-disposition "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+RUN chmod +x mkcert-v*-linux-amd64
+RUN mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+
+
 STOPSIGNAL SIGRTMIN+3
 
 ENTRYPOINT ["/sbin/init"]

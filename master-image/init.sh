@@ -4,11 +4,7 @@ set -e
 
 i=$1
 
-apt update
-apt install libnss3-tools
-curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-chmod +x mkcert-v*-linux-amd64
-mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+
 
 
 KUBERNETES_PUBLIC_ADDRESS=$2
@@ -17,11 +13,11 @@ KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubern
 
 mkcert -install
 
-mkcert -key-file ca-key.pem -cert-file ca.pem 
+mkcert -key-file ca-key.pem -cert-file ca.pem 127.0.0.1
 
-mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 
+mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 127.0.0.1
 
-mkcert -key-file service-account-key.pem -cert-file service-account.pem
+mkcert -key-file service-account-key.pem -cert-file service-account.pem 127.0.0.1
   
 #########################################################################################################################
 while [ $i -gt 0 ]
