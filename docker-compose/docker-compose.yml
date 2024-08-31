@@ -18,6 +18,8 @@ services:
     networks:
       clinco:
         ipv4_address: 172.172.0.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   clinco:
