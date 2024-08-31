@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 i=$1
 current=$2
 

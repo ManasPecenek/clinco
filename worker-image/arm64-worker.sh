@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 swapoff -a && sysctl vm.swappiness=0
 
 mkdir -p \

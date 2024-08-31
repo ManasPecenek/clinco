@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [[ "$(uname)" = *"Darwin"* ]]
 then
   KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)

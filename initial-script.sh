@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 export TERM=xterm
 blue="$(tput setab 9; tput setaf 4)" && export blue
 red="$(tput setab 9; tput setaf 1)" && export red

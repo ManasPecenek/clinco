@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 ./init.sh $1 $2
 
 tar -xvf etcd-${ETCD_VERSION}-linux-arm64.tar.gz
