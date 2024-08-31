@@ -9,18 +9,24 @@ i=$1
 
 KUBERNETES_PUBLIC_ADDRESS=$2
 
-KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
+KUBERNETES_HOSTNAMES="kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.default.svc.cluster.local"
 
 mkcert -install
 
-mkcert -key-file ca-key.pem -cert-file ca.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
+mkcert -key-file ca-key.pem -cert-file ca.pem 127.0.0.1 ${KUBERNETES_PUBLIC_ADDRESS} 
 
-mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
+mkcert -key-file kubernetes-key.pem -cert-file kubernetes.pem 127.0.0.1 ${KUBERNETES_PUBLIC_ADDRESS} 10.32.0.1 172.172.0.1 ${KUBERNETES_HOSTNAMES}
 
-mkcert -key-file service-account-key.pem -cert-file service-account.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
+mkcert -key-file service-account-key.pem -cert-file service-account.pem 127.0.0.1 ${KUBERNETES_PUBLIC_ADDRESS} 
 
-mkcert -key-file kube-proxy-key.pem -cert-file kube-proxy.pem 127.0.0.1 $KUBERNETES_PUBLIC_ADDRESS 
+mkcert -key-file kube-proxy-key.pem -cert-file kube-proxy.pem 127.0.0.1 ${KUBERNETES_PUBLIC_ADDRESS} 
+
+mkcert -key-file kube-controller-manager-key.pem -cert-file kube-controller-manager.pem 127.0.0.1 ${KUBERNETES_PUBLIC_ADDRESS} 
   
+mkcert -key-file kube-scheduler-key.pem -cert-file kube-scheduler.pem 127.0.0.1 ${KUBERNETES_PUBLIC_ADDRESS} 
+
+mkcert -key-file admin-key.pem -cert-file admin.pem 127.0.0.1 ${KUBERNETES_PUBLIC_ADDRESS} 
+
 #########################################################################################################################
 while [ $i -gt 0 ]
 do
