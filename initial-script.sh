@@ -16,8 +16,8 @@ fi
 
 [[ -z "$(docker network ls | grep clinco)" ]] && \
 
-docker network create --driver=bridge --subnet=172.172.0.0/16 --scope=local --attachable=false --ingress=false clinco #> /dev/null # 2>&1
-# docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco #> /dev/null # 2>&1
+# docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --attachable=true clinco #> /dev/null # 2>&1
+docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco #> /dev/null # 2>&1
 
 [[ $? -eq 0 ]] && echo -e "\n*** Docker Network clinco Created *** \n"
 
@@ -26,7 +26,7 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  export KUBERNETES_PUBLIC_ADDRESS=host-gateway #host.docker.internal #$(hostname)
+  export KUBERNETES_PUBLIC_ADDRESS=host.docker.internal #$(hostname)
 fi
 
 if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
