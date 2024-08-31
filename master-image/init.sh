@@ -9,7 +9,7 @@ i=$1
 
 KUBERNETES_PUBLIC_ADDRESS=$2
 
-KUBERNETES_HOSTNAMES="kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.default.svc.cluster.local"
+KUBERNETES_HOSTNAMES="kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.svc.cluster.local kubernetes.default.svc.cluster.local"
 
 INTERNAL_IP=172.172.0.1
 
