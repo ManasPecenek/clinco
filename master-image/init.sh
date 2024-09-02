@@ -44,7 +44,6 @@ mkcert -client -key-file admin.key -cert-file admin.crt 127.0.0.1 10.32.0.1 ${KU
 openssl verify -CAfile ca.crt kubernetes.crt
 
 
-
 #########################################################################################################################
 while [ $i -gt 0 ]
 do
@@ -145,7 +144,7 @@ kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.crt \
 --embed-certs=true \
---server=https://master:6443 \
+--server=https://172.172.0.1:6443 \
 --kubeconfig=admin.kubeconfig
 # --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 
