@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  worker:
+    image: "petschenek/ubuntu-systemd:worker-${ARCH}-22.04"
+    build:
+      context: ../worker-image
+      dockerfile: ../worker-image/amd64.Dockerfile
+    hostname: worker-1
+    container_name: worker-1
+    networks:
+      clinco:
+        ipv4_address: "172.172.1.1"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /lib/modules:/lib/modules:ro
+    privileged: true
+    user: root
+
+
+networks:
+  clinco:
+    external: true

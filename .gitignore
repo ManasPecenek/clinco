@@ -1,2 +1,2 @@
-kubeconfig
+.kubeconfig
 *.pem

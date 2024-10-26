@@ -61,7 +61,6 @@ export ETCD_VOLUME=${ETCD_VOLUME:-$RANDOM}
 
 echo -e "\n*** Creating Master Node *** \n"
 # docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-22.04 > /dev/null 2>&1
-
 docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Created ***"$none"\n" || echo -e $red"ERROR Could not Create Master Node"$none"\n"
@@ -75,7 +74,8 @@ if [[ $i -ne 1 ]];
 then
   docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 #> /dev/null
 else
-  docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 #> /dev/null
+  docker compose -f docker-compose/docker-compose.worker.yml up --build -d --force-recreate
+  # docker run -dt --network clinco -p 80:80 -p 443:443 --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 #> /dev/null
 fi
 [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
 i=$((i-1))
@@ -89,7 +89,7 @@ docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Master Node"$none"\n"
 
-docker cp master:/root/admin.kubeconfig ./kubeconfig
+docker cp master:/root/admin.kubeconfig .kubeconfig
 
 #########################################################################################################################
 j=$NODE_COUNT
@@ -116,9 +116,9 @@ docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NO
 j=$((j-1))
 done
 #########################################################################################################################
-# KUBECONFIG=~/.kube/config:./.kubeconfig kubectl config view --flatten > ./.merged-config
+# KUBECONFIG=~/.kube/config:.kubeconfig kubectl config view --flatten > ./.merged-config
 # mv ./.merged-config ~/.kube/config
-KUBECONFIG=./kubeconfig
+export KUBECONFIG=.kubeconfig
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
