@@ -4,10 +4,6 @@ set -e
 
 i=$1
 
-echo $i
-
-exit 1
-
 KUBERNETES_PUBLIC_ADDRESS=$2
 
 # KUBERNETES_HOSTNAMES="master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.svc.cluster.local kubernetes.default.svc.cluster.local"
@@ -181,12 +177,12 @@ kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.crt \
 --embed-certs=true \
---server=https://127.0.0.1:6443 \
+--server=https://172.172.0.1:6443 \
 --kubeconfig=admin.kubeconfig
 
 ################################################
 # --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
-# https://172.172.0.1:6443
+
 
 kubectl config set-credentials admin \
 --client-certificate=admin.crt \
