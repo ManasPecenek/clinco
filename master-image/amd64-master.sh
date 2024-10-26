@@ -50,8 +50,9 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-systemctl enable etcd
-systemctl start etcd
+systemctl enable --now etcd
+
+sleep 5
 
 mkdir -p /etc/kubernetes/config
 
@@ -108,6 +109,11 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
+systemctl daemon-reload
+systemctl enable --now kube-apiserver
+
+sleep 5
+
 cp kube-controller-manager.kubeconfig /var/lib/kubernetes/
 
 
@@ -143,6 +149,10 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
+systemctl daemon-reload
+systemctl enable --now kube-controller-manager
+
+sleep 5
 
 cp kube-scheduler.kubeconfig /var/lib/kubernetes/
 
@@ -167,8 +177,9 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-systemctl enable kube-apiserver kube-controller-manager kube-scheduler
-systemctl start kube-apiserver kube-controller-manager kube-scheduler
+systemctl enable --now kube-scheduler
+
+sleep 5
 
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
 apiVersion: rbac.authorization.k8s.io/v1

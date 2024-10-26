@@ -6,6 +6,8 @@ i=$1
 
 KUBERNETES_PUBLIC_ADDRESS=$2
 
+export MASTER_IP=172.172.0.1
+
 # KUBERNETES_HOSTNAMES="master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.svc.cluster.local kubernetes.default.svc.cluster.local"
 # INTERNAL_IP=172.172.0.1
 # DOCKER_BRIDGE=172.17.0.1
@@ -44,12 +46,6 @@ done
 
 
 #########################################################################################################################
-# if ! [[ "$i" =~ ^[0-9]+$ ]]; then
-#     echo "Error: i is not a number"
-#     echo $i
-#     exit 1
-# fi
-
 while [ $i -gt 0 ]
 do
 
@@ -57,7 +53,7 @@ instance=worker
 
 # EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
 INTERNAL_IP=172.172.1.$i # 127.0.0.1
-MASTER_IP=172.172.0.1
+# MASTER_IP=172.172.0.1
 
 cat <<EOF > ca-worker.conf
 [${instance}-${i}]
@@ -183,12 +179,8 @@ kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.crt \
 --embed-certs=true \
---server=https://172.172.0.1:6443 \
+--server=https://${MASTER_IP}:6443 \
 --kubeconfig=admin.kubeconfig
-
-################################################
-# --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
-
 
 kubectl config set-credentials admin \
 --client-certificate=admin.crt \
@@ -202,6 +194,28 @@ kubectl config set-context default \
 --kubeconfig=admin.kubeconfig
 
 kubectl config use-context default --kubeconfig=admin.kubeconfig
+
+
+kubectl config set-cluster clinco-the-hard-way \
+--certificate-authority=ca.crt \
+--embed-certs=true \
+--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+--kubeconfig=config
+
+
+kubectl config set-credentials admin \
+--client-certificate=admin.crt \
+--client-key=admin.key \
+--embed-certs=true \
+--kubeconfig=config
+
+kubectl config set-context default \
+--cluster=clinco-the-hard-way \
+--user=admin \
+--kubeconfig=config
+
+kubectl config use-context default --kubeconfig=config
+
 
 
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
