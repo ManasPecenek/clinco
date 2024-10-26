@@ -15,6 +15,33 @@ INTERNAL_IP=172.172.0.1
 
 DOCKER_BRIDGE=172.17.0.1
 
+mkcert -install
+
+cp /root/.local/share/mkcert/rootCA-key.pem ca.key
+
+cp /root/.local/share/mkcert/rootCA.pem ca.crt
+
+# update-ca-certificates
+
+
+
+
+# mkcert -key-file ca.key -cert-file ca.key 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+
+mkcert -client -key-file kubernetes.key -cert-file kubernetes.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+
+mkcert -client -key-file service-account.key -cert-file service-account.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+
+mkcert -client -key-file kube-proxy.key -cert-file kube-proxy.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+
+mkcert -client -key-file kube-controller-manager.key -cert-file kube-controller-manager.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+  
+mkcert -client -key-file kube-scheduler.key -cert-file kube-scheduler.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+
+mkcert -client -key-file admin.key -cert-file admin.crt 127.0.0.1 10.32.0.1 ${KUBERNETES_PUBLIC_ADDRESS} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
+
+
+openssl verify -CAfile ca.crt kubernetes.crt
 
 
 #########################################################################################################################

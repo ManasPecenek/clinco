@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ubuntu:22.04
+FROM ubuntu:22.04
 
 ENV container=docker 
 ENV K8S_VERSION=v1.26.1
@@ -16,6 +16,18 @@ RUN wget -q --show-progress --https-only --timestamping \
 "https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl"
 
 RUN wget "https://dl.k8s.io/release/$(wget -qO- https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl
+
+# RUN wget -o cfssl https://pkg.cfssl.org/R1.2/cfssl_darwin-amd64
+# RUN wget -o cfssljson https://pkg.cfssl.org/R1.2/cfssljson_darwin-amd64
+# RUN chmod +x cfssl cfssljson && mv cfssl cfssljson /usr/local/bin/
+
+
+# RUN apt install libnss3-tools -y
+# RUN wget --content-disposition "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+# RUN chmod +x mkcert-v*-linux-amd64
+# RUN mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+
 
 RUN chmod +x kubectl && mv ./kubectl /usr/local/bin/kubectl
 RUN wget -o cfssl https://pkg.cfssl.org/R1.2/cfssl_darwin-amd64
@@ -23,15 +35,15 @@ RUN wget -o cfssljson https://pkg.cfssl.org/R1.2/cfssljson_darwin-amd64
 RUN chmod +x cfssl cfssljson && mv cfssl cfssljson /usr/local/bin/
 
 
-RUN apt install libnss3-tools -y
-RUN wget --content-disposition "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-RUN chmod +x mkcert-v*-linux-amd64
-RUN mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+# RUN apt install libnss3-tools -y
+# RUN wget --content-disposition "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+# RUN chmod +x mkcert-v*-linux-amd64
+# RUN mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
 
-
-COPY ./init.sh .
-COPY ./add.sh .
-COPY ./amd64-master.sh .
+COPY ca.conf .
+COPY init.sh .
+COPY add.sh .
+COPY amd64-master.sh .
 
 RUN chmod +x init.sh add.sh  amd64-master.sh
 
