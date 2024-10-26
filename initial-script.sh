@@ -89,7 +89,7 @@ docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Master Node"$none"\n"
 
-docker cp master:/root/config .
+docker cp master:/root/config .temp-config
 
 #########################################################################################################################
 j=$NODE_COUNT
@@ -116,7 +116,8 @@ echo -e "*** Configuring Worker Node $j *** \n"
 j=$((j-1))
 done
 #########################################################################################################################
-export KUBECONFIG=./config
+KUBECONFIG=~/.kube/config:./.temp-config kubectl config view --flatten > .merged-config
+mv .merged-config ~/.kube/config
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null

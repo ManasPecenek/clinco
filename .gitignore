@@ -1,2 +1,3 @@
 *.kubeconfig
 *.pem
+.temp-config
