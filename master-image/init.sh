@@ -27,23 +27,29 @@ certs=(
   "service-accounts"
 )
 
-for i in ${certs[*]}; do
-  openssl genrsa -out "${i}.key" 4096
+for component in ${certs[*]}; do
+  openssl genrsa -out "${component}.key" 4096
 
-  openssl req -new -key "${i}.key" -sha256 \
-    -config "ca.conf" -section ${i} \
-    -out "${i}.csr"
+  openssl req -new -key "${component}.key" -sha256 \
+    -config "ca.conf" -section ${component} \
+    -out "${component}.csr"
   
-  openssl x509 -req -days 3653 -in "${i}.csr" \
+  openssl x509 -req -days 3653 -in "${component}.csr" \
     -copy_extensions copyall \
     -sha256 -CA "ca.crt" \
     -CAkey "ca.key" \
     -CAcreateserial \
-    -out "${i}.crt"
+    -out "${component}.crt"
 done
 
 
 #########################################################################################################################
+# if ! [[ "$i" =~ ^[0-9]+$ ]]; then
+#     echo "Error: i is not a number"
+#     echo $i
+#     exit 1
+# fi
+
 while [ $i -gt 0 ]
 do
 
