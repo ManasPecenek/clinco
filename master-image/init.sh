@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 i=$1
 
@@ -14,6 +14,14 @@ KUBERNETES_HOSTNAMES="master kubernetes kubernetes.default kubernetes.default.sv
 INTERNAL_IP=172.172.0.1
 
 DOCKER_BRIDGE=172.17.0.1
+
+{
+  openssl genrsa -out ca.key 4096
+  openssl req -x509 -new -sha512 -noenc \
+    -key ca.key -days 3653 \
+    -config ca.conf \
+    -out ca.crt
+}
 
 certs=(
   "admin" "node-0" "node-1"

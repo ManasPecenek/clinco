@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 export TERM=xterm
 blue="$(tput setab 9; tput setaf 4)" && export blue
