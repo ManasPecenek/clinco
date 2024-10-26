@@ -2,6 +2,12 @@
 
 set -e
 
+cp /home/kube-proxy.kubeconfig .
+cp /home/worker-$2.kubeconfig .
+cp /home/worker-$2.key .
+cp /home/worker-$2.crt .
+cp /home/ca.crt .
+
 swapoff -a && sysctl vm.swappiness=0
 
 mkdir -p \

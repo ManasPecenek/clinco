@@ -14,7 +14,8 @@ services:
       - "6443:6443"
       - "8443:8443"
     volumes:
-      - "etcd-volume:/var/lib/etcd"
+      - etcd-volume:/var/lib/etcd
+      - shared-volume:/home
     networks:
       clinco:
         ipv4_address: 172.172.0.1
@@ -29,3 +30,4 @@ volumes:
   etcd-volume:
     name: etcd-${ETCD_VOLUME}
     driver: local
+  shared-volume:

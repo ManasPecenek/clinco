@@ -8,18 +8,14 @@ red="$(tput setab 9; tput setaf 1)" && export red
 none="\033[0m" && export none
 
 if ! docker info > /dev/null 2>&1; then
-  echo -e "\n"$red"Docker is not running - please start docker and try again!"$none
+  echo -e "\n"$red"Docker is not running - please start docker and try again!"$none"\n"
   exit 1
 fi
 
-[[ -f "admin.kubeconfig" ]] && rm -f admin.kubeconfig
-
 [[ -z "$(docker network ls | grep clinco)" ]] && \
-
-# docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --attachable=true clinco #> /dev/null # 2>&1
 docker network create --driver=bridge --subnet=172.172.0.0/16 --gateway=172.172.172.172 --scope=local --attachable=false --ingress=false clinco #> /dev/null # 2>&1
 
-[[ $? -eq 0 ]] && echo -e "\n*** Docker Network clinco Created *** \n"
+[[ $? -eq 0 ]] && echo -e "\n"$blue"*** Docker Network clinco Created ***"$none"\n"
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
@@ -36,7 +32,7 @@ elif [[ "$(uname -m)" = *"x86"* ]]
 then
   export ARCH=amd64
 else
-  echo "Could not find your architecture" && exit 1
+  echo $red"Could not find your architecture"$none"\n" && exit 1
 fi
 
 
@@ -59,7 +55,7 @@ export NODE_COUNT=${NODE_COUNT:-1}
 
 export ETCD_VOLUME=${ETCD_VOLUME:-$RANDOM}
 
-echo -e "\n*** Creating Master Node *** \n"
+echo -e "\n"$blue"*** Creating Master Node ***"$none"\n"
 # docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-22.04 > /dev/null 2>&1
 docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
 
@@ -69,7 +65,7 @@ docker compose -f docker-compose/docker-compose.yml up --build -d --force-recrea
 i=$NODE_COUNT
 while [ $i -gt 0 ]
 do
-echo -e "*** Creating Worker Node $i *** \n"
+echo -e $blue"*** Creating Worker Node $i ***"$none"\n"
 if [[ $i -ne 1 ]];
 then
   docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 #> /dev/null
@@ -83,7 +79,7 @@ done
 
 
 #########################################################################################################################
-echo -e "*** Configuring Master Node *** \n"
+echo -e $blue"*** Configuring Master Node ***"$none"\n"
 
 docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS" #> /dev/null
 
@@ -95,21 +91,10 @@ docker cp master:/root/admin.kubeconfig .kubeconfig
 j=$NODE_COUNT
 while [ $j -gt 0 ]
 do
-docker cp master:/root/worker-$j.kubeconfig .
-docker cp master:/root/kube-proxy.kubeconfig .
-docker cp master:/root/ca.crt .
-docker cp master:/root/worker-$j.key .
-docker cp master:/root/worker-$j.crt .
 
-docker cp worker-$j.kubeconfig worker-$j:/root/ && rm -f worker-$j.kubeconfig
-docker cp kube-proxy.kubeconfig worker-$j:/root/ && rm -f kube-proxy.kubeconfig
-docker cp ca.crt worker-$j:/root/ && rm -f ca.crt
-docker cp worker-$j.key worker-$j:/root/ && rm -f worker-$j.key
-docker cp worker-$j.crt worker-$j:/root/ && rm -f worker-$j.crt
+echo -e $blue"*** Configuring Worker Node $j ***"$none"\n"
 
-echo -e "*** Configuring Worker Node $j *** \n"
-
-docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT" #> /dev/null
+docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT $j" #> /dev/null
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
 
@@ -120,15 +105,15 @@ done
 # mv ./.merged-config ~/.kube/config
 export KUBECONFIG=.kubeconfig
 
-echo -e "*** Deploying CoreDNS *** \n"; sleep 15
+echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
 [[ $? -eq 0 ]] && echo -e $blue"*** CoreDNS Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy CoreDNS"$none"\n"
 
-echo -e "*** Deploying Local Path Provisioner *** \n"
+echo -e $blue"*** Deploying Local Path Provisioner ***"$none"\n"
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml #> /dev/null
 [[ $? -eq 0 ]] && echo -e $blue"*** Local Path Provisioner Deployed***"$none"\n" || echo -e $red"ERROR! Could not Deploy Local Path Provisioner"$none"\n"
 
-echo -e "*** Deploying Nginx Ingress Controller *** \n"
+echo -e $blue"*** Deploying Nginx Ingress Controller ***"$none"\n"
 helm upgrade --install ingress-nginx ingress-nginx \
 --repo https://kubernetes.github.io/ingress-nginx \
 --namespace ingress-nginx --create-namespace \

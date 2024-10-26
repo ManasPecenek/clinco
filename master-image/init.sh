@@ -202,3 +202,7 @@ resources:
               secret: ${ENCRYPTION_KEY}
       - identity: {}
 EOF
+
+cp /root/worker-* /home/
+cp /root/kube-proxy.kubeconfig /home/
+cp /root/ca.crt /home/

@@ -16,6 +16,7 @@ services:
       - "443:443"
     volumes:
       - /lib/modules:/lib/modules:ro
+      - shared-volume:/home
     privileged: true
     user: root
 
@@ -23,3 +24,6 @@ services:
 networks:
   clinco:
     external: true
+
+volumes:
+  shared-volume:
