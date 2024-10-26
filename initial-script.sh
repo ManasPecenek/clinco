@@ -116,9 +116,9 @@ echo -e "*** Configuring Worker Node $j *** \n"
 j=$((j-1))
 done
 #########################################################################################################################
-# KUBECONFIG=~/.kube/config:./.temp-config kubectl config view --flatten > ./.merged-config
-# mv ./.merged-config ~/.kube/config
-export KUBECONFIG=~/.kube/config:./.kubeconfig
+KUBECONFIG=~/.kube/config:./.kubeconfig kubectl config view --flatten > ./.merged-config
+mv ./.merged-config ~/.kube/config
+KUBECONFIG=./.kubeconfig
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
