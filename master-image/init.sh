@@ -179,7 +179,7 @@ kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.crt \
 --embed-certs=true \
---server=https://${MASTER_IP}:6443 \
+--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 --kubeconfig=admin.kubeconfig
 
 kubectl config set-credentials admin \
@@ -196,25 +196,25 @@ kubectl config set-context default \
 kubectl config use-context default --kubeconfig=admin.kubeconfig
 
 
-kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.crt \
---embed-certs=true \
---server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
---kubeconfig=config
+# kubectl config set-cluster clinco-the-hard-way \
+# --certificate-authority=ca.crt \
+# --embed-certs=true \
+# --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+# --kubeconfig=config
 
 
-kubectl config set-credentials admin \
---client-certificate=kube-api-server.crt \
---client-key=kube-api-server.key \
---embed-certs=true \
---kubeconfig=config
+# kubectl config set-credentials admin \
+# --client-certificate=kube-api-server.crt \
+# --client-key=kube-api-server.key \
+# --embed-certs=true \
+# --kubeconfig=config
 
-kubectl config set-context default \
---cluster=clinco-the-hard-way \
---user=system:kube-api-server \
---kubeconfig=config
+# kubectl config set-context default \
+# --cluster=clinco-the-hard-way \
+# --user=system:kube-api-server \
+# --kubeconfig=config
 
-kubectl config use-context default --kubeconfig=config
+# kubectl config use-context default --kubeconfig=config
 
 
 
