@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -e
 
 i=$1
 current=$2

@@ -1,16 +1,11 @@
 #!/bin/bash
 
-set -eux
+set -e
 
 i=$1
 
-KUBERNETES_PUBLIC_ADDRESS=$2
-
+export KUBERNETES_PUBLIC_ADDRESS=$2
 export MASTER_IP=172.172.0.1
-
-# KUBERNETES_HOSTNAMES="master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.svc.cluster.local kubernetes.default.svc.cluster.local"
-# INTERNAL_IP=172.172.0.1
-# DOCKER_BRIDGE=172.17.0.1
 
 {
   openssl genrsa -out ca.key 4096
@@ -50,10 +45,7 @@ while [ $i -gt 0 ]
 do
 
 instance=worker
-
-# EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
-INTERNAL_IP=172.172.1.$i # 127.0.0.1
-# MASTER_IP=172.172.0.1
+INTERNAL_IP=172.172.1.$i
 
 cat <<EOF > ca-worker.conf
 [${instance}-${i}]
@@ -194,29 +186,6 @@ kubectl config set-context default \
 --kubeconfig=admin.kubeconfig
 
 kubectl config use-context default --kubeconfig=admin.kubeconfig
-
-
-# kubectl config set-cluster clinco-the-hard-way \
-# --certificate-authority=ca.crt \
-# --embed-certs=true \
-# --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
-# --kubeconfig=config
-
-
-# kubectl config set-credentials admin \
-# --client-certificate=kube-api-server.crt \
-# --client-key=kube-api-server.key \
-# --embed-certs=true \
-# --kubeconfig=config
-
-# kubectl config set-context default \
-# --cluster=clinco-the-hard-way \
-# --user=system:kube-api-server \
-# --kubeconfig=config
-
-# kubectl config use-context default --kubeconfig=config
-
-
 
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 

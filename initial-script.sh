@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -e
 
 export TERM=xterm
 blue="$(tput setab 9; tput setaf 4)" && export blue
@@ -109,16 +109,16 @@ docker cp worker-$j.crt worker-$j:/root/ && rm -f worker-$j.crt
 
 echo -e "*** Configuring Worker Node $j *** \n"
 
-(docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT") #> /dev/null
+docker exec -i --privileged --user root worker-$j bash -c "./$ARCH-worker.sh $NODE_COUNT" #> /dev/null
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
 
 j=$((j-1))
 done
 #########################################################################################################################
-KUBECONFIG=~/.kube/config:./.kubeconfig kubectl config view --flatten > ./.merged-config
-mv ./.merged-config ~/.kube/config
-KUBECONFIG=./.kubeconfig
+# KUBECONFIG=~/.kube/config:./.kubeconfig kubectl config view --flatten > ./.merged-config
+# mv ./.merged-config ~/.kube/config
+KUBECONFIG=~/.kube/config:./.kubeconfig
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
