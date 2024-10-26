@@ -8,7 +8,7 @@ tar -xvf etcd-${ETCD_VERSION}-linux-amd64.tar.gz
 mv etcd-${ETCD_VERSION}-linux-amd64/etcd* /usr/local/bin/
 mkdir -p /etc/etcd /var/lib/etcd
 chmod 700 /var/lib/etcd
-cp ca.crt kube-api-server.key kube-api-server.key /etc/etcd/
+cp ca.crt kube-api-server.crt kube-api-server.key /etc/etcd/
 rm -f etcd-${ETCD_VERSION}-linux-amd64.tar.gz && rm -rf etcd-${ETCD_VERSION}-linux-amd64
 
 INTERNAL_IP=172.172.0.1
@@ -26,9 +26,9 @@ Documentation=https://github.com/coreos
 Type=notify
 ExecStart=/usr/local/bin/etcd \\
   --name ${ETCD_NAME} \\
-  --cert-file=/etc/etcd/kube-api-server.key \\
+  --cert-file=/etc/etcd/kube-api-server.crt \\
   --key-file=/etc/etcd/kube-api-server.key \\
-  --peer-cert-file=/etc/etcd/kube-api-server.key \\
+  --peer-cert-file=/etc/etcd/kube-api-server.crt \\
   --peer-key-file=/etc/etcd/kube-api-server.key \\
   --trusted-ca-file=/etc/etcd/ca.crt \\
   --peer-trusted-ca-file=/etc/etcd/ca.crt \\
@@ -60,8 +60,8 @@ mv kube-apiserver kube-controller-manager kube-scheduler /usr/local/bin/
 
 mkdir -p /var/lib/kubernetes/
 
-cp ca.crt ca.key kube-api-server.key kube-api-server.key \
-service-account.key service-account.crt \
+cp ca.crt ca.key kube-api-server.crt kube-api-server.key \
+service-accounts.key service-accounts.crt \
 encryption-config.yaml /var/lib/kubernetes/
 
 
@@ -84,21 +84,21 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
   --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
   --etcd-cafile=/var/lib/kubernetes/ca.crt \\
-  --etcd-certfile=/var/lib/kubernetes/kube-api-server.key \\
+  --etcd-certfile=/var/lib/kubernetes/kube-api-server.crt \\
   --etcd-keyfile=/var/lib/kubernetes/kube-api-server.key \\
   --etcd-servers=https://${INTERNAL_IP}:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
-  --kubelet-client-certificate=/var/lib/kubernetes/kube-api-server.key \\
+  --kubelet-client-certificate=/var/lib/kubernetes/kube-api-server.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kube-api-server.key \\
   --runtime-config='api/all=true' \\
   --service-account-key-file=/var/lib/kubernetes/service-account.crt \\
-  --service-account-signing-key-file=/var/lib/kubernetes/service-account.key \\
+  --service-account-signing-key-file=/var/lib/kubernetes/service-accounts.key \\
   --service-account-issuer=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --service-node-port-range=30000-32767 \\
-  --tls-cert-file=/var/lib/kubernetes/kube-api-server.key \\
+  --tls-cert-file=/var/lib/kubernetes/kube-api-server.crt \\
   --tls-private-key-file=/var/lib/kubernetes/kube-api-server.key \\
   --v=2
 Restart=on-failure
@@ -131,7 +131,7 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --controllers=* \\
   --root-ca-file=/var/lib/kubernetes/ca.crt \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
-  --service-account-private-key-file=/var/lib/kubernetes/service-account.key \\
+  --service-account-private-key-file=/var/lib/kubernetes/service-accounts.key \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --use-service-account-credentials=true \\
   --v=2 \\

@@ -4,16 +4,11 @@ set -e
 
 i=$1
 
-
-
-
 KUBERNETES_PUBLIC_ADDRESS=$2
 
-KUBERNETES_HOSTNAMES="master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.svc.cluster.local kubernetes.default.svc.cluster.local"
-
-INTERNAL_IP=172.172.0.1
-
-DOCKER_BRIDGE=172.17.0.1
+# KUBERNETES_HOSTNAMES="master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster kubernetes.svc.cluster.local kubernetes.default.svc.cluster.local"
+# INTERNAL_IP=172.172.0.1
+# DOCKER_BRIDGE=172.17.0.1
 
 {
   openssl genrsa -out ca.key 4096
@@ -24,8 +19,9 @@ DOCKER_BRIDGE=172.17.0.1
 }
 
 certs=(
-  "admin" "node-0" "node-1"
-  "kube-proxy" "kube-scheduler"
+  "admin"
+  "kube-proxy"
+  "kube-scheduler"
   "kube-controller-manager"
   "kube-api-server"
   "service-accounts"
@@ -53,15 +49,37 @@ do
 
 instance=worker
 
-EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
+# EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
 INTERNAL_IP=172.172.1.$i # 127.0.0.1
 MASTER_IP=172.172.0.1
 
+cat <<EOF > ca-worker.conf
+[${instance}-${i}]
+distinguished_name = ${instance}-${i}_distinguished_name
+prompt             = no
+req_extensions     = ${instance}-${i}_req_extensions
+
+[${instance}-${i}_req_extensions]
+basicConstraints     = CA:FALSE
+extendedKeyUsage     = clientAuth, serverAuth
+keyUsage             = critical, digitalSignature, keyEncipherment
+nsCertType           = client
+nsComment            = "${instance}-${i} Certificate"
+subjectAltName       = DNS:${instance}-${i}, IP:127.0.0.1
+subjectKeyIdentifier = hash
+
+[${instance}-${i}_distinguished_name]
+CN = system:node:${instance}-${i}
+O  = system:nodes
+C  = US
+ST = Washington
+L  = Seattle
+EOF
 
 openssl genrsa -out "${instance}-${i}.key" 4096
 
 openssl req -new -key "${instance}-${i}.key" -sha256 \
-  -config "ca.conf" -section ${instance}-${i} \
+  -config "ca-worker.conf" -section ${instance}-${i} \
   -out "${instance}-${i}.csr"
 
 openssl x509 -req -days 3653 -in "${instance}-${i}.csr" \
