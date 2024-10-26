@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -e
 
 i=$1
 
@@ -56,6 +56,20 @@ instance=worker
 EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
 INTERNAL_IP=172.172.1.$i # 127.0.0.1
 MASTER_IP=172.172.0.1
+
+
+openssl genrsa -out "${instance}-${i}.key" 4096
+
+openssl req -new -key "${instance}-${i}.key" -sha256 \
+  -config "ca.conf" -section ${instance}-${i} \
+  -out "${instance}-${i}.csr"
+
+openssl x509 -req -days 3653 -in "${instance}-${i}.csr" \
+  -copy_extensions copyall \
+  -sha256 -CA "ca.crt" \
+  -CAkey "ca.key" \
+  -CAcreateserial \
+  -out "${instance}-${i}.crt"
 
 
 kubectl config set-cluster clinco-the-hard-way \
