@@ -11,7 +11,10 @@ WORKDIR /root
 
 VOLUME ["/var/lib/containerd"]
 
-RUN apt update -y && apt upgrade -y && apt install -y wget systemd systemd-cron kmod socat conntrack ipset && apt clean -y
+RUN apt update && \
+    apt install -y wget systemd systemd-cron kmod socat conntrack ipset iproute2 && \
+    apt clean autoclean && \
+    apt autoremove --yes
 
 RUN wget -q --show-progress --https-only --timestamping \
 https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_VERSION}/crictl-${CRI_VERSION}-linux-amd64.tar.gz \
@@ -27,7 +30,5 @@ COPY ./amd64-worker.sh .
 RUN chmod +x amd64-worker.sh
 
 STOPSIGNAL SIGRTMIN+3
-
-RUN apt update && apt install -y iproute2
 
 ENTRYPOINT ["/sbin/init"]
