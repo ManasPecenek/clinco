@@ -26,7 +26,7 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  export KUBERNETES_PUBLIC_ADDRESS=127.0.0.1  #172.17.0.1 #host.docker.internal #$(hostname)
+  export KUBERNETES_PUBLIC_ADDRESS=127.0.0.1 #$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
 fi
 
 if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
@@ -89,7 +89,7 @@ docker exec -i --privileged --user root master bash -c "./$ARCH-master.sh $NODE_
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Master Node"$none"\n"
 
-docker cp master:/root/config .temp-config
+docker cp master:/root/config ./.temp-config
 
 #########################################################################################################################
 j=$NODE_COUNT
@@ -116,8 +116,9 @@ echo -e "*** Configuring Worker Node $j *** \n"
 j=$((j-1))
 done
 #########################################################################################################################
-KUBECONFIG=~/.kube/config:./.temp-config kubectl config view --flatten > .merged-config
-mv .merged-config ~/.kube/config
+# KUBECONFIG=~/.kube/config:./.temp-config kubectl config view --flatten > ./.merged-config
+# mv ./.merged-config ~/.kube/config
+KUBECONFIG=~/.kube/config:./.temp-config
 
 echo -e "*** Deploying CoreDNS *** \n"; sleep 15
 kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null

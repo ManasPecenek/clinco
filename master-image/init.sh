@@ -204,14 +204,14 @@ kubectl config set-cluster clinco-the-hard-way \
 
 
 kubectl config set-credentials admin \
---client-certificate=admin.crt \
---client-key=admin.key \
+--client-certificate=kube-api-server.crt \
+--client-key=kube-api-server.key \
 --embed-certs=true \
 --kubeconfig=config
 
 kubectl config set-context default \
 --cluster=clinco-the-hard-way \
---user=admin \
+--user=system:kube-api-server \
 --kubeconfig=config
 
 kubectl config use-context default --kubeconfig=config
