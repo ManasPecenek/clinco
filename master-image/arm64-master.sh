@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 ./init.sh $1 $2
 

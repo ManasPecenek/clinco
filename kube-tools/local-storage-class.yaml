@@ -112,11 +112,11 @@ data:
     }
   setup: |-
     #!/bin/sh
-    set -eu
+    set -euxu
     mkdir -m 0777 -p "$VOL_DIR"
   teardown: |-
     #!/bin/sh
-    set -eu
+    set -euxu
     rm -rf "$VOL_DIR"
   helperPod.yaml: |-
     apiVersion: v1

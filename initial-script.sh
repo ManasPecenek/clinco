@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 export TERM=xterm
 blue="$(tput setab 9; tput setaf 4)" && export blue
@@ -51,9 +51,13 @@ while getopts "v:n:" option; do
   esac
 done
 
-[[ -z "$NODE_COUNT" ]] && export NODE_COUNT=1
+# [[ -z "$NODE_COUNT" ]] && export NODE_COUNT=1
 
-[[ -z "$ETCD_VOLUME" ]] && export ETCD_VOLUME=$RANDOM
+# [[ -z "$ETCD_VOLUME" ]] && export ETCD_VOLUME=$RANDOM
+
+export NODE_COUNT=${NODE_COUNT:-1}
+
+export ETCD_VOLUME=${ETCD_VOLUME:-$RANDOM}
 
 echo -e "\n*** Creating Master Node *** \n"
 # docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/ubuntu-systemd:master-$ARCH-22.04 > /dev/null 2>&1

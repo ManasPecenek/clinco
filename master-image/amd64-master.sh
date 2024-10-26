@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 ./init.sh $1 $2
 
@@ -93,7 +93,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-client-certificate=/var/lib/kubernetes/kube-api-server.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kube-api-server.key \\
   --runtime-config='api/all=true' \\
-  --service-account-key-file=/var/lib/kubernetes/service-account.crt \\
+  --service-account-key-file=/var/lib/kubernetes/service-accounts.crt \\
   --service-account-signing-key-file=/var/lib/kubernetes/service-accounts.key \\
   --service-account-issuer=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \\
   --service-cluster-ip-range=10.32.0.0/24 \\
@@ -166,13 +166,9 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-echo anann-0
-
 systemctl daemon-reload
 systemctl enable kube-apiserver kube-controller-manager kube-scheduler
 systemctl start kube-apiserver kube-controller-manager kube-scheduler
-
-echo anann-1
 
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
 apiVersion: rbac.authorization.k8s.io/v1
@@ -195,8 +191,6 @@ rules:
     verbs:
       - "*"
 EOF
-
-echo anann-2
 
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
 apiVersion: rbac.authorization.k8s.io/v1

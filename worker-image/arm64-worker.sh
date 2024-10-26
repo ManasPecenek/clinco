@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 swapoff -a && sysctl vm.swappiness=0
 
