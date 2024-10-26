@@ -195,8 +195,8 @@ EOF
 
 
 systemctl daemon-reload
-systemctl enable containerd kubelet kube-proxy
-systemctl start containerd kubelet kube-proxy
+systemctl enable --now containerd kubelet kube-proxy
+sleep 5
 
 
 NODE_COUNT=$1
