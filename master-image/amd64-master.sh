@@ -9,13 +9,13 @@ mv etcd-${ETCD_VERSION}-linux-amd64/etcd* /usr/local/bin/
 mkdir -p /etc/etcd /var/lib/etcd
 chmod 700 /var/lib/etcd
 cp ca.crt kube-api-server.crt kube-api-server.key /etc/etcd/
-rm -f etcd-${ETCD_VERSION}-linux-amd64.tar.gz && rm -rf etcd-${ETCD_VERSION}-linux-amd64
+rm -rf etcd*
 
-INTERNAL_IP=172.172.0.1
+export INTERNAL_IP=172.172.0.1
 
-ETCD_NAME=$(hostname -s)
+export ETCD_NAME=$(hostname -s)
 
-KUBERNETES_PUBLIC_ADDRESS=$2
+export KUBERNETES_PUBLIC_ADDRESS=$2
 
 cat <<EOF | tee /etc/systemd/system/etcd.service
 [Unit]
@@ -61,9 +61,13 @@ mv kube-apiserver kube-controller-manager kube-scheduler /usr/local/bin/
 
 mkdir -p /var/lib/kubernetes/
 
-cp ca.crt ca.key kube-api-server.crt kube-api-server.key \
-service-accounts.key service-accounts.crt \
-encryption-config.yaml /var/lib/kubernetes/
+cp ca.crt ca.key \
+kube-api-server.crt \
+kube-api-server.key \
+service-accounts.key \
+service-accounts.crt \
+encryption-config.yaml \
+/var/lib/kubernetes/
 
 
 cat <<EOF | tee /etc/systemd/system/kube-apiserver.service
