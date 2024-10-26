@@ -15,6 +15,28 @@ INTERNAL_IP=172.172.0.1
 
 DOCKER_BRIDGE=172.17.0.1
 
+certs=(
+  "admin" "node-0" "node-1"
+  "kube-proxy" "kube-scheduler"
+  "kube-controller-manager"
+  "kube-api-server"
+  "service-accounts"
+)
+
+for i in ${certs[*]}; do
+  openssl genrsa -out "${i}.key" 4096
+
+  openssl req -new -key "${i}.key" -sha256 \
+    -config "ca.conf" -section ${i} \
+    -out "${i}.csr"
+  
+  openssl x509 -req -days 3653 -in "${i}.csr" \
+    -copy_extensions copyall \
+    -sha256 -CA "ca.crt" \
+    -CAkey "ca.key" \
+    -CAcreateserial \
+    -out "${i}.crt"
+done
 
 
 #########################################################################################################################
@@ -27,8 +49,6 @@ EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
 INTERNAL_IP=172.172.1.$i # 127.0.0.1
 MASTER_IP=172.172.0.1
 
-
-mkcert -client -key-file worker-$i.key -cert-file worker-$i.crt 127.0.0.1 ${EXTERNAL_IP} 10.32.0.1 ${MASTER_IP} ${INTERNAL_IP} ${KUBERNETES_HOSTNAMES} ${DOCKER_BRIDGE}
 
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.crt \
