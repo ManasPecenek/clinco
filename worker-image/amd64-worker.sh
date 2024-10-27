@@ -196,7 +196,7 @@ bindAddressHardFail: false
 clientConnection:
   kubeconfig: "/var/lib/kube-proxy/kubeconfig"
 clusterCIDR: "10.172.0.0/16"
-mode: "iptables"
+mode: "ipvs"
 conntrack:
   maxPerCore: 0
 EOF
@@ -210,9 +210,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-proxy \\
   --config=/var/lib/kube-proxy/kube-proxy-config.yaml \\
-  --log_file=/var/log/kube-proxy.log \\
   --config-sync-period=1m0s \\
-  --logtostderr=false \\
   --v=2
 Restart=on-failure
 RestartSec=5
