@@ -10,17 +10,6 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=127.0.0.1 #$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
 fi
 
-# if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
-# then
-#   ARCH=arm64
-# elif [[ "$(uname -m)" = *"x86"* ]]
-# then
-#   ARCH=amd64
-# else
-#   echo "Could not configure your architecture" && exit 1
-# fi
-
-
 while getopts "n:" option; do
   case $option in
   n) 

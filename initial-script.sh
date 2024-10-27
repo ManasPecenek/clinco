@@ -25,16 +25,6 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=127.0.0.1 #$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
 fi
 
-# if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
-# then
-#   export ARCH=arm64
-# elif [[ "$(uname -m)" = *"x86"* ]]
-# then
-#   export ARCH=amd64
-# else
-#   echo $red"Could not find your architecture"$none"\n" && exit 1
-# fi
-
 
 while getopts "v:n:" option; do
   case $option in
@@ -47,9 +37,6 @@ while getopts "v:n:" option; do
   esac
 done
 
-# [[ -z "$NODE_COUNT" ]] && export NODE_COUNT=1
-
-# [[ -z "$ETCD_VOLUME" ]] && export ETCD_VOLUME=$RANDOM
 
 export NODE_COUNT=${NODE_COUNT:-1}
 
@@ -101,8 +88,6 @@ docker exec -i --privileged --user root worker-$j bash -c "./worker.sh $NODE_COU
 j=$((j-1))
 done
 #########################################################################################################################
-# KUBECONFIG=~/.kube/config:.kubeconfig kubectl config view --flatten > ./.merged-config
-# mv ./.merged-config ~/.kube/config
 export KUBECONFIG=.kubeconfig
 
 echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
