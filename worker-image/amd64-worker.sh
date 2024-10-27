@@ -75,7 +75,7 @@ version = 2
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
   # set default runtime handler to v2, which has a per-pod shim
   runtime_type = "io.containerd.runc.v2"
-  base_runtime_spec = "/etc/containerd/cri-base.json"
+  base_runtime_spec = ""
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
     # use systemd cgroup by default
     SystemdCgroup = false
@@ -84,7 +84,7 @@ version = 2
 # runtime class tests ...
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler]
   runtime_type = "io.containerd.runc.v2"
-  base_runtime_spec = "/etc/containerd/cri-base.json"
+  base_runtime_spec = ""
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler.options]
     SystemdCgroup = false
 
