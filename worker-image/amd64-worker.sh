@@ -140,6 +140,8 @@ cat <<EOF | tee /var/lib/kubelet/kubelet-config.yaml
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: "cgroupfs"
+kubeletCgroups: "/system.slice/kubelet.service"
+cgroupsPerQOS: true
 authentication:
   anonymous:
     enabled: false
@@ -157,14 +159,12 @@ clusterDomain: "cluster.local"
 clusterDNS:
   - "10.32.0.10"
 resolvConf: "/run/systemd/resolve/resolv.conf"
-containerRuntimeEndpoint: "unix:///var/run/containerd/containerd.sock"
+containerRuntimeEndpoint: "unix:///run/containerd/containerd.sock"
 tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
-cgroupsPerQOS: true
 maxPods: 40
 cpuManagerReconcilePeriod: "0s"
 evictionHard:
-  memory.available: "50Mi"
   imagefs.available: "0%"
   nodefs.available: "0%"
   nodefs.inodesFree: "0%"
