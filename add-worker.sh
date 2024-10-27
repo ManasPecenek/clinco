@@ -4,10 +4,10 @@ set -e
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
+  export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+  export KUBERNETES_PUBLIC_ADDRESS=127.0.0.1 #$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
 fi
 
 # if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
@@ -41,24 +41,11 @@ docker exec -it --privileged --user root master bash -c "./add.sh $i $current $K
 
 while [ $i -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 > /dev/null 2>&1
+docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro -v shared-volume:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 > /dev/null 2>&1
 
 instance=worker
 
-docker cp master:/root/ca.crt .
-docker cp master:/root/${instance}-$i-key.pem .
-docker cp master:/root/${instance}-$i.pem .
-docker cp master:/root/kube-proxy.kubeconfig .
-docker cp master:/root/${instance}-$i.kubeconfig .
-
-
-docker cp ca.crt ${instance}-$i:/root/ && rm -f ca.crt
-docker cp ${instance}-$i-key.pem ${instance}-$i:/root/ && rm -f ${instance}-$i-key.pem
-docker cp ${instance}-$i.pem ${instance}-$i:/root/ && rm -f ${instance}-$i.pem 
-docker cp kube-proxy.kubeconfig ${instance}-$i:/root/ && rm -f kube-proxy.kubeconfig
-docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/ && rm -f ${instance}-$i.kubeconfig
-
-(docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh $current") > /dev/null 2>&1
+docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh $current"
 
 i=$((i-1))
 done
