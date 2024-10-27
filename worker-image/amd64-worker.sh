@@ -96,6 +96,14 @@ version = 2
   tolerate_missing_hugepages_controller = true
   # restrict_oom_score_adj needs to be true when running inside UserNS (rootless)
   restrict_oom_score_adj = false
+
+[plugins."io.containerd.grpc.v1.cri".cni]
+  # bin_dir is the directory in which the binaries for the plugin is kept.
+  bin_dir = "/opt/cni/bin"
+
+  # conf_dir is the directory in which the admin places a CNI conf.
+  conf_dir = "/etc/cni/net.d"
+
 EOF
 
 
