@@ -65,29 +65,6 @@ mkdir -p /etc/containerd/
 cat << EOF | tee /etc/containerd/config.toml
 version = 2
 
-[plugins."io.containerd.grpc.v1.cri".containerd]
-  # save disk space when using a single snapshotter
-  discard_unpacked_layers = true
-  # explicitly use default snapshotter so we can sed it in entrypoint
-  snapshotter = "overlayfs"
-  # explicit default here, as we're configuring it below
-  default_runtime_name = "runc"
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-  # set default runtime handler to v2, which has a per-pod shim
-  runtime_type = "io.containerd.runc.v2"
-  base_runtime_spec = ""
-  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-    # use systemd cgroup by default
-    SystemdCgroup = false
-
-# Setup a runtime with the magic name ("test-handler") used for Kubernetes
-# runtime class tests ...
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler]
-  runtime_type = "io.containerd.runc.v2"
-  base_runtime_spec = ""
-  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler.options]
-    SystemdCgroup = false
-
 [plugins."io.containerd.grpc.v1.cri"]
   # use fixed sandbox image
   sandbox_image = "registry.k8s.io/pause:3.10"
@@ -97,12 +74,34 @@ version = 2
   # restrict_oom_score_adj needs to be true when running inside UserNS (rootless)
   restrict_oom_score_adj = false
 
-[plugins."io.containerd.grpc.v1.cri".cni]
-  # bin_dir is the directory in which the binaries for the plugin is kept.
-  bin_dir = "/opt/cni/bin"
+  [plugins."io.containerd.grpc.v1.cri".containerd]
+    # save disk space when using a single snapshotter
+    discard_unpacked_layers = true
+    # explicitly use default snapshotter so we can sed it in entrypoint
+    snapshotter = "overlayfs"
+    # explicit default here, as we're configuring it below
+    default_runtime_name = "runc"
 
-  # conf_dir is the directory in which the admin places a CNI conf.
-  conf_dir = "/etc/cni/net.d"
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+      # set default runtime handler to v2, which has a per-pod shim
+      runtime_type = "io.containerd.runc.v2"
+      cni_conf_dir = "/etc/cni/net.d"
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+        # use systemd cgroup by default
+        SystemdCgroup = false
+
+    # Setup a runtime with the magic name ("test-handler") used for Kubernetes
+    # runtime class tests ...
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler]
+      runtime_type = "io.containerd.runc.v2"
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.test-handler.options]
+        SystemdCgroup = false
+
+  [plugins."io.containerd.grpc.v1.cri".cni]
+    # bin_dir is the directory in which the binaries for the plugin is kept.
+    bin_dir = "/opt/cni/bin"
+    # conf_dir is the directory in which the admin places a CNI conf.
+    conf_dir = "/etc/cni/net.d"
 
 EOF
 
@@ -136,6 +135,7 @@ cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
 cp ca.crt /var/lib/kubernetes/
 mkdir -p /etc/kubernetes/manifests
 
+
 cat <<EOF | tee /var/lib/kubelet/kubelet-config.yaml
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
@@ -151,7 +151,7 @@ authentication:
   x509:
     clientCAFile: "/var/lib/kubernetes/ca.crt"
 authorization:
-  mode: "Webhook"
+  mode: Webhook
   webhook:
     cacheAuthorizedTTL: "0s"
     cacheUnauthorizedTTL: "0s"
