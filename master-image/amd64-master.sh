@@ -11,7 +11,7 @@ chmod 700 /var/lib/etcd
 cp ca.crt kube-api-server.crt kube-api-server.key /etc/etcd/
 rm -rf etcd*
 
-export INTERNAL_IP=172.172.0.1
+export MASTER_IP=172.172.0.1
 
 export ETCD_NAME=$(hostname -s)
 
@@ -20,27 +20,30 @@ export KUBERNETES_PUBLIC_ADDRESS=$2
 cat <<EOF | tee /etc/systemd/system/etcd.service
 [Unit]
 Description=etcd
-Documentation=https://github.com/coreos
+Documentation=https://github.com/etcd-io/etcd
 
 [Service]
 Type=notify
 ExecStart=/usr/local/bin/etcd \\
-  --name ${ETCD_NAME} \\
+  --name=${ETCD_NAME} \\
+  --log-outputs=default \\
+  --initial-cluster-state=new \\
   --cert-file=/etc/etcd/kube-api-server.crt \\
   --key-file=/etc/etcd/kube-api-server.key \\
   --peer-cert-file=/etc/etcd/kube-api-server.crt \\
   --peer-key-file=/etc/etcd/kube-api-server.key \\
-  --trusted-ca-file=/etc/etcd/ca.crt \\
   --peer-trusted-ca-file=/etc/etcd/ca.crt \\
-  --peer-client-cert-auth \\
-  --client-cert-auth \\
-  --initial-advertise-peer-urls https://${INTERNAL_IP}:2380 \\
-  --listen-peer-urls https://${INTERNAL_IP}:2380 \\
-  --listen-client-urls https://${INTERNAL_IP}:2379,https://127.0.0.1:2379 \\
-  --advertise-client-urls https://${INTERNAL_IP}:2379 \\
-  --initial-cluster-token etcd-cluster-0 \\
-  --initial-cluster master=https://${INTERNAL_IP}:2380 \\
-  --initial-cluster-state new \\
+  --peer-client-cert-auth=true \\
+  --trusted-ca-file=/etc/etcd/ca.crt \\
+  --client-cert-auth=true \\
+  --initial-advertise-peer-urls=https://${MASTER_IP}:2380 \\
+  --initial-cluster=master=https://${MASTER_IP}:2380 \\
+  --initial-cluster-token=etcd-cluster-0 \\
+  --listen-peer-urls=https://${MASTER_IP}:2380 \\
+  --listen-client-urls=https://${MASTER_IP}:2379,https://127.0.0.1:2379 \\
+  --advertise-client-urls=https://${MASTER_IP}:2379 \\
+  --snapshot-count=10000 \\
+  --log-level=debug \\
   --data-dir=/var/lib/etcd
 Restart=on-failure
 RestartSec=5
@@ -77,13 +80,13 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-apiserver \\
-  --advertise-address=${INTERNAL_IP} \\
+  --advertise-address=${MASTER_IP} \\
   --bind-address=0.0.0.0 \\
   --allow-privileged=true \\
   --audit-log-maxage=30 \\
   --audit-log-maxbackup=3 \\
   --audit-log-maxsize=100 \\
-  --audit-log-path=/var/log/audit.log \\
+  --audit-log-path=/var/log/kube-apiserver-audit.log \\
   --authorization-mode=Node,RBAC \\
   --secure-port=6443 \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
@@ -91,16 +94,16 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --etcd-cafile=/var/lib/kubernetes/ca.crt \\
   --etcd-certfile=/var/lib/kubernetes/kube-api-server.crt \\
   --etcd-keyfile=/var/lib/kubernetes/kube-api-server.key \\
-  --etcd-servers=https://${INTERNAL_IP}:2379 \\
+  --etcd-servers=https://127.0.0.1:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
   --kubelet-client-certificate=/var/lib/kubernetes/kube-api-server.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kube-api-server.key \\
-  --runtime-config='api/all=true' \\
+  --runtime-config="api/all=true" \\
   --service-account-key-file=/var/lib/kubernetes/service-accounts.crt \\
   --service-account-signing-key-file=/var/lib/kubernetes/service-accounts.key \\
-  --service-account-issuer=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \\
+  --service-account-issuer=https://kubernetes.default.svc.cluster.local \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kube-api-server.crt \\
@@ -138,14 +141,13 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --authentication-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --authorization-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --leader-elect=true \\
-  --controllers=* \\
+  --controllers="*" \\
   --root-ca-file=/var/lib/kubernetes/ca.crt \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
   --service-account-private-key-file=/var/lib/kubernetes/service-accounts.key \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --use-service-account-credentials=true \\
-  --v=2 \\
-  --pod-eviction-timeout=1m0s
+  --v=2
 Restart=on-failure
 RestartSec=5
 
@@ -205,14 +207,11 @@ rules:
       - nodes/metrics
     verbs:
       - "*"
-EOF
-
-cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: system:kube-apiserver
-  namespace: ""
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

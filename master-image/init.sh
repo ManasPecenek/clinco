@@ -190,8 +190,8 @@ kubectl config use-context default --kubeconfig=admin.kubeconfig
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 
 cat > encryption-config.yaml <<EOF
-kind: EncryptionConfig
-apiVersion: v1
+kind: EncryptionConfiguration
+apiVersion: apiserver.config.k8s.io/v1
 resources:
   - resources:
       - secrets
