@@ -22,7 +22,7 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  export KUBERNETES_PUBLIC_ADDRESS=127.0.0.1 #$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
+  export KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
 fi
 
 

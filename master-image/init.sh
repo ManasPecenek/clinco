@@ -7,6 +7,8 @@ i=$1
 export KUBERNETES_PUBLIC_ADDRESS=$2
 export MASTER_IP=172.172.0.1
 
+sed -i "s/\${KUBERNETES_PUBLIC_ADDRESS}/$KUBERNETES_PUBLIC_ADDRESS/g" ca.conf
+
 {
   openssl genrsa -out ca.key 4096
   openssl req -x509 -new -sha512 -noenc \
