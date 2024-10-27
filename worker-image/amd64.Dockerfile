@@ -1,11 +1,13 @@
 FROM ubuntu:22.04
 
+ARG ARCH=amd64
+
 ENV container=docker 
 ENV CRI_VERSION=v1.26.0
 ENV RUNC_VERSION=v1.1.4
 ENV CNI_VERSION=v1.2.0
 ENV CONTAINERD_VERSION=1.6.15
-ENV K8S_VERSION=v1.26.1
+ENV K8S_VERSION=v1.31.0
 
 WORKDIR /root
 
@@ -17,17 +19,17 @@ RUN apt update && \
     apt autoremove --yes
 
 RUN wget -q --show-progress --https-only --timestamping \
-https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_VERSION}/crictl-${CRI_VERSION}-linux-amd64.tar.gz \
-https://github.com/opencontainers/runc/releases/download/${RUNC_VERSION}/runc.amd64 \
-https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-amd64-${CNI_VERSION}.tgz \
-https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz \
-https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl \
-https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kube-proxy \
-https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubelet
+https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRI_VERSION}/crictl-${CRI_VERSION}-linux-${ARCH}.tar.gz \
+https://github.com/opencontainers/runc/releases/download/${RUNC_VERSION}/runc.${ARCH} \
+https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz \
+https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-${ARCH}.tar.gz \
+https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/${ARCH}/kubectl \
+https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/${ARCH}/kube-proxy \
+https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/${ARCH}/kubelet
 
-COPY ./amd64-worker.sh .
+COPY ./${ARCH}-worker.sh .
 
-RUN chmod +x amd64-worker.sh
+RUN chmod +x ${ARCH}-worker.sh
 
 STOPSIGNAL SIGRTMIN+3
 

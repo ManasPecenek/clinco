@@ -11,7 +11,7 @@ chmod 700 /var/lib/etcd
 cp ca.crt kube-api-server.crt kube-api-server.key /etc/etcd/
 rm -rf etcd*
 
-export INTERNAL_IP=172.172.0.1
+export MASTER_IP=172.172.0.1
 
 export ETCD_NAME=$(hostname -s)
 
@@ -20,27 +20,30 @@ export KUBERNETES_PUBLIC_ADDRESS=$2
 cat <<EOF | tee /etc/systemd/system/etcd.service
 [Unit]
 Description=etcd
-Documentation=https://github.com/coreos
+Documentation=https://github.com/etcd-io/etcd
 
 [Service]
 Type=notify
 ExecStart=/usr/local/bin/etcd \\
-  --name ${ETCD_NAME} \\
+  --name=${ETCD_NAME} \\
+  --log-outputs=default \\
+  --initial-cluster-state=new \\
   --cert-file=/etc/etcd/kube-api-server.crt \\
   --key-file=/etc/etcd/kube-api-server.key \\
   --peer-cert-file=/etc/etcd/kube-api-server.crt \\
   --peer-key-file=/etc/etcd/kube-api-server.key \\
-  --trusted-ca-file=/etc/etcd/ca.crt \\
   --peer-trusted-ca-file=/etc/etcd/ca.crt \\
-  --peer-client-cert-auth \\
-  --client-cert-auth \\
-  --initial-advertise-peer-urls https://${INTERNAL_IP}:2380 \\
-  --listen-peer-urls https://${INTERNAL_IP}:2380 \\
-  --listen-client-urls https://${INTERNAL_IP}:2379,https://127.0.0.1:2379 \\
-  --advertise-client-urls https://${INTERNAL_IP}:2379 \\
-  --initial-cluster-token etcd-cluster-0 \\
-  --initial-cluster master=https://${INTERNAL_IP}:2380 \\
-  --initial-cluster-state new \\
+  --peer-client-cert-auth=true \\
+  --trusted-ca-file=/etc/etcd/ca.crt \\
+  --client-cert-auth=true \\
+  --initial-advertise-peer-urls=https://${MASTER_IP}:2380 \\
+  --initial-cluster=master=https://${MASTER_IP}:2380 \\
+  --initial-cluster-token=etcd-cluster-0 \\
+  --listen-peer-urls=https://${MASTER_IP}:2380 \\
+  --listen-client-urls=https://${MASTER_IP}:2379,https://127.0.0.1:2379 \\
+  --advertise-client-urls=https://${MASTER_IP}:2379 \\
+  --snapshot-count=10000 \\
+  --log-level=debug \\
   --data-dir=/var/lib/etcd
 Restart=on-failure
 RestartSec=5
@@ -77,7 +80,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-apiserver \\
-  --advertise-address=${INTERNAL_IP} \\
+  --advertise-address=${MASTER_IP} \\
   --bind-address=0.0.0.0 \\
   --allow-privileged=true \\
   --audit-log-maxage=30 \\
@@ -91,7 +94,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --etcd-cafile=/var/lib/kubernetes/ca.crt \\
   --etcd-certfile=/var/lib/kubernetes/kube-api-server.crt \\
   --etcd-keyfile=/var/lib/kubernetes/kube-api-server.key \\
-  --etcd-servers=https://${INTERNAL_IP}:2379 \\
+  --etcd-servers=https://${MASTER_IP}:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
