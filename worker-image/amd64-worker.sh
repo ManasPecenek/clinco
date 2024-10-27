@@ -124,6 +124,7 @@ cp ca.crt /var/lib/kubernetes/
 cat <<EOF | tee /var/lib/kubelet/kubelet-config.yaml
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: "cgroupfs"
 authentication:
   anonymous:
     enabled: false
@@ -144,9 +145,8 @@ resolvConf: "/run/systemd/resolve/resolv.conf"
 containerRuntimeEndpoint: "unix:///var/run/containerd/containerd.sock"
 tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
-cgroupDriver: "systemd"
 cgroupsPerQOS: true
-cgroupRoot: "/kubelet"
+maxPods: 40
 cpuManagerReconcilePeriod: "0s"
 evictionHard:
   memory.available: "50Mi"
@@ -158,6 +158,7 @@ failSwapOn: false
 fileCheckFrequency: "0s"
 healthzBindAddress: "127.0.0.1"
 healthzPort: 10248
+podCIDR: "${POD_CIDR}"
 httpCheckFrequency: "0s"
 logging:
   flushFrequency: 0
