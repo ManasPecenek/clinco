@@ -146,6 +146,7 @@ tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
 cgroupDriver: "systemd"
 cgroupsPerQOS: true
+cgroupRoot: "/kubelet"
 cpuManagerReconcilePeriod: "0s"
 evictionHard:
   memory.available: "50Mi"
