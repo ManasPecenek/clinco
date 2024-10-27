@@ -128,19 +128,55 @@ authentication:
   anonymous:
     enabled: false
   webhook:
+    cacheTTL: "0s"
     enabled: true
   x509:
     clientCAFile: "/var/lib/kubernetes/ca.crt"
 authorization:
-  mode: Webhook
+  mode: "Webhook"
+  webhook:
+    cacheAuthorizedTTL: "0s"
+    cacheUnauthorizedTTL: "0s"
 clusterDomain: "cluster.local"
 clusterDNS:
   - "10.32.0.10"
-podCIDR: "${POD_CIDR}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
-runtimeRequestTimeout: "15m"
+containerRuntimeEndpoint: "unix:///var/run/containerd/containerd.sock"
 tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
+cgroupDriver: "systemd"
+cgroupsPerQOS: true
+cpuManagerReconcilePeriod: "0s"
+evictionHard:
+  memory.available: "50Mi"
+  imagefs.available: "0%"
+  nodefs.available: "0%"
+  nodefs.inodesFree: "0%"
+evictionPressureTransitionPeriod: "0s"
+failSwapOn: false
+fileCheckFrequency: "0s"
+healthzBindAddress: "127.0.0.1"
+healthzPort: 10248
+httpCheckFrequency: "0s"
+logging:
+  flushFrequency: 0
+  options:
+    json:
+      infoBufferSize: "0"
+    text:
+      infoBufferSize: "0"
+  verbosity: 0
+memorySwap: {}
+nodeStatusReportFrequency: "0s"
+nodeStatusUpdateFrequency: "0s"
+rotateCertificates: true
+runtimeRequestTimeout: "0s"
+shutdownGracePeriod: "0s"
+shutdownGracePeriodCriticalPods: "0s"
+staticPodPath: "/etc/kubernetes/manifests"
+streamingConnectionIdleTimeout: "0s"
+syncFrequency: "0s"
+volumeStatsAggPeriod: "0s"
 EOF
 
 cat <<EOF | tee /etc/systemd/system/kubelet.service
@@ -153,14 +189,8 @@ Requires=containerd.service
 [Service]
 ExecStart=/usr/local/bin/kubelet \\
   --config=/var/lib/kubelet/kubelet-config.yaml \\
-  --container-runtime=remote \\
-  --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \\
   --kubeconfig=/var/lib/kubelet/kubeconfig \\
-  --register-schedulable=true \\
-  --register-node=true \\
-  --v=2 \\
-  --fail-swap-on=false \\
-  --pod-infra-container-image=k8s.gcr.io/pause:3.6
+  --v=2
 Restart=on-failure
 RestartSec=5
 
