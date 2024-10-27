@@ -34,7 +34,7 @@ POD_CIDR=10.172.$i.0/24
 
 cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
 {
-    "cniVersion": "1.6.0",
+    "cniVersion": "1.0.0",
     "name": "bridge",
     "type": "bridge",
     "bridge": "cnio0",
@@ -53,7 +53,7 @@ EOF
 
 cat <<EOF | tee /etc/cni/net.d/99-loopback.conf
 {
-    "cniVersion": "1.6.0",
+    "cniVersion": "1.0.0",
     "name": "lo",
     "type": "loopback"
 }
@@ -152,9 +152,6 @@ authentication:
     clientCAFile: "/var/lib/kubernetes/ca.crt"
 authorization:
   mode: Webhook
-  webhook:
-    cacheAuthorizedTTL: "0s"
-    cacheUnauthorizedTTL: "0s"
 clusterDomain: "cluster.local"
 clusterDNS:
   - "10.32.0.10"
@@ -163,37 +160,9 @@ containerRuntimeEndpoint: "unix:///run/containerd/containerd.sock"
 tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
 maxPods: 40
-cpuManagerReconcilePeriod: "0s"
-evictionHard:
-  imagefs.available: "0%"
-  nodefs.available: "0%"
-  nodefs.inodesFree: "0%"
-evictionPressureTransitionPeriod: "0s"
 failSwapOn: false
-fileCheckFrequency: "0s"
-healthzBindAddress: "127.0.0.1"
-healthzPort: 10248
 podCIDR: "${POD_CIDR}"
-httpCheckFrequency: "0s"
-logging:
-  flushFrequency: 0
-  options:
-    json:
-      infoBufferSize: "0"
-    text:
-      infoBufferSize: "0"
-  verbosity: 0
-memorySwap: {}
-nodeStatusReportFrequency: "0s"
-nodeStatusUpdateFrequency: "0s"
-rotateCertificates: true
-runtimeRequestTimeout: "0s"
-shutdownGracePeriod: "0s"
-shutdownGracePeriodCriticalPods: "0s"
 staticPodPath: "/etc/kubernetes/manifests"
-streamingConnectionIdleTimeout: "0s"
-syncFrequency: "0s"
-volumeStatsAggPeriod: "0s"
 EOF
 
 cat <<EOF | tee /etc/systemd/system/kubelet.service

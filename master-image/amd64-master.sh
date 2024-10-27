@@ -86,7 +86,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --audit-log-maxage=30 \\
   --audit-log-maxbackup=3 \\
   --audit-log-maxsize=100 \\
-  --audit-log-path=/var/log/audit.log \\
+  --audit-log-path=/var/log/kube-apiserver-audit.log \\
   --authorization-mode=Node,RBAC \\
   --secure-port=6443 \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
@@ -94,16 +94,16 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --etcd-cafile=/var/lib/kubernetes/ca.crt \\
   --etcd-certfile=/var/lib/kubernetes/kube-api-server.crt \\
   --etcd-keyfile=/var/lib/kubernetes/kube-api-server.key \\
-  --etcd-servers=https://${MASTER_IP}:2379 \\
+  --etcd-servers=https://127.0.0.1:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
   --kubelet-client-certificate=/var/lib/kubernetes/kube-api-server.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kube-api-server.key \\
-  --runtime-config='api/all=true' \\
+  --runtime-config="api/all=true" \\
   --service-account-key-file=/var/lib/kubernetes/service-accounts.crt \\
   --service-account-signing-key-file=/var/lib/kubernetes/service-accounts.key \\
-  --service-account-issuer=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \\
+  --service-account-issuer=https://kubernetes.default.svc.cluster.local \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kube-api-server.crt \\
@@ -141,14 +141,13 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --authentication-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --authorization-kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --leader-elect=true \\
-  --controllers=* \\
+  --controllers="*" \\
   --root-ca-file=/var/lib/kubernetes/ca.crt \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
   --service-account-private-key-file=/var/lib/kubernetes/service-accounts.key \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --use-service-account-credentials=true \\
-  --v=2 \\
-  --pod-eviction-timeout=1m0s
+  --v=2
 Restart=on-failure
 RestartSec=5
 
@@ -208,14 +207,11 @@ rules:
       - nodes/metrics
     verbs:
       - "*"
-EOF
-
-cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: system:kube-apiserver
-  namespace: ""
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
