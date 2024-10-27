@@ -34,7 +34,7 @@ POD_CIDR=10.172.$i.0/24
 
 cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
 {
-    "cniVersion": "0.4.0",
+    "cniVersion": "1.6.0",
     "name": "bridge",
     "type": "bridge",
     "bridge": "cnio0",
@@ -53,7 +53,7 @@ EOF
 
 cat <<EOF | tee /etc/cni/net.d/99-loopback.conf
 {
-    "cniVersion": "0.4.0",
+    "cniVersion": "1.6.0",
     "name": "lo",
     "type": "loopback"
 }
