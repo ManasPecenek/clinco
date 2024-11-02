@@ -26,8 +26,10 @@ then
 fi
 
 
-while getopts "n:" option; do
+while getopts "c:n:" option; do
   case $option in
+  c) 
+    CLUSTER_NAME=$OPTARG;;
   n) 
     NODE_COUNT=$OPTARG;;
   *) echo "usage: $0 [-v] [-n]" #>&2
@@ -35,7 +37,7 @@ while getopts "n:" option; do
   esac
 done
 
-export CLUSTER_NAME=${1:-clinco}
+export CLUSTER_NAME=${CLUSTER_NAME:-clinco}
 
 if [ -z "$(docker volume ls | grep ${CLUSTER_NAME})" ]; then
   export ETCD_STATE=new
@@ -114,6 +116,9 @@ then
   --set controller.nodeSelector."kubernetes\.io\/hostname"=master \
   --set controller.service.external.enabled=false \
   --version 4.11.3 > /dev/null
+
+  helm upgrade --install test prometheus-community/kube-prometheus-stack --values values.custom.yaml
+
   [[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
 
 # [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 

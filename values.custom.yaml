@@ -6,3 +6,9 @@ grafana:
     hosts:
       - ubuntu.local
     path: /
+  persistence:
+    enabled: true
+    type: sts
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi

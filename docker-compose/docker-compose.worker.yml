@@ -28,3 +28,5 @@ networks:
 
 volumes:
   shared-volume:
+    name: clinco-shared
+    driver: local
