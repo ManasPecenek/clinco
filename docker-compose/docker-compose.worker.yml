@@ -2,10 +2,12 @@ version: '3.8'
 
 services:
   worker:
-    image: "petschenek/ubuntu-systemd:worker-${ARCH}-22.04"
+    # image: "petschenek/ubuntu-systemd:worker-${ARCH}-22.04"
     build:
       context: ../worker-image
-      dockerfile: ../worker-image/amd64.Dockerfile
+      dockerfile: ../worker-image/Dockerfile
+      args:
+        TARGETARCH: amd64
     hostname: worker-1
     container_name: worker-1
     networks:

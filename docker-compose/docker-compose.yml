@@ -1,9 +1,11 @@
 services:
   master:
-    image: petschenek/ubuntu-systemd:master-${ARCH}-22.04
+    # image: petschenek/ubuntu-systemd:master-${ARCH}-22.04
     build:
       context: ../master-image
-      dockerfile: ../master-image/amd64.Dockerfile
+      dockerfile: ../master-image/Dockerfile
+      args:
+        TARGETARCH: amd64
     container_name: master
     hostname: master
     privileged: true
