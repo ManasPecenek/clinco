@@ -2,11 +2,11 @@
 
 set -e
 
-cp /home/kube-proxy.kubeconfig .
-cp /home/worker-$2.kubeconfig .
-cp /home/worker-$2.key .
-cp /home/worker-$2.crt .
-cp /home/ca.crt .
+# cp /home/kube-proxy.kubeconfig .
+# cp /home/worker-$2.kubeconfig .
+# cp /home/worker-$2.key .
+# cp /home/worker-$2.crt .
+# cp /home/ca.crt .
 
 swapoff -a && sysctl vm.swappiness=0
 
@@ -24,8 +24,8 @@ tar -xvf crictl-${CRI_VERSION}-linux-${ARCH}.tar.gz
 tar -xvf containerd-${CONTAINERD_VERSION}-linux-${ARCH}.tar.gz -C containerd
 tar -xvf cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz -C /opt/cni/bin/
 mv runc.${ARCH} runc
-chmod +x crictl kubectl kube-proxy kubelet runc 
-mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
+chmod +x crictl kube-proxy kubelet runc 
+mv crictl kube-proxy kubelet runc /usr/local/bin/
 mv containerd/bin/* /bin/
 rm -f *.gz *.tgz
 

@@ -6,8 +6,14 @@ ENV ARCH=${TARGETARCH}
 ENV container=docker 
 ENV K8S_VERSION=v1.31.0
 ENV ETCD_VERSION=v3.5.16
+ENV CRI_VERSION=v1.31.0
+ENV RUNC_VERSION=v1.1.15
+ENV CNI_VERSION=v1.6.0
+ENV CONTAINERD_VERSION=1.7.23
 
 WORKDIR /root
+
+VOLUME ["/var/lib/containerd"]
 
 RUN apt update && \
     apt install wget systemd systemd-cron kmod socat conntrack ipset iproute2 -y && \
@@ -24,7 +30,7 @@ RUN wget -q --show-progress --https-only --timestamping \
 "https://github.com/opencontainers/runc/releases/download/${RUNC_VERSION}/runc.${TARGETARCH}" \
 "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${TARGETARCH}-${CNI_VERSION}.tgz" \
 "https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-${TARGETARCH}.tar.gz" \
-"https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/${TARGETARCH}/kube-proxy"\
+"https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/${TARGETARCH}/kube-proxy" \
 "https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/${TARGETARCH}/kubelet"
 
 COPY ca.conf init.sh add.sh master.sh worker.sh ./

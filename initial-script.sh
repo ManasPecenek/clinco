@@ -68,6 +68,7 @@ done
 
 
 #########################################################################################################################
+j=$NODE_COUNT
 echo -e $blue"*** Configuring Master Node ***"$none"\n"
 
 docker exec -i --privileged --user root master bash -c "./master.sh $NODE_COUNT $KUBERNETES_PUBLIC_ADDRESS" #> /dev/null

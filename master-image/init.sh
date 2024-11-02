@@ -19,6 +19,7 @@ sed -i "s/\${KUBERNETES_PUBLIC_ADDRESS}/$KUBERNETES_PUBLIC_ADDRESS/g" ca.conf
 
 certs=(
   "admin"
+  "master"
   "kube-proxy"
   "kube-scheduler"
   "kube-controller-manager"
@@ -43,7 +44,7 @@ done
 
 
 #########################################################################################################################
-while [ $i -gt 0 ]
+while [ $i -gt 1 ]
 do
 
 instance=worker
@@ -169,6 +170,24 @@ kubectl config set-context default \
 
 kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 
+kubectl config set-cluster clinco-the-hard-way \
+--certificate-authority=ca.crt \
+--embed-certs=true \
+--server=https://127.0.0.1:6443 \
+--kubeconfig=master.kubeconfig
+
+kubectl config set-credentials system:node:master \
+--client-certificate=master.crt \
+--client-key=master.key \
+--embed-certs=true \
+--kubeconfig=master.kubeconfig
+
+kubectl config set-context default \
+--cluster=clinco-the-hard-way \
+--user=system:node:master \
+--kubeconfig=master.kubeconfig
+
+kubectl config use-context default --kubeconfig=master.kubeconfig
 
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.crt \
