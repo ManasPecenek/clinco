@@ -55,12 +55,12 @@ kubectl config set-credentials system:node:${instance}-$i \
 --embed-certs=true \
 --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-context default \
+kubectl config set-context ${CLUSTER_NAME} \
 --cluster=clinco-the-hard-way \
 --user=system:node:${instance}-$i \
 --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config use-context default --kubeconfig=${instance}-$i.kubeconfig
+kubectl config use-context ${CLUSTER_NAME} --kubeconfig=${instance}-$i.kubeconfig
 
 i=$((i-1))
 done

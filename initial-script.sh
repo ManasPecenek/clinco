@@ -46,7 +46,7 @@ fi
 export NODE_COUNT=${NODE_COUNT:-0}
 
 echo -e "\n"$blue"*** Creating Master Node ***"$none"\n"
-# docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -e CLUSTER_NAME -v etcd-${CLUSTER_NAME}:/var/lib/etcd -v shared-volume:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/clinco-master:22.04 > /dev/null 2>&1
+# docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -e CLUSTER_NAME -v clinco-etcd-${CLUSTER_NAME}:/var/lib/etcd -v clinco-shared:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 --privileged --user root petschenek/clinco-master:22.04 > /dev/null 2>&1
 docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Created ***"$none"\n" || echo -e $red"ERROR Could not Create Master Node"$none"\n"
@@ -56,7 +56,7 @@ i=$NODE_COUNT
 while [ $i -gt 0 ]
 do
   echo -e $blue"*** Creating Worker Node $i ***"$none"\n"
-  # docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro -v shared-volume:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
+  # docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
   docker compose -f docker-compose/docker-compose.worker.yml up --build -d --force-recreate
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"

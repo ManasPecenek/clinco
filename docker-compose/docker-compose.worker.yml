@@ -8,14 +8,13 @@ services:
       dockerfile: ../worker-image/Dockerfile
       args:
         TARGETARCH: amd64
+    environment:
+      CLUSTER_NAME: ${CLUSTER_NAME}
     hostname: worker-1
     container_name: worker-1
     networks:
       clinco:
         ipv4_address: "172.172.1.1"
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
       - /lib/modules:/lib/modules:ro
       - shared-volume:/home

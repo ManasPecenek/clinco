@@ -37,8 +37,8 @@ networks:
 
 volumes:
   etcd-volume:
-    name: etcd-${CLUSTER_NAME}
+    name: clinco-etcd-${CLUSTER_NAME}
     driver: local
   shared-volume:
-    name: clinco-shared-volume
+    name: clinco-shared
     driver: local
