@@ -20,10 +20,10 @@ mkdir -p \
 
 
 mkdir -p containerd
-tar -xvf crictl-${CRI_VERSION}-linux-amd64.tar.gz
-tar -xvf containerd-${CONTAINERD_VERSION}-linux-amd64.tar.gz -C containerd
-tar -xvf cni-plugins-linux-amd64-${CNI_VERSION}.tgz -C /opt/cni/bin/
-mv runc.amd64 runc
+tar -xvf crictl-${CRI_VERSION}-linux-${ARCH}.tar.gz
+tar -xvf containerd-${CONTAINERD_VERSION}-linux-${ARCH}.tar.gz -C containerd
+tar -xvf cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz -C /opt/cni/bin/
+mv runc.${ARCH} runc
 chmod +x crictl kubectl kube-proxy kubelet runc 
 mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
 mv containerd/bin/* /bin/
