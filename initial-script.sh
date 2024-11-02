@@ -94,30 +94,34 @@ docker exec -i --privileged --user root worker-$j bash -c "./worker.sh $NODE_COU
 j=$((j-1))
 done
 #########################################################################################################################
-# export KUBECONFIG=.kubeconfig
 
-# echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
-# kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
-# [[ $? -eq 0 ]] && echo -e $blue"*** CoreDNS Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy CoreDNS"$none"\n"
+if [[ ${ETCD_STATE} = "new" ]];
+then
 
-# echo -e $blue"*** Deploying Local Path Provisioner ***"$none"\n"
-# kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml #> /dev/null
-# [[ $? -eq 0 ]] && echo -e $blue"*** Local Path Provisioner Deployed***"$none"\n" || echo -e $red"ERROR! Could not Deploy Local Path Provisioner"$none"\n"
+  export KUBECONFIG=.kubeconfig
 
-# echo -e $blue"*** Deploying Nginx Ingress Controller ***"$none"\n"
-# helm upgrade --install ingress-nginx ingress-nginx \
-# --repo https://kubernetes.github.io/ingress-nginx \
-# --namespace ingress-nginx --create-namespace \
-# --set controller.hostNetwork=true \
-# --set controller.hostPort.enabled=true  \
-# --set controller.admissionWebhooks.enabled=false \
-# --set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
-# --set controller.service.external.enabled=false \
-# --version 4.1.1 > /dev/null
-# [[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
+  echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
+  kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
+  [[ $? -eq 0 ]] && echo -e $blue"*** CoreDNS Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy CoreDNS"$none"\n"
+
+  echo -e $blue"*** Deploying Local Path Provisioner ***"$none"\n"
+  kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml #> /dev/null
+  [[ $? -eq 0 ]] && echo -e $blue"*** Local Path Provisioner Deployed***"$none"\n" || echo -e $red"ERROR! Could not Deploy Local Path Provisioner"$none"\n"
+
+  echo -e $blue"*** Deploying Nginx Ingress Controller ***"$none"\n"
+  helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace \
+  --set controller.hostNetwork=true \
+  --set controller.hostPort.enabled=true  \
+  --set controller.admissionWebhooks.enabled=false \
+  --set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
+  --set controller.service.external.enabled=false \
+  --version 4.1.1 > /dev/null
+  [[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
 
 # [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
 
-
+fi
 
 
