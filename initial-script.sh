@@ -49,7 +49,7 @@ export NODE_COUNT=${NODE_COUNT:-1}
 export ETCD_VOLUME=${ETCD_VOLUME:-$RANDOM}
 
 echo -e "\n"$blue"*** Creating Master Node ***"$none"\n"
-# docker run -dt --network clinco --hostname master --name master -v etcd-$ETCD_VOLUME:/var/lib/etcd -v shared-volume:/home --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/clinco-master:22.04 > /dev/null 2>&1
+# docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -v etcd-$ETCD_VOLUME:/var/lib/etcd -v shared-volume:/home --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/clinco-master:22.04 > /dev/null 2>&1
 docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Created ***"$none"\n" || echo -e $red"ERROR Could not Create Master Node"$none"\n"
@@ -94,27 +94,27 @@ docker exec -i --privileged --user root worker-$j bash -c "./worker.sh $NODE_COU
 j=$((j-1))
 done
 #########################################################################################################################
-export KUBECONFIG=.kubeconfig
+# export KUBECONFIG=.kubeconfig
 
-echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
-kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
-[[ $? -eq 0 ]] && echo -e $blue"*** CoreDNS Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy CoreDNS"$none"\n"
+# echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
+# kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
+# [[ $? -eq 0 ]] && echo -e $blue"*** CoreDNS Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy CoreDNS"$none"\n"
 
-echo -e $blue"*** Deploying Local Path Provisioner ***"$none"\n"
-kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml #> /dev/null
-[[ $? -eq 0 ]] && echo -e $blue"*** Local Path Provisioner Deployed***"$none"\n" || echo -e $red"ERROR! Could not Deploy Local Path Provisioner"$none"\n"
+# echo -e $blue"*** Deploying Local Path Provisioner ***"$none"\n"
+# kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml #> /dev/null
+# [[ $? -eq 0 ]] && echo -e $blue"*** Local Path Provisioner Deployed***"$none"\n" || echo -e $red"ERROR! Could not Deploy Local Path Provisioner"$none"\n"
 
-echo -e $blue"*** Deploying Nginx Ingress Controller ***"$none"\n"
-helm upgrade --install ingress-nginx ingress-nginx \
---repo https://kubernetes.github.io/ingress-nginx \
---namespace ingress-nginx --create-namespace \
---set controller.hostNetwork=true \
---set controller.hostPort.enabled=true  \
---set controller.admissionWebhooks.enabled=false \
---set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
---set controller.service.external.enabled=false \
---version 4.1.1 > /dev/null
-[[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
+# echo -e $blue"*** Deploying Nginx Ingress Controller ***"$none"\n"
+# helm upgrade --install ingress-nginx ingress-nginx \
+# --repo https://kubernetes.github.io/ingress-nginx \
+# --namespace ingress-nginx --create-namespace \
+# --set controller.hostNetwork=true \
+# --set controller.hostPort.enabled=true  \
+# --set controller.admissionWebhooks.enabled=false \
+# --set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
+# --set controller.service.external.enabled=false \
+# --version 4.1.1 > /dev/null
+# [[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
 
 # [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
 
