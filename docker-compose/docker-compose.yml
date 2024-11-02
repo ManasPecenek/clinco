@@ -15,9 +15,12 @@ services:
     stdin_open: true  # Allows the container to stay running
     tty: true         # Enables terminal emulation
     ports:
+      - "80:80"
+      - "443:443"
       - "6443:6443"
       - "8443:8443"
     volumes:
+      - /lib/modules:/lib/modules:ro
       - etcd-volume:/var/lib/etcd
       - shared-volume:/home
     networks:
@@ -35,3 +38,5 @@ volumes:
     name: etcd #-${ETCD_VOLUME}
     driver: local
   shared-volume:
+    name: clinco-shared-volume
+    driver: local
