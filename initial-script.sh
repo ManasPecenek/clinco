@@ -111,9 +111,9 @@ then
   --set controller.hostNetwork=true \
   --set controller.hostPort.enabled=true  \
   --set controller.admissionWebhooks.enabled=false \
-  --set controller.nodeSelector."kubernetes\.io\/hostname"=worker-1 \
+  --set controller.nodeSelector."kubernetes\.io\/hostname"=master \
   --set controller.service.external.enabled=false \
-  --version 4.1.1 > /dev/null
+  --version 4.11.3 > /dev/null
   [[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
 
 # [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
