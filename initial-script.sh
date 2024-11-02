@@ -26,30 +26,27 @@ then
 fi
 
 
-while getopts "v:n:" option; do
+while getopts "n:" option; do
   case $option in
-  v)
-    ETCD_VOLUME=$OPTARG;;
   n) 
     NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-r]" #>&2
+  *) echo "usage: $0 [-v] [-n]" #>&2
      exit 1 ;;
   esac
 done
 
-if [ -z "$(docker volume ls | grep etcd)" ]; then
+export CLUSTER_NAME=${1:-clinco}
+
+if [ -z "$(docker volume ls | grep ${CLUSTER_NAME})" ]; then
   export ETCD_STATE=new
 else
   export ETCD_STATE=existing
 fi
 
-
 export NODE_COUNT=${NODE_COUNT:-0}
 
-export ETCD_VOLUME=${ETCD_VOLUME:-$RANDOM}
-
 echo -e "\n"$blue"*** Creating Master Node ***"$none"\n"
-# docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -v etcd-$ETCD_VOLUME:/var/lib/etcd -v shared-volume:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/clinco-master:22.04 > /dev/null 2>&1
+# docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -e CLUSTER_NAME -v etcd-${CLUSTER_NAME}:/var/lib/etcd -v shared-volume:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 -p 8443:8443 --privileged --user root petschenek/clinco-master:22.04 > /dev/null 2>&1
 docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Created ***"$none"\n" || echo -e $red"ERROR Could not Create Master Node"$none"\n"

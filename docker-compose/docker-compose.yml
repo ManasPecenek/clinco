@@ -8,6 +8,7 @@ services:
         TARGETARCH: amd64
     environment:
       ETCD_STATE: ${ETCD_STATE}
+      CLUSTER_NAME: ${CLUSTER_NAME}
     container_name: master
     hostname: master
     privileged: true
@@ -18,7 +19,8 @@ services:
       - "80:80"
       - "443:443"
       - "6443:6443"
-      - "8443:8443"
+    expose:
+      - 8443
     volumes:
       - /lib/modules:/lib/modules:ro
       - etcd-volume:/var/lib/etcd
@@ -35,7 +37,7 @@ networks:
 
 volumes:
   etcd-volume:
-    name: etcd #-${ETCD_VOLUME}
+    name: etcd-${CLUSTER_NAME}
     driver: local
   shared-volume:
     name: clinco-shared-volume

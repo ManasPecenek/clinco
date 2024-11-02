@@ -12,9 +12,9 @@ fi
 
 while getopts "n:" option; do
   case $option in
-  n) 
+  n)
     ADDITIONAL_NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-r]" >&2
+  *) echo "usage: $0 [-v] [-n]" >&2
      exit 1 ;;
   esac
 done
