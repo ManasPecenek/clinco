@@ -91,7 +91,7 @@ metadata:
     storageclass.kubernetes.io/is-default-class: "true"
   name: standard
 provisioner: rancher.io/local-path
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
 reclaimPolicy: Delete
 
 ---
