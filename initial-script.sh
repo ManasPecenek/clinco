@@ -44,7 +44,7 @@ else
 fi
 
 
-export NODE_COUNT=${NODE_COUNT:-1}
+export NODE_COUNT=${NODE_COUNT:-0}
 
 export ETCD_VOLUME=${ETCD_VOLUME:-$RANDOM}
 
@@ -56,7 +56,7 @@ docker compose -f docker-compose/docker-compose.yml up --build -d --force-recrea
 
 
 i=$NODE_COUNT
-while [ $i -gt 1 ]
+while [ $i -gt 0 ]
 do
   echo -e $blue"*** Creating Worker Node $i ***"$none"\n"
   # docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro -v shared-volume:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
@@ -81,7 +81,7 @@ docker cp master:/root/admin.kubeconfig .kubeconfig
 
 #########################################################################################################################
 j=$NODE_COUNT
-while [ $j -gt 1 ]
+while [ $j -gt 0 ]
 do
 
 echo -e $blue"*** Configuring Worker Node $j ***"$none"\n"

@@ -44,7 +44,7 @@ done
 
 
 #########################################################################################################################
-while [ $i -gt 1 ]
+while [ $i -gt 0 ]
 do
 
 instance=worker
@@ -224,6 +224,6 @@ resources:
       - identity: {}
 EOF
 
-cp /root/worker-* /home/
+[[ $1 -gt 0 ]] && cp /root/worker-* /home/ 
 cp /root/kube-proxy.kubeconfig /home/
 cp /root/ca.crt /home/
