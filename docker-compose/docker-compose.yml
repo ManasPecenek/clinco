@@ -6,6 +6,8 @@ services:
       dockerfile: ../master-image/Dockerfile
       args:
         TARGETARCH: amd64
+    environment:
+      ETCD_STATE: ${ETCD_STATE}
     container_name: master
     hostname: master
     privileged: true
