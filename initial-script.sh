@@ -114,10 +114,12 @@ then
   --set controller.hostPort.enabled=true  \
   --set controller.admissionWebhooks.enabled=false \
   --set controller.nodeSelector."kubernetes\.io\/hostname"=master \
-  --set controller.service.external.enabled=false \
+  --set controller.service.external.enabled=true \
+  --set controller.service.externalIPs[0]="172.172.0.1" \
+  --set controller.service.externalTrafficPolicy="Local" \
   --version 4.11.3 > /dev/null
 
-  helm upgrade --install test prometheus-community/kube-prometheus-stack --values values.custom.yaml
+  # helm upgrade --install test prometheus-community/kube-prometheus-stack --values values.custom.yaml
 
   [[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
 
