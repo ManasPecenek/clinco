@@ -30,6 +30,6 @@ networks:
 
 volumes:
   etcd-volume:
-    name: etcd-${ETCD_VOLUME}
+    name: etcd #-${ETCD_VOLUME}
     driver: local
   shared-volume:

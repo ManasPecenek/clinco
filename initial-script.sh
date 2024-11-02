@@ -37,6 +37,12 @@ while getopts "v:n:" option; do
   esac
 done
 
+if [ -z "$(docker volume ls | grep etcd)" ]; then
+  export ETCD_STATE=new
+else
+  export ETCD_STATE=existing
+fi
+
 
 export NODE_COUNT=${NODE_COUNT:-1}
 
