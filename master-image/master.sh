@@ -9,7 +9,7 @@ mv etcd-${ETCD_VERSION}-linux-${ARCH}/etcd* /usr/local/bin/
 mkdir -p /etc/etcd /var/lib/etcd
 groupadd etcd && useradd -r -s /bin/false -g etcd etcd
 chown -R etcd:etcd /etc/etcd /var/lib/etcd
-chmod 700 /var/lib/etcd
+chmod -R 700 /var/lib/etcd
 cp ca.crt kube-api-server.crt kube-api-server.key /etc/etcd/
 rm -rf etcd*
 

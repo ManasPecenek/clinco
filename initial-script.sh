@@ -119,7 +119,7 @@ then
   --set controller.service.externalTrafficPolicy="Local" \
   --version 4.11.3 > /dev/null
 
-  kubectl apply -f components.yaml
+  # kubectl apply -f components.yaml
 
   # helm upgrade --install test prometheus-community/kube-prometheus-stack --values values.custom.yaml
 

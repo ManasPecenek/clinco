@@ -133,8 +133,6 @@ HOSTNAME=$(hostname -s)
 cp ${HOSTNAME}.key ${HOSTNAME}.crt /var/lib/kubelet/
 cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
 cp ca.crt /var/lib/kubernetes/
-mkdir -p /etc/kubernetes/manifests
-
 
 cat <<EOF | tee /var/lib/kubelet/kubelet-config.yaml
 kind: KubeletConfiguration
@@ -162,7 +160,7 @@ tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
 maxPods: 40
 failSwapOn: false
 podCIDR: "${POD_CIDR}"
-staticPodPath: "/etc/kubernetes/manifests"
+staticPodPath: ""
 EOF
 
 cat <<EOF | tee /etc/systemd/system/kubelet.service
@@ -184,7 +182,7 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-
+chmod 600 /etc/systemd/system/kubelet.service
 cp kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
 
 
