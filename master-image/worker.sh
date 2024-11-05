@@ -2,11 +2,11 @@
 
 set -e
 
-cp /home/kube-proxy.kubeconfig .
-cp /home/worker-$2.kubeconfig .
-cp /home/worker-$2.key .
-cp /home/worker-$2.crt .
-cp /home/ca.crt .
+# cp /home/kube-proxy.kubeconfig .
+# cp /home/worker-$2.kubeconfig .
+# cp /home/worker-$2.key .
+# cp /home/worker-$2.crt .
+# cp /home/ca.crt .
 
 swapoff -a && sysctl vm.swappiness=0
 
@@ -24,13 +24,12 @@ tar -xvf crictl-${CRI_VERSION}-linux-${ARCH}.tar.gz
 tar -xvf containerd-${CONTAINERD_VERSION}-linux-${ARCH}.tar.gz -C containerd
 tar -xvf cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz -C /opt/cni/bin/
 mv runc.${ARCH} runc
-chmod +x crictl kubectl kube-proxy kubelet runc 
-mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
+chmod +x crictl kube-proxy kubelet runc 
+mv crictl kube-proxy kubelet runc /usr/local/bin/
 mv containerd/bin/* /bin/
 rm -f *.gz *.tgz
 
-i=$(hostname -s | cut -b 8)
-POD_CIDR=10.172.$i.0/24
+MASTER_POD_CIDR=10.172.0.0/24
 
 cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
 {
@@ -43,7 +42,7 @@ cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
     "ipam": {
         "type": "host-local",
         "ranges": [
-          [{"subnet": "${POD_CIDR}"}]
+          [{"subnet": "${MASTER_POD_CIDR}"}]
         ],
         "routes": [{"dst": "0.0.0.0/0"}]
     }
@@ -159,7 +158,7 @@ tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
 maxPods: 40
 failSwapOn: false
-podCIDR: "${POD_CIDR}"
+podCIDR: "${MASTER_POD_CIDR}"
 staticPodPath: ""
 EOF
 
@@ -226,7 +225,7 @@ sleep 5
 NODE_COUNT=$1
 while [[ $NODE_COUNT -gt 0 ]]
 do
-  if [[ $NODE_COUNT != $i ]]
+  if [[ $NODE_COUNT != 0 ]]
   then
     ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
   fi

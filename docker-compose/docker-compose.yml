@@ -1,9 +1,14 @@
 services:
   master:
-    image: petschenek/ubuntu-systemd:master-${ARCH}-22.04
+    # image: petschenek/ubuntu-systemd:master-${ARCH}-22.04
     build:
       context: ../master-image
-      dockerfile: ../master-image/amd64.Dockerfile
+      dockerfile: ../master-image/Dockerfile
+      args:
+        TARGETARCH: amd64
+    environment:
+      ETCD_STATE: ${ETCD_STATE}
+      CLUSTER_NAME: ${CLUSTER_NAME}
     container_name: master
     hostname: master
     privileged: true
@@ -11,9 +16,13 @@ services:
     stdin_open: true  # Allows the container to stay running
     tty: true         # Enables terminal emulation
     ports:
+      - "80:80"
+      - "443:443"
       - "6443:6443"
-      - "8443:8443"
+    expose:
+      - 8443
     volumes:
+      - /lib/modules:/lib/modules:ro
       - etcd-volume:/var/lib/etcd
       - shared-volume:/home
     networks:
@@ -28,6 +37,8 @@ networks:
 
 volumes:
   etcd-volume:
-    name: etcd-${ETCD_VOLUME}
+    name: clinco-etcd-${CLUSTER_NAME}
     driver: local
   shared-volume:
+    name: clinco-shared
+    driver: local

@@ -19,6 +19,7 @@ sed -i "s/\${KUBERNETES_PUBLIC_ADDRESS}/$KUBERNETES_PUBLIC_ADDRESS/g" ca.conf
 
 certs=(
   "admin"
+  "master"
   "kube-proxy"
   "kube-scheduler"
   "kube-controller-manager"
@@ -98,12 +99,12 @@ kubectl config set-credentials system:node:${instance}-$i \
 --embed-certs=true \
 --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-context default \
+kubectl config set-context ${CLUSTER_NAME} \
 --cluster=clinco-the-hard-way \
 --user=system:node:${instance}-$i \
 --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config use-context default --kubeconfig=${instance}-$i.kubeconfig
+kubectl config use-context ${CLUSTER_NAME} --kubeconfig=${instance}-$i.kubeconfig
 
 i=$((i-1))
 done
@@ -122,12 +123,12 @@ kubectl config set-credentials system:kube-proxy \
 --embed-certs=true \
 --kubeconfig=kube-proxy.kubeconfig
 
-kubectl config set-context default \
+kubectl config set-context ${CLUSTER_NAME} \
 --cluster=clinco-the-hard-way \
 --user=system:kube-proxy \
 --kubeconfig=kube-proxy.kubeconfig
 
-kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+kubectl config use-context ${CLUSTER_NAME} --kubeconfig=kube-proxy.kubeconfig
 
 
 kubectl config set-cluster clinco-the-hard-way \
@@ -142,12 +143,12 @@ kubectl config set-credentials system:kube-controller-manager \
 --embed-certs=true \
 --kubeconfig=kube-controller-manager.kubeconfig
 
-kubectl config set-context default \
+kubectl config set-context ${CLUSTER_NAME} \
 --cluster=clinco-the-hard-way \
 --user=system:kube-controller-manager \
 --kubeconfig=kube-controller-manager.kubeconfig
 
-kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
+kubectl config use-context ${CLUSTER_NAME} --kubeconfig=kube-controller-manager.kubeconfig
 
 
 kubectl config set-cluster clinco-the-hard-way \
@@ -162,13 +163,31 @@ kubectl config set-credentials system:kube-scheduler \
 --embed-certs=true \
 --kubeconfig=kube-scheduler.kubeconfig
 
-kubectl config set-context default \
+kubectl config set-context ${CLUSTER_NAME} \
 --cluster=clinco-the-hard-way \
 --user=system:kube-scheduler \
 --kubeconfig=kube-scheduler.kubeconfig
 
-kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
+kubectl config use-context ${CLUSTER_NAME} --kubeconfig=kube-scheduler.kubeconfig
 
+kubectl config set-cluster clinco-the-hard-way \
+--certificate-authority=ca.crt \
+--embed-certs=true \
+--server=https://127.0.0.1:6443 \
+--kubeconfig=master.kubeconfig
+
+kubectl config set-credentials system:node:master \
+--client-certificate=master.crt \
+--client-key=master.key \
+--embed-certs=true \
+--kubeconfig=master.kubeconfig
+
+kubectl config set-context ${CLUSTER_NAME} \
+--cluster=clinco-the-hard-way \
+--user=system:node:master \
+--kubeconfig=master.kubeconfig
+
+kubectl config use-context ${CLUSTER_NAME} --kubeconfig=master.kubeconfig
 
 kubectl config set-cluster clinco-the-hard-way \
 --certificate-authority=ca.crt \
@@ -182,12 +201,12 @@ kubectl config set-credentials admin \
 --embed-certs=true \
 --kubeconfig=admin.kubeconfig
 
-kubectl config set-context default \
+kubectl config set-context ${CLUSTER_NAME} \
 --cluster=clinco-the-hard-way \
 --user=admin \
 --kubeconfig=admin.kubeconfig
 
-kubectl config use-context default --kubeconfig=admin.kubeconfig
+kubectl config use-context ${CLUSTER_NAME} --kubeconfig=admin.kubeconfig
 
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 
@@ -205,6 +224,6 @@ resources:
       - identity: {}
 EOF
 
-cp /root/worker-* /home/
+[[ $1 -gt 0 ]] && cp /root/worker-* /home/ 
 cp /root/kube-proxy.kubeconfig /home/
 cp /root/ca.crt /home/
