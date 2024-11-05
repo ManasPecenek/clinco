@@ -13,7 +13,7 @@ metadata:
   name: nginx-helm
   namespace: ingress-nginx
 spec:
-  interval: 10m
+  interval: 1m
   timeout: 5m
   chart:
     spec:
@@ -22,7 +22,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: nginx-helm
-      interval: 5m
+      interval: 1m
   releaseName: ingress-nginx
   install:
     remediation:
