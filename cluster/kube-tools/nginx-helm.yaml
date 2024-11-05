@@ -29,7 +29,7 @@ spec:
     remediation:
       retries: 3
   upgrade:
-    cleanupOnFail: true
+    cleanupOnFail: false
     force: true
     remediation:
       retries: 3
