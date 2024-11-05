@@ -1,4 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- local-path-provisioner-0.0.30.yaml
+  - local-path-provisioner-0.0.30.yaml
+  - nginx-helm.yaml
