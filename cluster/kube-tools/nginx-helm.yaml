@@ -1,3 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-nginx
+---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
@@ -41,7 +46,8 @@ spec:
         enabled: true 
       admissionWebhooks:
         enabled: false
-      nodeSelector."kubernetes.io/hostname": master
+      nodeSelector:
+        kubernetes.io/hostname: master
       service:
         externalTrafficPolicy: Local
         external:
