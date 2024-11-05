@@ -7,7 +7,7 @@ spec:
   prune: true
   force: true
   interval: 1m0s
-  path: ./flux/kube-tools.yaml
+  path: ./flux/kube-tools
   sourceRef:
     kind: GitRepository
     name: flux-system
