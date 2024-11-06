@@ -110,6 +110,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kube-api-server.crt \\
   --tls-private-key-file=/var/lib/kubernetes/kube-api-server.key \\
+  --enable-aggregator-routing=true \\
   --v=2
 Restart=on-failure
 RestartSec=5
