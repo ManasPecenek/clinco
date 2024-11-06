@@ -141,9 +141,8 @@ kubeletCgroups: "/system.slice/kubelet.service"
 cgroupsPerQOS: true
 authentication:
   anonymous:
-    enabled: false
+    enabled: true
   webhook:
-    cacheTTL: "0s"
     enabled: true
   x509:
     clientCAFile: "/var/lib/kubernetes/ca.crt"
