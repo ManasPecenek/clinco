@@ -109,7 +109,6 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kube-api-server.crt \\
   --tls-private-key-file=/var/lib/kubernetes/kube-api-server.key \\
-  --enable-aggregator-routing=true \\
   --enable-bootstrap-token-auth=true \\
   --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname \\
   --v=2
@@ -119,6 +118,8 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOF
+
+ #   --enable-aggregator-routing=true \\
 
 systemctl daemon-reload
 systemctl enable --now kube-apiserver

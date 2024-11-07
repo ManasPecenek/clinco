@@ -153,7 +153,7 @@ clusterDNS:
   - "10.32.0.10"
 logging:
   verbosity: 2
-memorySwap: "{}"
+memorySwap: {}
 resolvConf: "/run/systemd/resolve/resolv.conf"
 containerRuntimeEndpoint: "unix:///run/containerd/containerd.sock"
 tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
@@ -162,7 +162,7 @@ maxPods: 50
 failSwapOn: false
 podCIDR: "${MASTER_POD_CIDR}"
 healthzBindAddress: "127.0.0.1"
-healthzPort: 10250
+healthzPort: 10248
 EOF
 
 cat <<EOF | tee /etc/systemd/system/kubelet.service
