@@ -141,7 +141,7 @@ kubeletCgroups: "/system.slice/kubelet.service"
 cgroupsPerQOS: true
 authentication:
   anonymous:
-    enabled: true
+    enabled: false
   webhook:
     enabled: true
   x509:
@@ -151,14 +151,18 @@ authorization:
 clusterDomain: "cluster.local"
 clusterDNS:
   - "10.32.0.10"
+logging:
+  verbosity: 2
+memorySwap: "{}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 containerRuntimeEndpoint: "unix:///run/containerd/containerd.sock"
 tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
-maxPods: 40
+maxPods: 50
 failSwapOn: false
 podCIDR: "${MASTER_POD_CIDR}"
-staticPodPath: ""
+healthzBindAddress: "127.0.0.1"
+healthzPort: 10250
 EOF
 
 cat <<EOF | tee /etc/systemd/system/kubelet.service
