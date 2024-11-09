@@ -7,14 +7,14 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  export KUBERNETES_PUBLIC_ADDRESS=127.0.0.1 #$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
+  export KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
 fi
 
 while getopts "n:" option; do
   case $option in
   n)
     ADDITIONAL_NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-n]" >&2
+  *) echo "usage: $0 [-v] [-c]" >&2
      exit 1 ;;
   esac
 done
