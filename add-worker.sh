@@ -23,7 +23,7 @@ done
 
 export CLUSTER_NAME=${CLUSTER_NAME:-clinco}
 
-[[ -z "$ADDITIONAL_NODE_COUNT" ]] && ADDITIONAL_NODE_COUNT=1
+export ADDITIONAL_NODE_COUNT=${ADDITIONAL_NODE_COUNT:-1}
 
 current=$(docker ps | grep -c worker-)
 
