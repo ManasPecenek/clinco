@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -e
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
@@ -25,20 +25,20 @@ export CLUSTER_NAME=${CLUSTER_NAME:-clinco}
 
 export ADDITIONAL_NODE_COUNT=${ADDITIONAL_NODE_COUNT:-1}
 
-current=$(docker ps | grep -c worker-)
 
-i=$(($ADDITIONAL_NODE_COUNT + $current))
+current=$(docker ps --filter "name=worker-" -q | wc -l)
 
+k=$(($ADDITIONAL_NODE_COUNT + $current))
 
-docker exec -it --privileged --user root master bash -c "./add.sh $i $current $KUBERNETES_PUBLIC_ADDRESS"
+docker exec -it --privileged --user root master bash -c "./add.sh $k $current $KUBERNETES_PUBLIC_ADDRESS"
 
-while [ $i -gt $current ]
+while [ $k -gt $current ]
 do
-  docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
+  docker run -dt --network clinco --hostname worker-$k --name worker-$k -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$k --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
 
   instance=worker
 
-  docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh $current"
+  docker exec -it --privileged --user root ${instance}-$k bash -c "./worker.sh $ADDITIONAL_NODE_COUNT $k"
 
   i=$((i-1))
 done

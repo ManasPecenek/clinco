@@ -34,7 +34,7 @@ do
   C  = US
   ST = Washington
   L  = Seattle
-  EOF
+EOF
 
   openssl genrsa -out "${instance}-${i}.key" 4096
 
@@ -77,5 +77,5 @@ do
 
   kubectl config use-context ${CLUSTER_NAME} --kubeconfig=${instance}-$i.kubeconfig
 
-i=$((i-1))
+  i=$((i-1))
 done
