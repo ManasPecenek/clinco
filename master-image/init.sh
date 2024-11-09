@@ -226,4 +226,4 @@ EOF
 
 [[ $1 -gt 0 ]] && cp /root/worker-* /home/ 
 cp /root/kube-proxy.kubeconfig /home/
-cp /root/ca.crt /home/
+cp /root/ca* /home/

@@ -2,12 +2,6 @@
 
 set -e
 
-# cp /home/kube-proxy.kubeconfig .
-# cp /home/worker-$2.kubeconfig .
-# cp /home/worker-$2.key .
-# cp /home/worker-$2.crt .
-# cp /home/ca.crt .
-
 swapoff -a && sysctl vm.swappiness=0
 
 mkdir -p \
@@ -16,10 +10,10 @@ mkdir -p \
   /var/lib/kubelet \
   /var/lib/kube-proxy \
   /var/lib/kubernetes \
-  /var/run/kubernetes
+  /var/run/kubernetes \
+  /etc/containerd \
+  containerd
 
-
-mkdir -p containerd
 tar -xvf crictl-${CRI_VERSION}-linux-${ARCH}.tar.gz
 tar -xvf containerd-${CONTAINERD_VERSION}-linux-${ARCH}.tar.gz -C containerd
 tar -xvf cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz -C /opt/cni/bin/
@@ -28,38 +22,6 @@ chmod +x crictl kube-proxy kubelet runc
 mv crictl kube-proxy kubelet runc /usr/local/bin/
 mv containerd/bin/* /bin/
 rm -f *.gz *.tgz
-
-# MASTER_POD_CIDR=10.172.0.0/24
-
-# cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
-# {
-#     "cniVersion": "1.0.0",
-#     "name": "bridge",
-#     "type": "bridge",
-#     "bridge": "cnio0",
-#     "isGateway": true,
-#     "ipMasq": true,
-#     "ipam": {
-#         "type": "host-local",
-#         "ranges": [
-#           [{"subnet": "${MASTER_POD_CIDR}"}]
-#         ],
-#         "routes": [{"dst": "0.0.0.0/0"}]
-#     }
-# }
-# EOF
-
-
-# cat <<EOF | tee /etc/cni/net.d/99-loopback.conf
-# {
-#     "cniVersion": "1.0.0",
-#     "name": "lo",
-#     "type": "loopback"
-# }
-# EOF
-
-
-mkdir -p /etc/containerd/
 
 cat << EOF | tee /etc/containerd/config.toml
 version = 2
@@ -164,8 +126,6 @@ healthzBindAddress: "127.0.0.1"
 healthzPort: 10248
 EOF
 
-# podCIDR: "${MASTER_POD_CIDR}"
-
 cat <<EOF | tee /etc/systemd/system/kubelet.service
 [Unit]
 Description=Kubernetes Kubelet
@@ -188,7 +148,6 @@ EOF
 chmod 600 /etc/systemd/system/kubelet.service
 cp kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
 
-
 cat <<EOF | tee /var/lib/kube-proxy/kube-proxy-config.yaml
 kind: KubeProxyConfiguration
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
@@ -201,7 +160,6 @@ mode: "ipvs"
 conntrack:
   maxPerCore: 0
 EOF
-
 
 cat <<EOF | tee /etc/systemd/system/kube-proxy.service
 [Unit]
@@ -220,18 +178,6 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-
 systemctl daemon-reload
 systemctl enable --now containerd kubelet kube-proxy
 sleep 5
-
-
-# NODE_COUNT=$1
-# while [[ $NODE_COUNT -gt 0 ]]
-# do
-#   if [[ $NODE_COUNT != 0 ]]
-#   then
-#     ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
-#   fi
-# NODE_COUNT=$((NODE_COUNT-1))
-# done
