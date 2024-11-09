@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 if [[ "$(uname)" = *"Darwin"* ]]
 then
