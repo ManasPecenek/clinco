@@ -10,14 +10,18 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
 fi
 
-while getopts "n:" option; do
+while getopts "c:n:" option; do
   case $option in
-  n)
-    ADDITIONAL_NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-c]" >&2
+  c) 
+    CLUSTER_NAME=$OPTARG;;
+  n) 
+    NODE_COUNT=$OPTARG;;
+  *) echo "usage: $0 [-v] [-c]" #>&2
      exit 1 ;;
   esac
 done
+
+export CLUSTER_NAME=${CLUSTER_NAME:-clinco}
 
 [[ -z "$ADDITIONAL_NODE_COUNT" ]] && ADDITIONAL_NODE_COUNT=1
 
@@ -30,12 +34,12 @@ docker exec -it --privileged --user root master bash -c "./add.sh $i $current $K
 
 while [ $i -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro -v shared-volume:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 > /dev/null 2>&1
+  docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro -v shared-volume:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 > /dev/null 2>&1
 
-instance=worker
+  instance=worker
 
-docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh $current"
+  docker exec -it --privileged --user root ${instance}-$i bash -c "./worker.sh $current"
 
-i=$((i-1))
+  i=$((i-1))
 done
 

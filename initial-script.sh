@@ -61,8 +61,8 @@ do
   # docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
   docker compose -f docker-compose/docker-compose.worker.yml up --build -d --force-recreate
 
-[[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
-i=$((i-1))
+  [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
+  i=$((i-1))
 done
 
 
@@ -83,13 +83,14 @@ j=$NODE_COUNT
 while [ $j -gt 0 ]
 do
 
-echo -e $blue"*** Configuring Worker Node $j ***"$none"\n"
+  echo -e $blue"*** Configuring Worker Node $j ***"$none"\n"
 
-docker exec -i --privileged --user root worker-$j bash -c "./worker.sh $NODE_COUNT $j" #> /dev/null
+  docker exec -i --privileged --user root worker-$j bash -c "./worker.sh $NODE_COUNT $j" #> /dev/null
 
-[[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
+  [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
 
-j=$((j-1))
+  j=$((j-1))
+
 done
 #########################################################################################################################
 
