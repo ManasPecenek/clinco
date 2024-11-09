@@ -32,7 +32,7 @@ while getopts "c:n:" option; do
     CLUSTER_NAME=$OPTARG;;
   n) 
     NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-c]" #>&2
+  *) echo "usage: $0 [-n] [-c]" #>&2
      exit 1 ;;
   esac
 done
@@ -48,8 +48,8 @@ fi
 export NODE_COUNT=${NODE_COUNT:-0}
 
 echo -e "\n"$blue"*** Creating Master Node ***"$none"\n"
-# docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -e CLUSTER_NAME -v clinco-etcd-${CLUSTER_NAME}:/var/lib/etcd -v clinco-shared:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 --privileged --user root petschenek/clinco-master:22.04 > /dev/null 2>&1
-docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
+docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -e CLUSTER_NAME -v clinco-etcd-${CLUSTER_NAME}:/var/lib/etcd -v clinco-shared:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 --privileged --user root petschenek/clinco-master:22.04 #> /dev/null 2>&1
+# docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Created ***"$none"\n" || echo -e $red"ERROR Could not Create Master Node"$none"\n"
 
@@ -58,11 +58,11 @@ i=$NODE_COUNT
 while [ $i -gt 0 ]
 do
   echo -e $blue"*** Creating Worker Node $i ***"$none"\n"
-  # docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
-  docker compose -f docker-compose/docker-compose.worker.yml up --build -d --force-recreate
+  docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
+  # docker compose -f docker-compose/docker-compose.worker.yml up --build -d --force-recreate
 
-[[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
-i=$((i-1))
+  [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
+  i=$((i-1))
 done
 
 
@@ -83,13 +83,14 @@ j=$NODE_COUNT
 while [ $j -gt 0 ]
 do
 
-echo -e $blue"*** Configuring Worker Node $j ***"$none"\n"
+  echo -e $blue"*** Configuring Worker Node $j ***"$none"\n"
 
-docker exec -i --privileged --user root worker-$j bash -c "./worker.sh $NODE_COUNT $j" #> /dev/null
+  docker exec -i --privileged --user root worker-$j bash -c "./worker.sh $NODE_COUNT $j" #> /dev/null
 
-[[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
+  [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $j Configured ***"$none"\n" || echo -e $red"ERROR! Could not Configure Worker Node $j"$none"\n"
 
-j=$((j-1))
+  j=$((j-1))
+
 done
 #########################################################################################################################
 

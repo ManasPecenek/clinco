@@ -16,10 +16,10 @@ mkdir -p \
   /var/lib/kubelet \
   /var/lib/kube-proxy \
   /var/lib/kubernetes \
-  /var/run/kubernetes
+  /var/run/kubernetes \
+  /etc/containerd \
+  containerd
 
-
-mkdir -p containerd
 tar -xvf crictl-${CRI_VERSION}-linux-${ARCH}.tar.gz
 tar -xvf containerd-${CONTAINERD_VERSION}-linux-${ARCH}.tar.gz -C containerd
 tar -xvf cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz -C /opt/cni/bin/
@@ -28,39 +28,6 @@ chmod +x crictl kubectl kube-proxy kubelet runc
 mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
 mv containerd/bin/* /bin/
 rm -f *.gz *.tgz
-
-i=$(hostname -s | cut -b 8)
-POD_CIDR=10.172.$i.0/24
-
-cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
-{
-    "cniVersion": "1.0.0",
-    "name": "bridge",
-    "type": "bridge",
-    "bridge": "cnio0",
-    "isGateway": true,
-    "ipMasq": true,
-    "ipam": {
-        "type": "host-local",
-        "ranges": [
-          [{"subnet": "${POD_CIDR}"}]
-        ],
-        "routes": [{"dst": "0.0.0.0/0"}]
-    }
-}
-EOF
-
-
-cat <<EOF | tee /etc/cni/net.d/99-loopback.conf
-{
-    "cniVersion": "1.0.0",
-    "name": "lo",
-    "type": "loopback"
-}
-EOF
-
-
-mkdir -p /etc/containerd/
 
 cat << EOF | tee /etc/containerd/config.toml
 version = 2
@@ -161,7 +128,6 @@ tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
 maxPods: 50
 failSwapOn: false
-podCIDR: "${POD_CIDR}"
 healthzBindAddress: "127.0.0.1"
 healthzPort: 10248
 EOF
@@ -202,7 +168,6 @@ conntrack:
   maxPerCore: 0
 EOF
 
-
 cat <<EOF | tee /etc/systemd/system/kube-proxy.service
 [Unit]
 Description=Kubernetes Kube Proxy
@@ -220,18 +185,6 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-
 systemctl daemon-reload
 systemctl enable --now containerd kubelet kube-proxy
 sleep 5
-
-
-NODE_COUNT=$1
-while [[ $NODE_COUNT -gt 0 ]]
-do
-  if [[ $NODE_COUNT != $i ]]
-  then
-    ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
-  fi
-NODE_COUNT=$((NODE_COUNT-1))
-done

@@ -67,12 +67,12 @@ mv kube-apiserver kube-controller-manager kube-scheduler /usr/local/bin/
 mkdir -p /var/lib/kubernetes/
 
 cp ca.crt ca.key \
-kube-api-server.crt \
-kube-api-server.key \
-service-accounts.key \
-service-accounts.crt \
-encryption-config.yaml \
-/var/lib/kubernetes/
+  kube-api-server.crt \
+  kube-api-server.key \
+  service-accounts.key \
+  service-accounts.crt \
+  encryption-config.yaml \
+  /var/lib/kubernetes/
 
 
 cat <<EOF | tee /etc/systemd/system/kube-apiserver.service
@@ -110,7 +110,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --tls-cert-file=/var/lib/kubernetes/kube-api-server.crt \\
   --tls-private-key-file=/var/lib/kubernetes/kube-api-server.key \\
   --enable-bootstrap-token-auth=true \\
-  --kubelet-preferred-address-types=Hostname,InternalDNS,InternalIP,ExternalDNS,ExternalIP \\
+  --kubelet-preferred-address-types=InternalIP,Hostname,InternalDNS,ExternalDNS,ExternalIP \\
   --proxy-client-cert-file=/var/lib/kubernetes/ca.crt \\
   --proxy-client-key-file=/var/lib/kubernetes/ca.key \\
   --requestheader-client-ca-file=/var/lib/kubernetes/ca.crt \\
