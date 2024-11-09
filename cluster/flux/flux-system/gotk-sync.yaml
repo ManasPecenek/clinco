@@ -8,7 +8,7 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: bootstrap-flux
+    branch: update-worker-scripts
   # secretRef:
   #   name: flux-system
   url: https://github.com/ManasPecenek/clinco.git
