@@ -98,8 +98,7 @@ then
 
   export KUBECONFIG=.kubeconfig
 
-  kubectl apply -k components
-  kubectl apply -k cluster/flux-system
+  kubectl apply -k cluster/components
 
   # echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
   # kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
