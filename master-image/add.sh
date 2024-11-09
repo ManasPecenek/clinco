@@ -49,15 +49,6 @@ EOF
     -CAcreateserial \
     -out "${instance}-${i}.crt"
 
-  # cfssl gencert \
-  #   -ca=ca.crt \
-  #   -ca-key=ca.key \
-  #   -config=ca-config.json \
-  #   -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
-  #   -profile=kubernetes \
-  #   ${instance}-$i-csr.json | cfssljson -bare ${instance}-$i
-
-
   kubectl config set-cluster clinco-the-hard-way \
   --certificate-authority=ca.crt \
   --embed-certs=true \
@@ -65,8 +56,8 @@ EOF
   --kubeconfig=${instance}-$i.kubeconfig
 
   kubectl config set-credentials system:node:${instance}-$i \
-  --client-certificate=${instance}-$i.pem \
-  --client-key=${instance}-$i-key.pem \
+  --client-certificate=${instance}-$i.crt \
+  --client-key=${instance}-$i.key \
   --embed-certs=true \
   --kubeconfig=${instance}-$i.kubeconfig
 
@@ -79,3 +70,5 @@ EOF
 
   i=$((i-1))
 done
+
+cp /root/worker-* /home/ 
