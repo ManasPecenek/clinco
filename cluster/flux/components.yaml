@@ -7,7 +7,7 @@ spec:
   prune: true
   force: true
   interval: 1m0s
-  path: ./cluster/kube-tools
+  path: ./cluster/flux/components
   sourceRef:
     kind: GitRepository
     name: flux-system
