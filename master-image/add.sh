@@ -10,8 +10,8 @@ do
 
   instance=worker
   INTERNAL_IP=172.172.1.$i
-  KUBERNETES_PUBLIC_ADDRESS=$3
-  EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS}
+  MASTER_IP=172.172.0.1
+  EXTERNAL_IP=$3
 
   cat <<EOF > ca-worker.conf
   [${instance}-${i}]
@@ -52,7 +52,7 @@ EOF
   kubectl config set-cluster clinco-the-hard-way \
   --certificate-authority=ca.crt \
   --embed-certs=true \
-  --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+  --server=https://${MASTER_IP}:6443 \
   --kubeconfig=${instance}-$i.kubeconfig
 
   kubectl config set-credentials system:node:${instance}-$i \

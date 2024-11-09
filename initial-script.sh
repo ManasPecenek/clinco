@@ -58,8 +58,8 @@ i=$NODE_COUNT
 while [ $i -gt 0 ]
 do
   echo -e $blue"*** Creating Worker Node $i ***"$none"\n"
-  # docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
-  docker compose -f docker-compose/docker-compose.worker.yml up --build -d --force-recreate
+  docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
+  # docker compose -f docker-compose/docker-compose.worker.yml up --build -d --force-recreate
 
   [[ $? -eq 0 ]] && echo -e $blue"*** Worker Node $i Created ***"$none"\n" || echo -e $red"ERROR! Could not Create Worker Node $i"$none"\n"
   i=$((i-1))
