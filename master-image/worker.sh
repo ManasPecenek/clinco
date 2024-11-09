@@ -29,34 +29,34 @@ mv crictl kube-proxy kubelet runc /usr/local/bin/
 mv containerd/bin/* /bin/
 rm -f *.gz *.tgz
 
-MASTER_POD_CIDR=10.172.0.0/24
+# MASTER_POD_CIDR=10.172.0.0/24
 
-cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
-{
-    "cniVersion": "1.0.0",
-    "name": "bridge",
-    "type": "bridge",
-    "bridge": "cnio0",
-    "isGateway": true,
-    "ipMasq": true,
-    "ipam": {
-        "type": "host-local",
-        "ranges": [
-          [{"subnet": "${MASTER_POD_CIDR}"}]
-        ],
-        "routes": [{"dst": "0.0.0.0/0"}]
-    }
-}
-EOF
+# cat <<EOF | tee /etc/cni/net.d/10-bridge.conf
+# {
+#     "cniVersion": "1.0.0",
+#     "name": "bridge",
+#     "type": "bridge",
+#     "bridge": "cnio0",
+#     "isGateway": true,
+#     "ipMasq": true,
+#     "ipam": {
+#         "type": "host-local",
+#         "ranges": [
+#           [{"subnet": "${MASTER_POD_CIDR}"}]
+#         ],
+#         "routes": [{"dst": "0.0.0.0/0"}]
+#     }
+# }
+# EOF
 
 
-cat <<EOF | tee /etc/cni/net.d/99-loopback.conf
-{
-    "cniVersion": "1.0.0",
-    "name": "lo",
-    "type": "loopback"
-}
-EOF
+# cat <<EOF | tee /etc/cni/net.d/99-loopback.conf
+# {
+#     "cniVersion": "1.0.0",
+#     "name": "lo",
+#     "type": "loopback"
+# }
+# EOF
 
 
 mkdir -p /etc/containerd/
@@ -160,10 +160,11 @@ tlsCertFile: "/var/lib/kubelet/${HOSTNAME}.crt"
 tlsPrivateKeyFile: "/var/lib/kubelet/${HOSTNAME}.key"
 maxPods: 50
 failSwapOn: false
-podCIDR: "${MASTER_POD_CIDR}"
 healthzBindAddress: "127.0.0.1"
 healthzPort: 10248
 EOF
+
+# podCIDR: "${MASTER_POD_CIDR}"
 
 cat <<EOF | tee /etc/systemd/system/kubelet.service
 [Unit]
@@ -225,12 +226,12 @@ systemctl enable --now containerd kubelet kube-proxy
 sleep 5
 
 
-NODE_COUNT=$1
-while [[ $NODE_COUNT -gt 0 ]]
-do
-  if [[ $NODE_COUNT != 0 ]]
-  then
-    ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
-  fi
-NODE_COUNT=$((NODE_COUNT-1))
-done
+# NODE_COUNT=$1
+# while [[ $NODE_COUNT -gt 0 ]]
+# do
+#   if [[ $NODE_COUNT != 0 ]]
+#   then
+#     ip r add 10.172.$NODE_COUNT.0/24 via 172.172.1.$NODE_COUNT 
+#   fi
+# NODE_COUNT=$((NODE_COUNT-1))
+# done
