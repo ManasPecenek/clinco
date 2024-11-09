@@ -38,7 +38,7 @@ do
 
   instance=worker
 
-  docker exec -it --privileged --user root ${instance}-$k bash -c "./worker.sh $ADDITIONAL_NODE_COUNT $k"
+  docker exec -i --privileged --user root ${instance}-$k bash -c "./worker.sh $ADDITIONAL_NODE_COUNT $k"
 
   k=$((k-1))
 done
