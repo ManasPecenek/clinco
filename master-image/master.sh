@@ -102,7 +102,6 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
   --kubelet-client-certificate=/var/lib/kubernetes/kube-api-server.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kube-api-server.key \\
-  --runtime-config="api/all=true" \\
   --service-account-key-file=/var/lib/kubernetes/service-accounts.crt \\
   --service-account-signing-key-file=/var/lib/kubernetes/service-accounts.key \\
   --service-account-issuer=https://kubernetes.default.svc.cluster.local \\
@@ -110,6 +109,15 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kube-api-server.crt \\
   --tls-private-key-file=/var/lib/kubernetes/kube-api-server.key \\
+  --enable-bootstrap-token-auth=true \\
+  --kubelet-preferred-address-types=Hostname,InternalDNS,InternalIP,ExternalDNS,ExternalIP \\
+  --proxy-client-cert-file=/var/lib/kubernetes/ca.crt \\
+  --proxy-client-key-file=/var/lib/kubernetes/ca.key \\
+  --requestheader-client-ca-file=/var/lib/kubernetes/ca.crt \\
+  --requestheader-allowed-names= \\
+  --requestheader-extra-headers-prefix=X-Remote-Extra- \\
+  --requestheader-group-headers=X-Remote-Group \\
+  --requestheader-username-headers=X-Remote-User \\
   --v=2
 Restart=on-failure
 RestartSec=5
@@ -117,6 +125,8 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOF
+
+ #   --enable-aggregator-routing=true \\
 
 systemctl daemon-reload
 systemctl enable --now kube-apiserver

@@ -22,7 +22,7 @@ then
   export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  export KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)  #172.17.0.1 #host.docker.internal #$(hostname)
+  export KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
 fi
 
 
@@ -32,7 +32,7 @@ while getopts "c:n:" option; do
     CLUSTER_NAME=$OPTARG;;
   n) 
     NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-n]" #>&2
+  *) echo "usage: $0 [-v] [-c]" #>&2
      exit 1 ;;
   esac
 done
@@ -98,34 +98,11 @@ then
 
   export KUBECONFIG=.kubeconfig
 
-  echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
-  kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/coredns-1.9.1.yaml #> /dev/null
-  [[ $? -eq 0 ]] && echo -e $blue"*** CoreDNS Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy CoreDNS"$none"\n"
+  kubectl apply -k cluster/kube-tools
 
-  echo -e $blue"*** Deploying Local Path Provisioner ***"$none"\n"
-  kubectl apply -f https://raw.githubusercontent.com/ManasPecenek/clinco/main/kube-tools/local-storage-class.yaml #> /dev/null
-  [[ $? -eq 0 ]] && echo -e $blue"*** Local Path Provisioner Deployed***"$none"\n" || echo -e $red"ERROR! Could not Deploy Local Path Provisioner"$none"\n"
+  kubectl apply -k cluster/flux/flux-system
 
-  echo -e $blue"*** Deploying Nginx Ingress Controller ***"$none"\n"
-  helm upgrade --install ingress-nginx ingress-nginx \
-  --repo https://kubernetes.github.io/ingress-nginx \
-  --namespace ingress-nginx --create-namespace \
-  --set controller.hostNetwork=true \
-  --set controller.hostPort.enabled=true  \
-  --set controller.admissionWebhooks.enabled=false \
-  --set controller.nodeSelector."kubernetes\.io\/hostname"=master \
-  --set controller.service.external.enabled=true \
-  --set controller.service.externalIPs[0]="172.172.0.1" \
-  --set controller.service.externalTrafficPolicy="Local" \
-  --version 4.11.3 > /dev/null
-
-  # kubectl apply -f components.yaml
-
-  # helm upgrade --install test prometheus-community/kube-prometheus-stack --values values.custom.yaml
-
-  [[ $? -eq 0 ]] && echo -e $blue"*** Nginx Ingress Controller Deployed ***"$none"\n" || echo -e $red"ERROR! Could not Deploy Nginx Ingress Controller"$none"\n"
-
-# [[ -z $(kubectl get deploy -A | awk '{print $2}' | tail +2 | grep -w "coredns") ]] && 
+  [[ $? -eq 0 ]] && echo -e $blue"*** Cluster Provisioning Completed ***"$none"\n" || echo -e $red"ERROR! Cluster Provisioning Failed"$none"\n"
 
 fi
 

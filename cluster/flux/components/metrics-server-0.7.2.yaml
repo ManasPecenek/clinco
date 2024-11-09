@@ -132,16 +132,14 @@ spec:
     spec:
       containers:
       - args:
-        - --cert-dir=/tmp
-        - --secure-port=4443
         - --kubelet-preferred-address-types=InternalIP
         - --kubelet-use-node-status-port
         - --metric-resolution=15s
         - --kubelet-insecure-tls
-          # --authorization-kubeconfig string
-          # --authentication-kubeconfig string
-          # --kubelet-port 10250
-          # --kubelet-client-key string
+        - --bind-address=0.0.0.0
+        - --secure-port=4443
+        - --cert-dir=/tmp
+        - --v=2
         image: registry.k8s.io/metrics-server/metrics-server:v0.7.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -169,10 +167,10 @@ spec:
             cpu: 100m
             memory: 200Mi
         securityContext:
-          allowPrivilegeEscalation: false
+          allowPrivilegeEscalation: true
           capabilities:
             drop:
-            - ALL
+              - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsUser: 1000
@@ -185,8 +183,6 @@ spec:
         kubernetes.io/os: linux
       priorityClassName: system-cluster-critical
       serviceAccountName: metrics-server
-      # hostNetwork: true
-      # dnsPolicy: ClusterFirstWithHostNet
       volumes:
       - emptyDir: {}
         name: tmp-dir
