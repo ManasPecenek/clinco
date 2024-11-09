@@ -40,6 +40,6 @@ do
 
   docker exec -it --privileged --user root ${instance}-$k bash -c "./worker.sh $ADDITIONAL_NODE_COUNT $k"
 
-  i=$((i-1))
+  k=$((k-1))
 done
 
