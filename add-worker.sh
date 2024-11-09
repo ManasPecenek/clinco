@@ -15,8 +15,8 @@ while getopts "c:n:" option; do
   c) 
     CLUSTER_NAME=$OPTARG;;
   n) 
-    NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-c]" #>&2
+    ADDITIONAL_NODE_COUNT=$OPTARG;;
+  *) echo "usage: $0 [-n] [-c]" #>&2
      exit 1 ;;
   esac
 done
