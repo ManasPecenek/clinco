@@ -34,7 +34,7 @@ docker exec -it --privileged --user root master bash -c "./add.sh $i $current $K
 
 while [ $i -gt $current ]
 do
-  docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro -v shared-volume:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 > /dev/null 2>&1
+  docker run -dt --network clinco --hostname worker-$i --name worker-$i -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$i --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
 
   instance=worker
 
