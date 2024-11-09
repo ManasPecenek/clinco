@@ -100,6 +100,8 @@ then
 
   kubectl apply -k cluster/kube-tools
 
+  kubectl apply -k cluster/flux/flux-system
+
   # kubectl apply -f cluster/flux/flux-system
 
   # echo -e $blue"*** Deploying CoreDNS ***"$none"\n"; sleep 15
