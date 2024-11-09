@@ -47,66 +47,66 @@ done
 while [ $i -gt 0 ]
 do
 
-instance=worker
-INTERNAL_IP=172.172.1.$i
+  instance=worker
+  INTERNAL_IP=172.172.1.$i
 
-cat <<EOF > ca-worker.conf
-[${instance}-${i}]
-distinguished_name = ${instance}-${i}_distinguished_name
-prompt             = no
-req_extensions     = ${instance}-${i}_req_extensions
+  cat <<EOF > ca-worker.conf
+  [${instance}-${i}]
+  distinguished_name = ${instance}-${i}_distinguished_name
+  prompt             = no
+  req_extensions     = ${instance}-${i}_req_extensions
 
-[${instance}-${i}_req_extensions]
-basicConstraints     = CA:FALSE
-extendedKeyUsage     = clientAuth, serverAuth
-keyUsage             = critical, digitalSignature, keyEncipherment
-nsCertType           = client
-nsComment            = "${instance}-${i} Certificate"
-subjectAltName       = DNS:${instance}-${i}, IP:127.0.0.1
-subjectKeyIdentifier = hash
+  [${instance}-${i}_req_extensions]
+  basicConstraints     = CA:FALSE
+  extendedKeyUsage     = clientAuth, serverAuth
+  keyUsage             = critical, digitalSignature, keyEncipherment
+  nsCertType           = client
+  nsComment            = "${instance}-${i} Certificate"
+  subjectAltName       = DNS:${instance}-${i}, IP:127.0.0.1
+  subjectKeyIdentifier = hash
 
-[${instance}-${i}_distinguished_name]
-CN = system:node:${instance}-${i}
-O  = system:nodes
-C  = US
-ST = Washington
-L  = Seattle
+  [${instance}-${i}_distinguished_name]
+  CN = system:node:${instance}-${i}
+  O  = system:nodes
+  C  = US
+  ST = Washington
+  L  = Seattle
 EOF
 
-openssl genrsa -out "${instance}-${i}.key" 4096
+  openssl genrsa -out "${instance}-${i}.key" 4096
 
-openssl req -new -key "${instance}-${i}.key" -sha256 \
-  -config "ca-worker.conf" -section ${instance}-${i} \
-  -out "${instance}-${i}.csr"
+  openssl req -new -key "${instance}-${i}.key" -sha256 \
+    -config "ca-worker.conf" -section ${instance}-${i} \
+    -out "${instance}-${i}.csr"
 
-openssl x509 -req -days 3653 -in "${instance}-${i}.csr" \
-  -copy_extensions copyall \
-  -sha256 -CA "ca.crt" \
-  -CAkey "ca.key" \
-  -CAcreateserial \
-  -out "${instance}-${i}.crt"
+  openssl x509 -req -days 3653 -in "${instance}-${i}.csr" \
+    -copy_extensions copyall \
+    -sha256 -CA "ca.crt" \
+    -CAkey "ca.key" \
+    -CAcreateserial \
+    -out "${instance}-${i}.crt"
 
 
-kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.crt \
---embed-certs=true \
---server=https://${MASTER_IP}:6443 \
---kubeconfig=${instance}-$i.kubeconfig
+  kubectl config set-cluster clinco-the-hard-way \
+  --certificate-authority=ca.crt \
+  --embed-certs=true \
+  --server=https://${MASTER_IP}:6443 \
+  --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-credentials system:node:${instance}-$i \
---client-certificate=${instance}-$i.crt \
---client-key=${instance}-$i.key \
---embed-certs=true \
---kubeconfig=${instance}-$i.kubeconfig
+  kubectl config set-credentials system:node:${instance}-$i \
+  --client-certificate=${instance}-$i.crt \
+  --client-key=${instance}-$i.key \
+  --embed-certs=true \
+  --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-context ${CLUSTER_NAME} \
---cluster=clinco-the-hard-way \
---user=system:node:${instance}-$i \
---kubeconfig=${instance}-$i.kubeconfig
+  kubectl config set-context ${CLUSTER_NAME} \
+  --cluster=clinco-the-hard-way \
+  --user=system:node:${instance}-$i \
+  --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config use-context ${CLUSTER_NAME} --kubeconfig=${instance}-$i.kubeconfig
+  kubectl config use-context ${CLUSTER_NAME} --kubeconfig=${instance}-$i.kubeconfig
 
-i=$((i-1))
+  i=$((i-1))
 done
 i=$1
 #########################################################################################################################
