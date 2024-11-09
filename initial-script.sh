@@ -48,8 +48,8 @@ fi
 export NODE_COUNT=${NODE_COUNT:-0}
 
 echo -e "\n"$blue"*** Creating Master Node ***"$none"\n"
-# docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -e CLUSTER_NAME -v clinco-etcd-${CLUSTER_NAME}:/var/lib/etcd -v clinco-shared:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 --privileged --user root petschenek/clinco-master:22.04 #> /dev/null 2>&1
-docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
+docker run -dt --network clinco --hostname master --name master -e ETCD_STATE -e CLUSTER_NAME -v clinco-etcd-${CLUSTER_NAME}:/var/lib/etcd -v clinco-shared:/home -v /lib/modules:/lib/modules:ro --ip=172.172.0.1 -p 6443:6443 --privileged --user root petschenek/clinco-master:22.04 #> /dev/null 2>&1
+# docker compose -f docker-compose/docker-compose.yml up --build -d --force-recreate
 
 [[ $? -eq 0 ]] && echo -e $blue"*** Master Node Created ***"$none"\n" || echo -e $red"ERROR Could not Create Master Node"$none"\n"
 
