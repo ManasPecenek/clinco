@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  worker:
+    # image: "petschenek/ubuntu-systemd:worker-${ARCH}-22.04"
+    build:
+      context: ../worker-image
+      dockerfile: ../worker-image/Dockerfile
+      args:
+        TARGETARCH: amd64
+    environment:
+      CLUSTER_NAME: ${CLUSTER_NAME}
+    hostname: worker-1
+    container_name: worker-1
+    networks:
+      clinco:
+        ipv4_address: "172.172.1.1"
+    volumes:
+      - /lib/modules:/lib/modules:ro
+      - shared-volume:/home
+    privileged: true
+    user: root
+
+
+networks:
+  clinco:
+    external: true
+
+volumes:
+  shared-volume:
+    name: clinco-shared
+    driver: local

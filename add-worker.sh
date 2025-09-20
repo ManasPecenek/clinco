@@ -1,63 +1,45 @@
 #!/bin/bash
 
+set -e
+
 if [[ "$(uname)" = *"Darwin"* ]]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
+  export KUBERNETES_PUBLIC_ADDRESS=$(ipconfig getifaddr en0)
 elif [[ "$(uname)" = *"Linux"* ]]
 then
-  KUBERNETES_PUBLIC_ADDRESS=$(hostname -i)
+  export KUBERNETES_PUBLIC_ADDRESS=$(hostname -I)
 fi
 
-if [[ "$(uname -m)" = *"arm"* || "$(uname -m)" = *"aarch"* ]]
-then
-  ARCH=arm64
-elif [[ "$(uname -m)" = *"x86"* ]]
-then
-  ARCH=amd64
-else
-  echo "Could not configure your architecture" && exit 1
-fi
-
-
-while getopts "n:" option; do
+while getopts "c:n:" option; do
   case $option in
+  c) 
+    CLUSTER_NAME=$OPTARG;;
   n) 
     ADDITIONAL_NODE_COUNT=$OPTARG;;
-  *) echo "usage: $0 [-v] [-r]" >&2
+  *) echo "usage: $0 [-n] [-c]" #>&2
      exit 1 ;;
   esac
 done
 
-[[ -z "$ADDITIONAL_NODE_COUNT" ]] && ADDITIONAL_NODE_COUNT=1
+export CLUSTER_NAME=${CLUSTER_NAME:-clinco}
 
-current=$(docker ps | grep -c worker-)
-
-i=$(($ADDITIONAL_NODE_COUNT + $current))
+export ADDITIONAL_NODE_COUNT=${ADDITIONAL_NODE_COUNT:-1}
 
 
-docker exec -it --privileged --user root master bash -c "./add.sh $i $current $KUBERNETES_PUBLIC_ADDRESS"
+current=$(docker ps --filter "name=worker-" -q | wc -l)
 
-while [ $i -gt $current ]
+k=$(($ADDITIONAL_NODE_COUNT + $current))
+
+docker exec -it --privileged --user root master bash -c "./add.sh $k $current $KUBERNETES_PUBLIC_ADDRESS"
+
+while [ $k -gt $current ]
 do
-docker run -dt --network clinco --hostname worker-$i --name worker-$i -v /lib/modules:/lib/modules:ro --ip=172.172.1.$i --privileged --user root petschenek/ubuntu-systemd:worker-$ARCH-22.04 > /dev/null 2>&1
+  docker run -dt --network clinco --hostname worker-$k --name worker-$k -e CLUSTER_NAME -v /lib/modules:/lib/modules:ro -v clinco-shared:/home --ip=172.172.1.$k --privileged --user root petschenek/clinco-worker:22.04 #> /dev/null
 
-instance=worker
+  instance=worker
 
-docker cp master:/root/ca.pem .
-docker cp master:/root/${instance}-$i-key.pem .
-docker cp master:/root/${instance}-$i.pem .
-docker cp master:/root/kube-proxy.kubeconfig .
-docker cp master:/root/${instance}-$i.kubeconfig .
+  docker exec -i --privileged --user root ${instance}-$k bash -c "./worker.sh $ADDITIONAL_NODE_COUNT $k"
 
-
-docker cp ca.pem ${instance}-$i:/root/ && rm -f ca.pem
-docker cp ${instance}-$i-key.pem ${instance}-$i:/root/ && rm -f ${instance}-$i-key.pem
-docker cp ${instance}-$i.pem ${instance}-$i:/root/ && rm -f ${instance}-$i.pem 
-docker cp kube-proxy.kubeconfig ${instance}-$i:/root/ && rm -f kube-proxy.kubeconfig
-docker cp ${instance}-$i.kubeconfig ${instance}-$i:/root/ && rm -f ${instance}-$i.kubeconfig
-
-(docker exec -it --privileged --user root ${instance}-$i bash -c "./$ARCH-worker.sh $current") > /dev/null 2>&1
-
-i=$((i-1))
+  k=$((k-1))
 done
 

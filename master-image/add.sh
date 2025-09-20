@@ -1,64 +1,74 @@
 #!/bin/bash
 
+set -e
+
 i=$1
 current=$2
 
 while [ $i -gt $current ]
 do
 
-instance=worker
+  instance=worker
+  INTERNAL_IP=172.172.1.$i
+  MASTER_IP=172.172.0.1
+  KUBERNETES_PUBLIC_ADDRESS=$3
 
-cat > ${instance}-$i-csr.json <<EOF
-{
-  "CN": "system:node:${instance}-$i",
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  },
-  "names": [
-    {
-      "C": "US",
-      "L": "Portland",
-      "O": "system:nodes",
-      "OU": "clinco Hard Way",
-      "ST": "Oregon"
-    }
-  ]
-}
+  cat <<EOF > ca-worker.conf
+  [${instance}-${i}]
+  distinguished_name = ${instance}-${i}_distinguished_name
+  prompt             = no
+  req_extensions     = ${instance}-${i}_req_extensions
+
+  [${instance}-${i}_req_extensions]
+  basicConstraints     = CA:FALSE
+  extendedKeyUsage     = clientAuth, serverAuth
+  keyUsage             = critical, digitalSignature, keyEncipherment
+  nsCertType           = client
+  nsComment            = "${instance}-${i} Certificate"
+  subjectAltName       = DNS:${instance}-${i}, IP:127.0.0.1
+  subjectKeyIdentifier = hash
+
+  [${instance}-${i}_distinguished_name]
+  CN = system:node:${instance}-${i}
+  O  = system:nodes
+  C  = US
+  ST = Washington
+  L  = Seattle
 EOF
 
-KUBERNETES_PUBLIC_ADDRESS=$3
+  openssl genrsa -out "${instance}-${i}.key" 4096
 
-EXTERNAL_IP=${KUBERNETES_PUBLIC_ADDRESS} # 172.172.1.$i
-INTERNAL_IP=172.172.1.$i # 127.0.0.1
+  openssl req -new -key "${instance}-${i}.key" -sha256 \
+    -config "ca-worker.conf" -section ${instance}-${i} \
+    -out "${instance}-${i}.csr"
 
-cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
-  -config=ca-config.json \
-  -hostname=${instance}-$i,${EXTERNAL_IP},${INTERNAL_IP} \
-  -profile=kubernetes \
-  ${instance}-$i-csr.json | cfssljson -bare ${instance}-$i
+  openssl x509 -req -days 3653 -in "${instance}-${i}.csr" \
+    -copy_extensions copyall \
+    -sha256 -CA "ca.crt" \
+    -CAkey "ca.key" \
+    -CAcreateserial \
+    -out "${instance}-${i}.crt"
 
+  kubectl config set-cluster clinco-the-hard-way \
+  --certificate-authority=ca.crt \
+  --embed-certs=true \
+  --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+  --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-cluster clinco-the-hard-way \
---certificate-authority=ca.pem \
---embed-certs=true \
---server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
---kubeconfig=${instance}-$i.kubeconfig
+  kubectl config set-credentials system:node:${instance}-$i \
+  --client-certificate=${instance}-$i.crt \
+  --client-key=${instance}-$i.key \
+  --embed-certs=true \
+  --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-credentials system:node:${instance}-$i \
---client-certificate=${instance}-$i.pem \
---client-key=${instance}-$i-key.pem \
---embed-certs=true \
---kubeconfig=${instance}-$i.kubeconfig
+  kubectl config set-context ${CLUSTER_NAME} \
+  --cluster=clinco-the-hard-way \
+  --user=system:node:${instance}-$i \
+  --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config set-context default \
---cluster=clinco-the-hard-way \
---user=system:node:${instance}-$i \
---kubeconfig=${instance}-$i.kubeconfig
+  kubectl config use-context ${CLUSTER_NAME} --kubeconfig=${instance}-$i.kubeconfig
 
-kubectl config use-context default --kubeconfig=${instance}-$i.kubeconfig
-
-i=$((i-1))
+  i=$((i-1))
 done
+
+cp /root/worker-* /home/ 
